@@ -2,7 +2,8 @@
 #define __HEAP__
 
 #include <stdlib.h>
-#include "heap_rep.h"
+
+typedef struct heap_s *Heap;
 
 /**
 * Creates a new heap with the given size doubled.
