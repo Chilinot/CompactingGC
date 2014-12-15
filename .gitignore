@@ -30,3 +30,7 @@
 
 # CLion IDEA
 .idea/
+
+# KDevelop IDE
+.kdev4/
+*.kdev4
