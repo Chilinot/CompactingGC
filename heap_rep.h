@@ -6,14 +6,14 @@
 
 typedef struct heap_block {
     void *header; // Contains all metadata.
-    // Directly after the header pointer is the data.4
+    // Directly after the header pointer is the data.
 } *MCHeapBlock;
 
 typedef struct heap_s {
     void *active_pointer;  // Like the stack pointer, but for the heap.
     void *passive_pointer; // Like the above.
-	void *active;   // Points to the active part of the heap.
-	void *passive;  // Same as above but for the passive.
+    void *active;   // Points to the active part of the heap.
+    void *passive;  // Same as above but for the passive.
 } *MCHeap;
 
 #endif
