@@ -27,7 +27,8 @@ typedef enum {
 	POINTER_TO_STRING,
 	FORWARDING_ADDRESS,
 	FUNCTION_POINTER,
-	BITVECTOR
+	BITVECTOR,
+	ERROR // Returned if an error occured when getting the header type.
 } header_type;
 
 /**

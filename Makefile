@@ -13,9 +13,10 @@ clean:
 
 %:	%.c
 	$(C_COMPILER) $(C_OPTIONS) $< -o $@
-
-heap.o: heap.c heap.h heap_rep.h
-	$(C_COMPILER) $ (C_OPTIONS) heap.c -o heap.o
+	
+test_header: header.c header.h header_tests.c
+	$(C_COMPILER) $(C_OPTIONS) header_tests.c header.c -o header_unittests -lcunit
+	./header_unittests
 
 #test: unittests.c istring.c istring.h
 #	$(C_COMPILER) $(C_OPTIONS) unittests.c istring.c -o unittests -lcunit
