@@ -29,5 +29,4 @@
 *.hex
 
 # CLion IDEA
-CMakeLists.txt
 .idea/
