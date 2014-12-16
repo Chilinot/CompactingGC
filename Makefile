@@ -1,5 +1,4 @@
-all: 
-	echo "Makefile unfinished!"
+all: test_header
 
 # Tex settings
 C_COMPILER   = gcc
