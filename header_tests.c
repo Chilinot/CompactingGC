@@ -53,6 +53,9 @@ void testForwardingAddress() {
 }
 
 void testFromFormatString() {
+	
+	// -- TEST SMALL STRING - Always a bitvector.
+	
 	void* header = header_fromFormatString("*rr*");
 	
 	// Check type bits to make sure it is a bitvector.
@@ -62,9 +65,43 @@ void testFromFormatString() {
 	void* bits = (void*) ((((intptr_t) 0b1001) << ((sizeof(void*) * 8) - 4)) | 3);
 	CU_ASSERT(header == bits);
 	
+	
+	// -- TEST ARCHITECTURE DEPENDENT STRING, bitvector on 64-bit systems, pointer on 32-bit.
+	
+	char medium_string[40];
+	
+	for(int i = 0; i < 40; i++) {
+		if(i == 38) {
+			medium_string[i] = '*';
+		}
+		else {
+			medium_string[i] = 'r';
+		}
+	}
+	
+	medium_string[39] = '\0';
+	
+	header = header_fromFormatString(medium_string);
+	
+	if(sizeof(void*) == 4) { // 32 bit system
+		// Check if it is a pointer.
+		CU_ASSERT((((intptr_t) header) & 0b11) == 0b00);
+	}
+	else if(sizeof(void*) == 8){ // 64 bit system
+		// Check if it is a bitvector.
+		CU_ASSERT((((intptr_t) header) & 0b11) == 0b11);
+	}
+	else {
+		CU_FAIL("Unit test missing for architecture!");
+	}
+	
+	
+	// -- TEST LARGE STRING - Always a pointer.
+	
 	// Constructs a string of 126 r's and 1 * as the last character.
 	// How it looks: rrr...rr*
 	char large_string[128];
+	
 	for(int i = 0; i < 128; i++) {
 		if(i == 126) {
 			large_string[i] = '*';
