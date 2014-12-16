@@ -3,6 +3,8 @@
 #include <string.h>
 #include "header.h"
 
+
+
 void* header_clearHeaderTypeBits(void* header) {
 	intptr_t cast_header = (intptr_t) header;
 	cast_header &= ~0b11;
@@ -12,8 +14,8 @@ void* header_clearHeaderTypeBits(void* header) {
 header_type header_getHeaderType(void* header) {
 	intptr_t cast_header = (intptr_t) header;
 	
-	cast_header &= 0b11;
-	
+	cast_header &= 0b11; //tar ut de minst två signifikanta bitarna  
+
 	switch(cast_header) {
 		case 0b00:
 			return POINTER_TO_STRING;
