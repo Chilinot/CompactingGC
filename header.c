@@ -3,8 +3,6 @@
 #include <string.h>
 #include "header.h"
 
-
-
 void* header_clearHeaderTypeBits(void* header) {
 	intptr_t cast_header = (intptr_t) header;
 	cast_header &= ~0b11;
@@ -43,8 +41,8 @@ void* header_fromFormatString(char* string) {
 	// Defines the char for a pointer.
 	static char p = '*'; 
 	
-	// True if the string will fit inside a void*-2 else false.
-	bool useVector = strlen(string) <= ((sizeof(void*) * 8) - 2);
+	// True if the string will fit inside a void*-4 else false.
+	bool useVector = strlen(string) <= ((sizeof(void*) * 4) - 4);
 	
 	if(useVector) {
 		int i = 0;
@@ -52,19 +50,21 @@ void* header_fromFormatString(char* string) {
 		
 		// Add ones to the header for each 'p' in the string.
 		while(string[i] != '\0'){
-			header <<= 1;
+			header <<= 2;
 			
 			// If the current char is a pointer char.
 			if(string[i] == p) {
-				header |= 1; // Add a one to the header.
+				header |= 0b11;
 			}
 			
 			i++;
 		}
 		
+		//TODO fixa bitvektorn så den använder två bitar per tecken, hälften utav det är fixat.
+		
 		// Make sure the header is properly shifted.
-		while(i++ < (sizeof(void*) * 8)) {
-			header <<= 1;
+		while(i++ < (sizeof(void*) * 4)) {
+			header <<= 2;
 		}
 		
 		// Mark the two type bits as a bitvector.
@@ -82,4 +82,25 @@ void* header_objectSpecificFunction(s_trace_f function) {
 	intptr_t ptr = (intptr_t) function;
 	ptr |= 0b10;
 	return (void*) ptr;
+}
+
+size_t header_getSize(void* header) {
+	int antal_r = 0;
+	int antal_p = 0;
+	
+	switch(header_getHeaderType(header)) {
+		case BITVECTOR:
+			for(int i = sizeof(void*) * 8; i > 2; i--) {
+				
+			}
+			break;
+		
+		case POINTER_TO_STRING:
+			break;
+			
+		default:
+			break;
+	}
+	
+	return (sizeof(int) * antal_r) + (sizeof(void*) + antal_p);
 }

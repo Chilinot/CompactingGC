@@ -62,7 +62,7 @@ void testFromFormatString() {
 	CU_ASSERT((((intptr_t) header) & 0b11) == 0b11);
 	
 	// Make sure the bits are in the right places.
-	void* bits = (void*) ((((intptr_t) 0b1001) << ((sizeof(void*) * 8) - 4)) | 3);
+	void* bits = (void*) ((((intptr_t) 0b11000011) << ((sizeof(void*) * 8) - 8)) | 0b11);
 	CU_ASSERT(header == bits);
 	
 	
