@@ -1,4 +1,0 @@
-CC = gcc
-
-stack:
-	$(CC) -Wall -std=c99 stack.c -o stack 
