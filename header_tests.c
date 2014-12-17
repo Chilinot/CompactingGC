@@ -94,6 +94,7 @@ void testFromFormatString() {
 	if(sizeof(void*) == 4) { // 32 bit system
 		// Check if it is a pointer.
 		CU_ASSERT((((intptr_t) header) & 0b11) == 0b00);
+		free(header);
 	}
 	else if(sizeof(void*) == 8){ // 64 bit system
 		// Check if it is a bitvector.
@@ -137,7 +138,17 @@ void testFromFormatString() {
 }
 
 void testObjectSpecificFunction() {
+	//TODO fixa unittest för header_objectSpecificFunction().
+}
+
+void testGetSize() {
+	// This assumes that header_fromFormatString() is working.
+	void* header = header_fromFormatString("*rr*");
 	
+	int size = (sizeof(void*) * 2) + (sizeof(int) * 2);
+	int header_size = header_getSize(header);
+	
+	CU_ASSERT(header_size == size);
 }
 
 // --- MAIN ---
@@ -162,7 +173,8 @@ int main() {
 		(NULL == CU_add_test(pSuite1, "test of header_getHeaderType()", testGetHeaderType)) ||
 		(NULL == CU_add_test(pSuite1, "test of header_forwardingAddress()", testForwardingAddress)) ||
 		(NULL == CU_add_test(pSuite1, "test of header_fromFormatString()", testFromFormatString)) ||
-		(NULL == CU_add_test(pSuite1, "test of header_objectSpecificFunction()", testObjectSpecificFunction))
+		(NULL == CU_add_test(pSuite1, "test of header_objectSpecificFunction()", testObjectSpecificFunction)) ||
+		(NULL == CU_add_test(pSuite1, "test of header_getSize()", testGetSize))
 	) {
 		CU_cleanup_registry();
 		return CU_get_error();
