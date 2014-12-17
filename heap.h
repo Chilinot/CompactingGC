@@ -12,12 +12,12 @@ typedef struct heap_s *Heap;
 * @param bytes - The heap size in amount of bytes.
 * @return Pointer to the new heap.
 */
-MCHeap heap_init(size_t bytes);
+Heap heap_init(size_t bytes);
 
 /**
 * De-allocates the given heap.
 */
-void heap_del(MCHeap heap);
+void heap_del(Heap heap);
 
 /**
 * Allocates the given amount of bytes on the given heap.
@@ -27,7 +27,7 @@ void heap_del(MCHeap heap);
 * @param bytes - The amount of bytes to allocate.
 * @return Pointer to the allocated memory space.
 */
-void *heap_allocate(MCHeap heap, void* header, int bytes);
+void *heap_allocate(Heap heap, void* header, int bytes);
 
 /**
  * Copies the data from the pointer pointing to a part in the active heap to the first
@@ -39,7 +39,7 @@ void *heap_allocate(MCHeap heap, void* header, int bytes);
  * @param data - Pointer pointing to the data to copy over.
  * @return Returns pointer to the copied data. This will still be a legal pointer after a call to heap_swapActiveAndPassive function.
  */
-void* heap_copyFromActiveToPassive(MCHeap heap, void *data);
+void* heap_copyFromActiveToPassive(Heap heap, void *data);
 
 /**
  * Replaces the header of the object pointed to by data paramter with the given
@@ -48,7 +48,7 @@ void* heap_copyFromActiveToPassive(MCHeap heap, void *data);
  * @param heap - The heap to work on.
  * @param data - The object to mark.
  */
-void heap_markAsCopied(MCHeap heap, void* data, void* forwarding_address);
+void heap_markAsCopied(Heap heap, void* data, void* forwarding_address);
 
 /**
  * Checks if the object pointed to by the data parameter is marked as copied to the passive part.
@@ -57,14 +57,14 @@ void heap_markAsCopied(MCHeap heap, void* data, void* forwarding_address);
  * @param data - Pointer to the object on the active part to check.
  * @return 1 if the object has been copied, 0 if not.
  */
-int heap_hasBeenCopied(MCHeap heap, void* data);
+int heap_hasBeenCopied(Heap heap, void* data);
 
 /**
  * Marks the active part of the heap as the passive and vice versa.
  *
  * @param heap - The heap to work on.
  */
-void heap_swapActiveAndPassive(MCHeap heap);
+void heap_swapActiveAndPassive(Heap heap);
 
 /**
 * Calculates the growth direction of the heap.
@@ -74,6 +74,6 @@ void heap_swapActiveAndPassive(MCHeap heap);
 * @param heap - The heap to calculate the direction of.
 * @return Int that indicates growth direction.
 */
-int heap_getGrowthDirection(MCHeap heap);
+int heap_getGrowthDirection(Heap heap);
 
 #endif
