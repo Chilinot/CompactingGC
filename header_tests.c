@@ -62,16 +62,24 @@ void testFromFormatString() {
 	CU_ASSERT((((intptr_t) header) & 0b11) == 0b11);
 	
 	// Make sure the bits are in the right places.
-	void* bits = (void*) ((((intptr_t) 0b11000011) << ((sizeof(void*) * 8) - 8)) | 0b11);
-	CU_ASSERT(header == bits);
+	intptr_t bits = 0b11000011; // This is what "*rr*" terminator looks like in bits.
 	
+	// Shift and terminate bitvector.
+	bits <<= 2;
+	bits |= 0b01;
+	
+	// Shift all bits to the left so they are in the right places then mark it as a bitvector.
+	bits <<= (sizeof(void*) * 8) - 10;
+	bits |= 0b11;
+	
+	CU_ASSERT(header == (void*) bits);
 	
 	// -- TEST ARCHITECTURE DEPENDENT STRING, bitvector on 64-bit systems, pointer on 32-bit.
 	
-	char medium_string[40];
+	char medium_string[28];
 	
-	for(int i = 0; i < 40; i++) {
-		if(i == 38) {
+	for(int i = 0; i < 28; i++) {
+		if(i == 26) {
 			medium_string[i] = '*';
 		}
 		else {
@@ -79,7 +87,7 @@ void testFromFormatString() {
 		}
 	}
 	
-	medium_string[39] = '\0';
+	medium_string[27] = '\0';
 	
 	header = header_fromFormatString(medium_string);
 	

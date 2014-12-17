@@ -38,32 +38,31 @@ void* header_forwardingAddress(void* pointer) {
 }
 
 void* header_fromFormatString(char* string) {
-	// Defines the char for a pointer.
-	static char p = '*'; 
-	
 	// True if the string will fit inside a void*-4 else false.
+	// It subtracts four to make sure the bitvector terminator and the header type will fit.
 	bool useVector = strlen(string) <= ((sizeof(void*) * 4) - 4);
 	
 	if(useVector) {
 		int i = 0;
 		intptr_t header = 0;
 		
-		// Add ones to the header for each 'p' in the string.
+		// Add ones to the header for each '*' in the string.
 		while(string[i] != '\0'){
-			header <<= 2;
-			
 			// If the current char is a pointer char.
-			if(string[i] == p) {
+			if(string[i] == '*') {
 				header |= 0b11;
 			}
 			
+			header <<= 2;
 			i++;
 		}
 		
-		//TODO fixa bitvektorn så den använder två bitar per tecken, hälften utav det är fixat.
+		// Terminate the bitvector.
+		header |= 0b01;
 		
 		// Make sure the header is properly shifted.
-		while(i++ < (sizeof(void*) * 4)) {
+		// Subtract one to account for the terminating bits.
+		while(i++ < (sizeof(void*) * 4) - 1) {
 			header <<= 2;
 		}
 		
