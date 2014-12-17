@@ -12,7 +12,7 @@
 /**
  * Defines the amount of chars we can store in a bitvector.
  */
-#define TOKENS_PER_POINTER ((sizeof(void*) * 4) / BITS_PER_TOKEN)
+#define TOKENS_PER_POINTER ((sizeof(void*) * 8) / BITS_PER_TOKEN)
 
 /**
  * Defines the bit representation of the bitvector terminator.
@@ -81,7 +81,7 @@ void* header_fromFormatString(char* string) {
 				header |= INT_TOKEN;
 			}
 			
-			header <<= 2;
+			header <<= BITS_PER_TOKEN;
 			i++;
 		}
 		
@@ -91,7 +91,7 @@ void* header_fromFormatString(char* string) {
 		// Make sure the header is properly shifted.
 		// Subtract one to account for the terminating bits.
 		while(i++ < TOKENS_PER_POINTER - 1) {
-			header <<= 2;
+			header <<= BITS_PER_TOKEN;
 		}
 		
 		// Mark the two type bits as a bitvector.
