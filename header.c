@@ -1,7 +1,33 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <string.h>
+#include <stdio.h>
 #include "header.h"
+
+/**
+ * Defines number of bits per token.
+ */
+#define BITS_PER_TOKEN 2
+
+/**
+ * Defines the amount of chars we can store in a bitvector.
+ */
+#define TOKENS_PER_POINTER ((sizeof(void*) * 4) / BITS_PER_TOKEN)
+
+/**
+ * Defines the bit representation of the bitvector terminator.
+ */
+#define TERMINATOR_TOKEN 0b01
+
+/**
+ * Bit representation of the pointer token.
+ */
+#define POINTER_TOKEN 0b11
+
+/**
+ * Bit representation of the int token.
+ */
+#define INT_TOKEN 0b00
 
 void* header_clearHeaderTypeBits(void* header) {
 	intptr_t cast_header = (intptr_t) header;
@@ -38,32 +64,33 @@ void* header_forwardingAddress(void* pointer) {
 }
 
 void* header_fromFormatString(char* string) {
-	// Defines the char for a pointer.
-	static char p = '*'; 
-	
 	// True if the string will fit inside a void*-4 else false.
-	bool useVector = strlen(string) <= ((sizeof(void*) * 4) - 4);
+	// It subtracts four to make sure the bitvector terminator and the header type will fit.
+	bool useVector = strlen(string) <= (TOKENS_PER_POINTER - 4);
 	
 	if(useVector) {
 		int i = 0;
 		intptr_t header = 0;
 		
-		// Add ones to the header for each 'p' in the string.
 		while(string[i] != '\0'){
-			header <<= 2;
 			
-			// If the current char is a pointer char.
-			if(string[i] == p) {
-				header |= 0b11;
+			if(string[i] == '*') {
+				header |= POINTER_TOKEN;
+			}
+			else {
+				header |= INT_TOKEN;
 			}
 			
+			header <<= 2;
 			i++;
 		}
 		
-		//TODO fixa bitvektorn så den använder två bitar per tecken, hälften utav det är fixat.
+		// Terminate the bitvector.
+		header |= TERMINATOR_TOKEN;
 		
 		// Make sure the header is properly shifted.
-		while(i++ < (sizeof(void*) * 4)) {
+		// Subtract one to account for the terminating bits.
+		while(i++ < TOKENS_PER_POINTER - 1) {
 			header <<= 2;
 		}
 		
@@ -90,8 +117,31 @@ size_t header_getSize(void* header) {
 	
 	switch(header_getHeaderType(header)) {
 		case BITVECTOR:
-			for(int i = sizeof(void*) * 8; i > 2; i--) {
+			for(int i = TOKENS_PER_POINTER * BITS_PER_TOKEN - BITS_PER_TOKEN; i >= 2; i -= 2) {
 				
+				intptr_t shifted = ((intptr_t) 0b11) << i;
+				
+				intptr_t bits = ((intptr_t) header) & shifted;
+				bits = (bits >> i) & 0b11;
+				
+				if(bits == TERMINATOR_TOKEN) {
+					break; // Stop the loop.
+				}
+				
+				switch(bits) {
+					case INT_TOKEN:
+						antal_r += 1;
+						break;
+					case POINTER_TOKEN:
+						antal_p += 1;
+						break;
+					case TERMINATOR_TOKEN:
+						break;
+						
+					// This is only reached if the header is not properly formatted.
+					default:
+ 						return 0;
+				}
 			}
 			break;
 		
@@ -101,6 +151,6 @@ size_t header_getSize(void* header) {
 		default:
 			break;
 	}
-	
-	return (sizeof(int) * antal_r) + (sizeof(void*) + antal_p);
+
+	return (sizeof(int) * antal_r) + (sizeof(void*) * antal_p);
 }
