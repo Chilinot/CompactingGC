@@ -45,10 +45,10 @@ void* heap_copyFromActiveToPassive(Heap heap, void *data);
  * Replaces the header of the object pointed to by data paramter with the given
  * forwarding address and marks it as copied.
  *
- * @param heap - The heap to work on.
  * @param data - The object to mark.
+ * @param forwarding_address - The address the new header should point to.
  */
-void heap_markAsCopied(Heap heap, void* data, void* forwarding_address);
+void heap_markAsCopied(void* data, void* forwarding_address);
 
 /**
  * Checks if the object pointed to by the data parameter is marked as copied to the passive part.

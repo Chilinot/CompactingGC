@@ -3,8 +3,8 @@
 #include "heap_rep.h"
 #include "header.h"
 
-MCHeap heap_init(size_t bytes) {
-    MCHeap heap = malloc(sizeof(struct heap_s) + (bytes * 2));
+Heap heap_init(size_t bytes) {
+    Heap heap = malloc(sizeof(struct heap_s) + (bytes * 2));
 
     heap->active = heap + sizeof(struct heap_s);
     heap->passive = heap->active + bytes;
@@ -15,12 +15,12 @@ MCHeap heap_init(size_t bytes) {
     return heap;
 }
 
-void heap_del(MCHeap heap) {
+void heap_del(Heap heap) {
     free(heap);
 }
 
-void* heap_allocate(MCHeap heap, void* header, int bytes) {
-    MCHeapBlock block = heap->active_pointer;
+void* heap_allocate(Heap heap, void* header, int bytes) {
+    HeapBlock block = heap->active_pointer;
 
     block->header = header;
 
@@ -31,8 +31,8 @@ void* heap_allocate(MCHeap heap, void* header, int bytes) {
     return data_pointer;
 }
 
-void* heap_allocate_passive(MCHeap heap, void* header, int bytes) {
-    MCHeapBlock block = heap->passive_pointer;
+void* heap_allocate_passive(Heap heap, void* header, int bytes) {
+    HeapBlock block = heap->passive_pointer;
 
     block->header = header;
 
@@ -43,13 +43,13 @@ void* heap_allocate_passive(MCHeap heap, void* header, int bytes) {
     return data_pointer;
 }
 
-void* heap_copyFromActiveToPassive(MCHeap heap, void *data) {
-    MCHeapBlock block = GET_HEAPBLOCK(data);
+void* heap_copyFromActiveToPassive(Heap heap, void *data) {
+    HeapBlock block = GET_HEAPBLOCK(data);
     
     void* header = (void*) block;
     size_t data_size = header_getSize(header);
 
-    MCHeapBlock passive_block = heap_allocate_passive(heap, header, data_size);
+    HeapBlock passive_block = heap_allocate_passive(heap, header, data_size);
 
     char* active_data = GET_DATABLOCK(block->header);
     char* passive_data = GET_DATABLOCK(passive_block->header);
@@ -63,6 +63,6 @@ void* heap_copyFromActiveToPassive(MCHeap heap, void *data) {
     return (void *) passive_data;
 }
 
-int heap_getGrowthDirection(MCHeap heap) {
+int heap_getGrowthDirection(Heap heap) {
     return heap->active - heap->passive;
 }
