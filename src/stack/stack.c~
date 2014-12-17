@@ -1,0 +1,15 @@
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <setjmp.h>
+
+#define Dump_registers() \
+jmp_buf env; \
+if (setjmp(env)) abort(); \
+
+
+int main(int argc, char *argv[]){
+  puts("hej\n");
+  extern char **environ;
+
+}
