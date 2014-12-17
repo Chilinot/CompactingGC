@@ -6,25 +6,29 @@
 
 char* concateFormatString(int value, char* concatedString, int size, char* rOrStar){
   int wholeSize = (value * size);
+  int temp = wholeSize;
   if(wholeSize <= 4){
     strcat(concatedString, rOrStar);
-}
+  }
   else{
     if(sizeof(void*) == 4){
       wholeSize = wholeSize / 4;
       for(int i = 0; i < wholeSize; i++){
 	strcat(concatedString, rOrStar);	
       }
-      if (wholeSize % 4 != 0){
+      if (temp % 4 != 0){
 	strcat(concatedString, rOrStar);
       }
     }
     if(sizeof(void*) == 8){
-     wholeSize = wholeSize / 8;
+      if(wholeSize <= 8){
+	strcat(concatedString, rOrStar);
+      }
+      wholeSize = wholeSize / 8;
       for(int i = 0; i < wholeSize; i++){
 	strcat(concatedString, rOrStar);
       }
-      if (wholeSize % 8 != 0){
+      if (temp % 8 != 0){
 	strcat(concatedString, rOrStar);
       }
     }
@@ -34,37 +38,45 @@ char* concateFormatString(int value, char* concatedString, int size, char* rOrSt
 }
 
 int returnDigit(char* layout, int digitPos){
-int nr = 0;
-for(int i = digitPos; i < strlen(layout); i++){
-if(isdigit(layout[i])){
-nr++;
-}
-}
-char stringValue[strlen(layout)];
-memcpy(stringValue, layout + digitPos, nr);
-return atoi(stringValue);
-}
-
-
-/*
-int formatStringToSize(char* layout){
-    if(sizeof(void*) == 4){
-      char* headerString = calloc(120);
+  int nr = 0;
+  for(int i = digitPos; i < strlen(layout); i++){
+    if(isdigit(layout[i])){
+      nr++;
     }
-    if(sizeof(void*) == 8){
-      char* headerString = calloc(8 * 62);
-	}
+  }
+  char stringValue[strlen(layout)];
+  memcpy(stringValue, layout + digitPos, nr);
+  return atoi(stringValue);
+}
+
+
+int newPos(char* layout, int currentPos){
+  int newPos;
+  for(int i = currentPos; i < strlen(layout); i++){
+    if(isdigit(layout[i])){
+      i++;
+    }
+    else{
+      newPos = i;
+      break;
+    }
+  }
+  printf("%d\n", newPos);
+  return newPos;
+}
+
+char* formatStringToHeaderString(char* layout){
+  char* headerString;
+  if(sizeof(void*) == 4){
+    headerString = calloc(32, 4);
+  }
+  if(sizeof(void*) == 8){
+    headerString = calloc(64, 8);
+  }
   if(layout == NULL){
     puts("No formatstring to allocate");
     exit(0);
   }
-
-  int p = 0;
-  int k = 0;
-  int f = 0;
-  int d = 0;
-  int l = 0;
-  int c = 0;
   char* r = "r";
   char* star = "*";
   int length = strlen(layout);  
@@ -75,61 +87,72 @@ int formatStringToSize(char* layout){
       int newPosition = newPos(layout, i);
       if(layout[newPosition] == '*') {
 	int size = sizeof(void*);
-	concatedFormatString(value, headerString, size, star); 
-    }
-    if(layout[newPosition] == array[1]){
-      k += value;
-    }
-    if(layout[newPosition] == array[2]){
-      f += value;
-    }
-    if(layout[newPosition] == array[3]){
-      d += value;
-    }
-    if(layout[newPosition] == array[4]){
-      l += value;
-    }
-    if(layout[newPosition] == array[5]){
-      c += value;
-    }
-    i = newPosition;
+	concateFormatString(value, headerString, size, star); 
+      }
+      if(layout[newPosition] == 'c') {
+	int size = sizeof(char);
+	concateFormatString(value, headerString, size, r); 
+      }
+      if(layout[newPosition] == 'l') {
+	int size = sizeof(long);
+	concateFormatString(value, headerString, size, r); 
+      }
+      if(layout[newPosition] == 'i') {
+	int size = sizeof(int);
+	concateFormatString(value, headerString, size, r); 
+      }
+      if(layout[newPosition] == 'd') {
+	int size = sizeof(double);
+	concateFormatString(value, headerString, size, r); 
+      }
+      if(layout[newPosition] == 'f') {
+	int size = sizeof(float);
+	concateFormatString(value, headerString, size, r); 
+      }
     }
     else{
-    if(layout[i] == array[0]){
-      
-    }
-    if(layout[i] == array[1]){
-      k++;
-
-    }
-    if(layout[i] == array[2]){
-      f++;
-    }
-    if(layout[i] == array[3]){
-      d++;
-    }
-    if(layout[i] == array[4]){
-      l++;
-    }
-    if(layout[i] == array[5]){
-      c++;
-    }
-    
+      int value = 1;
+      int newPosition = newPos(layout, i);
+      if(layout[newPosition] == '*') {
+	int size = sizeof(void*);
+	concateFormatString(value, headerString, size, star); 
+      }
+      if(layout[newPosition] == 'c') {
+	int size = sizeof(char);
+	concateFormatString(value, headerString, size, r); 
+      }
+      if(layout[newPosition] == 'l') {
+	int size = sizeof(long);
+	concateFormatString(value, headerString, size, r); 
+      }
+      if(layout[newPosition] == 'i') {
+	int size = sizeof(int);
+	concateFormatString(value, headerString, size, r); 
+      }
+      if(layout[newPosition] == 'd') {
+	int size = sizeof(double);
+	concateFormatString(value, headerString, size, r); 
+      }
+      if(layout[newPosition] == 'f') {
+	int size = sizeof(float);
+	concateFormatString(value, headerString, size, r); 
+      }
     }
   }
-
-
+  return headerString;
 }
-*/
+
 int main(int argc, char* argv[]){
-  int i =    sizeof(void*);
+  /*  int i =    sizeof(void*);
   int i2 =   sizeof(int);
   int i3 =   sizeof(long);
   int i4 =   sizeof(double);
   int i5 =   sizeof(float);
   int i6 =   sizeof(char);
-  char* test = malloc(120);
-  concateFormatString(7, test, 1, "r");
-  printf("void : %d\n int: %d\n long: %d\n double: %d\n float: %d\n char: %d\n test: %s\n ",i, i2, i3, i4, i5, i6, test);
-return 0;
+  printf("void : %d\n int: %d\n long: %d\n double: %d\n float: %d\n char: %d\n test: %s\n ",i, i2, i3, i4, i5, i6, test); */
+  // char* test2;
+  //  test2 = formatStringToHeaderString("2*3i");
+  //  printf("%s\n", test2);
+  newPos("32i", 1);
+  return 0;
 }
