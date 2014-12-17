@@ -4,38 +4,56 @@
 #include <ctype.h>
 #include "gc.h"
 
-char* concateFormatString(int value, char* concatedString, int size, char* rOrStar){
+
+/**
+ * Concatinates a '*' or a 'r' on to the headerstring depending on platform,
+ * number of items and size of item.
+ *@param value Number of items.
+ *@param headerString String on which to concatinate.
+ *@param size Size of the item.
+ *@param rOrStar '*' or 'r' wheter if the item is a void* or not. 
+ *@return Returns the concatinated string.
+ */
+
+char* concateFormatString(int value, char* headerString, int size, char* rOrStar){
   int wholeSize = (value * size);
   int temp = wholeSize;
   if(wholeSize <= 4){
-    strcat(concatedString, rOrStar);
+    strcat(headerString, rOrStar);
   }
   else{
     if(sizeof(void*) == 4){
       wholeSize = wholeSize / 4;
       for(int i = 0; i < wholeSize; i++){
-	strcat(concatedString, rOrStar);	
+	strcat(headerString, rOrStar);	
       }
       if (temp % 4 != 0){
-	strcat(concatedString, rOrStar);
+	strcat(headerString, rOrStar);
       }
     }
     if(sizeof(void*) == 8){
-      if(wholeSize <= 8){
-	strcat(concatedString, rOrStar);
+      if(wholeSize < 8){
+	strcat(headerString, rOrStar);
       }
       wholeSize = wholeSize / 8;
       for(int i = 0; i < wholeSize; i++){
-	strcat(concatedString, rOrStar);
+	strcat(headerString, rOrStar);
       }
       if (temp % 8 != 0){
-	strcat(concatedString, rOrStar);
+	strcat(headerString, rOrStar);
       }
     }
 
   }
-  return concatedString;
+  return headerString;
 }
+
+/**
+ *
+ *@param
+ *@param
+ *@return
+ */
 
 int returnDigit(char* layout, int digitPos){
   int nr = 0;
@@ -54,14 +72,12 @@ int newPos(char* layout, int currentPos){
   int newPos;
   for(int i = currentPos; i < strlen(layout); i++){
     if(isdigit(layout[i])){
-      i++;
     }
     else{
       newPos = i;
       break;
     }
   }
-  printf("%d\n", newPos);
   return newPos;
 }
 
@@ -80,44 +96,29 @@ char* formatStringToHeaderString(char* layout){
   char* r = "r";
   char* star = "*";
   int length = strlen(layout);  
-  for(int i = 0; i < length; i++){
-    printf("%d",i);
-    if(isdigit(layout[i])){
-      int value = returnDigit(layout, i);
-      int newPosition = newPos(layout, i);
-      if(layout[newPosition] == '*') {
-	int size = sizeof(void*);
-	concateFormatString(value, headerString, size, star); 
-      }
-      if(layout[newPosition] == 'c') {
-	int size = sizeof(char);
-	concateFormatString(value, headerString, size, r); 
-      }
-      if(layout[newPosition] == 'l') {
-	int size = sizeof(long);
-	concateFormatString(value, headerString, size, r); 
-      }
-      if(layout[newPosition] == 'i') {
-	int size = sizeof(int);
-	concateFormatString(value, headerString, size, r); 
-      }
-      if(layout[newPosition] == 'd') {
-	int size = sizeof(double);
-	concateFormatString(value, headerString, size, r); 
-      }
-      if(layout[newPosition] == 'f') {
-	int size = sizeof(float);
-	concateFormatString(value, headerString, size, r); 
-      }
+  int value;
+  for(int newPosition = 0; newPosition < length; newPosition++){
+    if(isdigit(layout[newPosition])){
+      value = returnDigit(layout, newPosition);
+      newPosition = newPos(layout, newPosition);
     }
     else{
-      int value = 1;
-      int newPosition = newPos(layout, i);
+      value = 1;
+    }
       if(layout[newPosition] == '*') {
 	int size = sizeof(void*);
 	concateFormatString(value, headerString, size, star); 
       }
       if(layout[newPosition] == 'c') {
+	if (layout[newPosition + 1] == 'c'){
+	  newPosition++;
+	}
+	if (layout[newPosition + 1] == 'c'){
+	  newPosition++;
+	}
+      	if (layout[newPosition + 1] == 'c'){
+	  newPosition++;
+	}
 	int size = sizeof(char);
 	concateFormatString(value, headerString, size, r); 
       }
@@ -138,21 +139,12 @@ char* formatStringToHeaderString(char* layout){
 	concateFormatString(value, headerString, size, r); 
       }
     }
-  }
   return headerString;
 }
 
 int main(int argc, char* argv[]){
-  /*  int i =    sizeof(void*);
-  int i2 =   sizeof(int);
-  int i3 =   sizeof(long);
-  int i4 =   sizeof(double);
-  int i5 =   sizeof(float);
-  int i6 =   sizeof(char);
-  printf("void : %d\n int: %d\n long: %d\n double: %d\n float: %d\n char: %d\n test: %s\n ",i, i2, i3, i4, i5, i6, test); */
-  // char* test2;
-  //  test2 = formatStringToHeaderString("2*3i");
-  //  printf("%s\n", test2);
-  newPos("32i", 1);
+   char* test2;
+   test2 = formatStringToHeaderString("3*3i*c");
+  printf("%s\n", test2);
   return 0;
 }
