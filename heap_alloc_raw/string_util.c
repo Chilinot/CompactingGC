@@ -43,7 +43,6 @@ char* concateFormatString(int value, char* headerString, int size, char* rOrStar
 	strcat(headerString, rOrStar);
       }
     }
-
   }
   return headerString;
 }
@@ -103,10 +102,10 @@ int newPos(char* layout, int currentPos){
 char* formatStringToHeaderString(char* layout){
   char* headerString;
   if(sizeof(void*) == 4){
-    headerString = calloc(32, 4);
+    headerString = malloc(sizeof(layout)+1);
   }
   if(sizeof(void*) == 8){
-    headerString = calloc(64, 8);
+    headerString = malloc(sizeof(layout)+1);
   }
   if(layout == NULL){
     puts("No formatstring to allocate");
@@ -131,6 +130,10 @@ char* formatStringToHeaderString(char* layout){
       if(layout[newPosition] == '*') {
 	int size = sizeof(void*);
 	concateFormatString(value, headerString, size, star); 
+      }
+      if(layout[newPosition] != 'c' && layout[newPosition] != '*' && layout[newPosition] != 'l' && layout[newPosition] != 'd' && layout[newPosition] != 'i' && layout[newPosition] != 'f'){
+	puts("Not a valid formatstring");
+	exit(0);
       }
       if(layout[newPosition] == 'c') {
 	if (layout[newPosition + 1] == 'c'){
@@ -161,6 +164,12 @@ char* formatStringToHeaderString(char* layout){
 	int size = sizeof(float);
 	concateFormatString(value, headerString, size, r); 
       }
-    }
+  }
   return headerString;
+}
+
+int main(int argc, char* argv[]){
+ char * test = formatStringToHeaderString(argv[1]);
+  printf("%s\n",test);
+return 0;
 }
