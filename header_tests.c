@@ -149,6 +149,11 @@ void testGetSize() {
 	int header_size = header_getSize(header);
 	
 	CU_ASSERT(header_size == size);
+	
+	// 47 chars, should always return a string pointer not a vector.
+	header = header_fromFormatString("rrrrrrrrrrrrr**rr*rr***rrr**rr**rr*r*r**rrr*rrr");
+	size = (sizeof(void*) * 15) + (sizeof(int) * 32);
+	CU_ASSERT(size == header_getSize(header));
 }
 
 // --- MAIN ---

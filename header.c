@@ -12,7 +12,7 @@
 /**
  * Defines the amount of chars we can store in a bitvector.
  */
-#define TOKENS_PER_POINTER ((sizeof(void*) * 4) / BITS_PER_TOKEN)
+#define TOKENS_PER_POINTER ((sizeof(void*) * 8) / BITS_PER_TOKEN)
 
 /**
  * Defines the bit representation of the bitvector terminator.
@@ -81,7 +81,7 @@ void* header_fromFormatString(char* string) {
 				header |= INT_TOKEN;
 			}
 			
-			header <<= 2;
+			header <<= BITS_PER_TOKEN;
 			i++;
 		}
 		
@@ -91,7 +91,7 @@ void* header_fromFormatString(char* string) {
 		// Make sure the header is properly shifted.
 		// Subtract one to account for the terminating bits.
 		while(i++ < TOKENS_PER_POINTER - 1) {
-			header <<= 2;
+			header <<= BITS_PER_TOKEN;
 		}
 		
 		// Mark the two type bits as a bitvector.
@@ -130,12 +130,10 @@ size_t header_getSize(void* header) {
 				
 				switch(bits) {
 					case INT_TOKEN:
-						antal_r += 1;
+						++antal_r;
 						break;
 					case POINTER_TOKEN:
-						antal_p += 1;
-						break;
-					case TERMINATOR_TOKEN:
+						++antal_p;
 						break;
 						
 					// This is only reached if the header is not properly formatted.
@@ -146,10 +144,20 @@ size_t header_getSize(void* header) {
 			break;
 		
 		case POINTER_TO_STRING:
+			header = header_clearHeaderTypeBits(header);
+			char *string = (char*) header;
+			for(int i = 0; string[i] != '\0'; i++) {
+				if(string[i] == '*') {
+					++antal_p;
+				}
+				else if(string[i] == 'r') {
+					++antal_r;
+				}
+			}
 			break;
 			
 		default:
-			break;
+			return 0;
 	}
 
 	return (sizeof(int) * antal_r) + (sizeof(void*) * antal_p);
