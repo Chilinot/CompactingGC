@@ -6,11 +6,15 @@
 typedef struct heap_s *Heap;
 
 /**
-* Creates a new heap with the given size doubled.
-* The heap allocates double the bytes given to fit both an active and a passive part.
+* Creates a heap with the given size in bytes.
+* Only half of the given amount will be usable at all times due
+* to it being split into an active and a passive area.
+* 
+* Returns null if the given size does not have space enough 
+* to fit metadata required by the heap.
 *
 * @param bytes - The heap size in amount of bytes.
-* @return Pointer to the new heap.
+* @return Pointer to the new heap, or null if the given space is too small.
 */
 Heap heap_init(size_t bytes);
 
@@ -42,7 +46,7 @@ void *heap_allocate(Heap heap, void* header, int bytes);
 void* heap_copyFromActiveToPassive(Heap heap, void *data);
 
 /**
- * Replaces the header of the object pointed to by data paramter with the given
+ * Replaces the header of the object pointed to by data parameter with the given
  * forwarding address and marks it as copied.
  *
  * @param data - The object to mark.
@@ -53,11 +57,10 @@ void heap_markAsCopied(void* data, void* forwarding_address);
 /**
  * Checks if the object pointed to by the data parameter is marked as copied to the passive part.
  * 
- * @param heap - The heap to work on.
  * @param data - Pointer to the object on the active part to check.
  * @return 1 if the object has been copied, 0 if not.
  */
-int heap_hasBeenCopied(Heap heap, void* data);
+int heap_hasBeenCopied(void* data);
 
 /**
  * Marks the active part of the heap as the passive and vice versa.
