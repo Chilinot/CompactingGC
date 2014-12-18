@@ -1,7 +1,10 @@
-#include <string.h>
+
 #include "CUnit/Basic.h"
-#include "heap_alloc.c"
+#include "heap_alloc.h"
 #include <stdlib.h>
+#include <ctype.h>
+#include <stdio.h>
+#include <string.h>
 
 int init_suite_2(void){
   return 0;
@@ -13,20 +16,33 @@ int clean_suite_2(void){
 
 void testconcateFormatString(int value, char* concatedString, int size, char* rOrStar) {
   char* headerString;
-  char* star = '*';
+  char* star = "*";
+  char* empty = "";
   if(sizeof(void*) == 4){
-    headerString = calloc(32, 4);
+    headerString = malloc(32* 4);
+   
   }
   if(sizeof(void*) == 8){
     headerString = calloc(64, 8);
   }
-  char* value = concateFormatString(8, headerString, 8, star);
 
-  printf("%s", value);
+  char* test1 = concateFormatString(8, headerString, 2, empty);
+  CU_ASSERT(strcmp(test1, "") == 0);
 
+  char* test2 = concateFormatString(4, headerString, 3, star);
+  CU_ASSERT(strcmp(test2, "***") == 0);
+  free(headerString);
 }
 
+/*
+void testreturnDigit() {
 
+  char* layout = "daa43af1";
+  int test = returnDigit(layout, 5);
+  printf("%d", test);
+  CU_ASSERT(test == 1);
+}
+*/
 
 int main()
 {
@@ -43,8 +59,8 @@ int main()
       return CU_get_error();
     }
 
-  if(
-    (NULL == CU_add_test(pSuite2, "testconcateFormatString", testconcateFormatString)))
+  if(NULL == CU_add_test(pSuite2, "testconcateFormatString", testconcateFormatString) /*||
+     NULL == CU_add_test(pSuite2, "testReturnDigit", testreturnDigit)*/)
     {
       CU_cleanup_registry();
       return CU_get_error();

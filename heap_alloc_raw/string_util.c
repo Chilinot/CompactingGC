@@ -49,10 +49,11 @@ char* concateFormatString(int value, char* headerString, int size, char* rOrStar
 }
 
 /**
- *
- *@param
- *@param
- *@return
+ * Searches for integers in a row in a substring until end of string or a non-integer item is found
+ * and converts the string of integers to an integer. 
+ *@param layout The formatstring.
+ *@param digitPos Position of the first integer in the substring of the formatstring.
+ *@return Returns the converted value of the substring.  
  */
 
 int returnDigit(char* layout, int digitPos){
@@ -68,18 +69,36 @@ int returnDigit(char* layout, int digitPos){
 }
 
 
+/**
+ * Searches from current position after non-integer or until end of string and returns that
+ * position
+ *@param layout The formatstring
+ *@param currentPos Current position in the formatstring.
+ *@return Returns the position of the next non-integer of the string.
+ */
+
 int newPos(char* layout, int currentPos){
+  int i;
   int newPos;
-  for(int i = currentPos; i < strlen(layout); i++){
-    if(isdigit(layout[i])){
-    }
-    else{
-      newPos = i;
-      break;
-    }
+  for(i = currentPos; i < strlen(layout); i++){
+      if(isdigit(layout[i])){
+      }
+      else{
+	newPos = i;
+	return newPos;
+      }
   }
+  newPos = i;
   return newPos;
 }
+
+/**
+ *Given a formatstring, converts the string into a headerstring that describes the memorylayout.
+ *If no string is given, terminate the program.
+ *@param The formatstring to be converted.
+ *@return Returns a headerstring.
+ */
+
 
 char* formatStringToHeaderString(char* layout){
   char* headerString;
@@ -101,6 +120,10 @@ char* formatStringToHeaderString(char* layout){
     if(isdigit(layout[newPosition])){
       value = returnDigit(layout, newPosition);
       newPosition = newPos(layout, newPosition);
+      if(length == newPosition){
+	concateFormatString(value, headerString, 1, r);
+	return headerString;
+      }
     }
     else{
       value = 1;
@@ -140,11 +163,4 @@ char* formatStringToHeaderString(char* layout){
       }
     }
   return headerString;
-}
-
-int main(int argc, char* argv[]){
-   char* test2;
-   test2 = formatStringToHeaderString("3*3i*c");
-  printf("%s\n", test2);
-  return 0;
 }
