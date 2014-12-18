@@ -42,6 +42,7 @@ void* h_alloc_data(Heap h, size_t bytes) {
 	/*
 	 * 1. Check if there is space left in the heap.
 	 *    If there are no space left in the heap, call h_gc to trigger garbage collection.
+	 *    If there is still not enough space left in the heap after the garbage collection return null.
 	 * 2. Create a string with the value in bytes amount of 'c' characters.
 	 * 3. Call the function for allocating objects with strings in the heap module with the newly created string.
 	 */
@@ -57,6 +58,7 @@ void* h_alloc_union(Heap h, size_t bytes, s_trace_f f) {
 	/*
 	 * 1. Check if there is space left in the heap.
 	 *    If there are no space left in the heap, call h_gc to trigger garbage collection.
+	 *    If there is still not enough space left in the heap after the garbage collection return null.
 	 * 2. Call function in heap module for allocating objects with function pointers.
 	 */
 }
