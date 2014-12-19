@@ -25,8 +25,12 @@ void heap_del(Heap heap) {
     free(heap);
 }
 
-void* heap_allocate(Heap heap, void* header, int bytes) {
+void* heap_allocate(Heap heap, void* header, size_t bytes) {
     HeapBlock block = heap->active_pointer;
+	
+	// Make sure the bytes are properly aligned.
+	// This will not work in all cases, but for this project it should work fine.
+	bytes = bytes + (bytes % sizeof(void*));
 
     block->header = header;
 
@@ -37,9 +41,12 @@ void* heap_allocate(Heap heap, void* header, int bytes) {
     return data_pointer;
 }
 
-void* heap_allocatePassive(Heap heap, void* header, int bytes) {
+void* heap_allocatePassive(Heap heap, void* header, size_t bytes) {
     HeapBlock block = heap->passive_pointer;
 
+	// Make sure the bytes are properly aligned.
+	bytes = bytes + (bytes % sizeof(void*));
+	
     block->header = header;
 
     void *data_pointer = heap->passive_pointer + sizeof(void*);
@@ -50,26 +57,31 @@ void* heap_allocatePassive(Heap heap, void* header, int bytes) {
 }
 
 void* heap_copyFromActiveToPassive(Heap heap, void *data) {
-    HeapBlock block = GET_HEAPBLOCK(data);
+	
+	//TODO heap_copyFromActiveToPassive needs to be remade.
+	// Should it recurse over the object and copy any object this object is pointing to?
 
-    void* header = (void*) block;
-    size_t data_size = header_getSize(header);
-
-    HeapBlock passive_block = heap_allocatePassive(heap, header, data_size);
-
-    char* active_data = GET_DATABLOCK(block->header);
-    char* passive_data = GET_DATABLOCK(passive_block->header);
-
-    for(size_t i = 0; i < data_size; i++) {
-        passive_data[i] = active_data[i];
-    }
-
-    heap_markAsCopied(heap, data, passive_data);
-
-    return (void *) passive_data;
+//     HeapBlock block = GET_HEAPBLOCK(data);
+// 
+//     void* header = (void*) block;
+//     size_t data_size = header_getSize(header);
+// 
+//     HeapBlock passive_block = heap_allocatePassive(heap, header, data_size);
+// 
+//     char* active_data = GET_DATABLOCK(block->header);
+//     char* passive_data = GET_DATABLOCK(passive_block->header);
+// 
+//     for(size_t i = 0; i < data_size; i++) {
+//         passive_data[i] = active_data[i];
+//     }
+// 
+//     heap_markAsCopied(data, passive_data);
+// 
+//     return (void *) passive_data;
 }
 
 int heap_getGrowthDirection(Heap heap) {
+	//TODO remake heap_getGrowthDirection since it will not work after a call to heap_swapActiveAndPassive.
     return heap->active - heap->passive;
 }
 

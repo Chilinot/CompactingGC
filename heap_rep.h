@@ -25,6 +25,6 @@ typedef struct heap_s {
  * @param bytes - The amount of bytes to allocate.
  * @return Pointer to the allocated memory space.
  */
-void* heap_allocatePassive(heap_s *heap, void* header, int bytes);
+void* heap_allocatePassive(heap_s *heap, void* header, size_t bytes);
 
 #endif

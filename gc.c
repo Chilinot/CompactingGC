@@ -15,7 +15,7 @@ void h_delete(Heap h) {
 
 void h_delete_dbg(Heap h, void* dbg_value) {
 	/*
-	 * 1. Call stack tracer to retreive pointers to all places in the stack that contains pointers to the heap.
+	 * 1. Call stack tracer to retrieve pointers to all places in the stack that contains pointers to the heap.
 	 * 2. Call h_delete() with the given heap.
 	 * 3. Overwrite the values on the stack with the dbg_value using pointers from #1.
 	 */
@@ -29,10 +29,10 @@ size_t h_avail(Heap h) {
 
 size_t h_gc(Heap h) {
 	/*
-	 * 1. Call stack tracer to retreive pointers to all places in the stack that contains pointers to the heap.
+	 * 1. Call stack tracer to retrieve pointers to all places in the stack that contains pointers to the heap.
 	 * 2. Use pointers from #1 to call heap iterator that iterates over the heap and finds pointers to other objects on the heap.
 	 *    (The heap iterator should also return pointers to places in the heap similar to stack tracer!)
-	 * 3. Call function in heap module that copies objects from active to passive using pointers retreived in #2.
+	 * 3. Call function in heap module that copies objects from active to passive using pointers retrieved in #2.
 	 * 4. Call function in heap module to swap active and passive area.
 	 * 5. Return available size by calling appropriate function in heap module.
 	 */

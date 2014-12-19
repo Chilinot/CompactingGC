@@ -31,7 +31,7 @@ void heap_del(Heap heap);
 * @param bytes - The amount of bytes to allocate.
 * @return Pointer to the allocated memory space.
 */
-void *heap_allocate(Heap heap, void* header, int bytes);
+void *heap_allocate(Heap heap, void* header, size_t bytes);
 
 /**
  * Copies the data from the pointer pointing to a part in the active heap to the first
