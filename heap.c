@@ -5,15 +5,23 @@
 
 Heap heap_init(size_t bytes) {
 
-	if(bytes > sizeof(struct heap_s)) {
+	if(bytes <= sizeof(struct heap_s)) {
 		// The given space is too small.
 		return NULL;
 	}
-
+	
+	// This is the amount of bytes available to the user.
+	size_t allocateable = bytes - sizeof(struct heap_s);
+	
+	// Make sure the available space can be split in half and still be properly aligned.
+	if((allocateable / 2) % sizeof(void*) != 0) {
+		return NULL;
+	}
+	
 	Heap heap = malloc(bytes);
 	
-	heap->active = heap + sizeof(struct heap_s);
-	heap->passive = heap->active + ((bytes - sizeof(struct heap_s)) / 2);
+	heap->active = ((char*) heap) + sizeof(struct heap_s);
+	heap->passive = ((char*) heap->active) + (allocateable / 2);
 	
 	heap->active_pointer = heap->active;
 	heap->passive_pointer = heap->passive;
@@ -82,6 +90,7 @@ void* heap_copyFromActiveToPassive(Heap heap, void *data) {
 
 int heap_getGrowthDirection(Heap heap) {
 	//TODO remake heap_getGrowthDirection since it will not work after a call to heap_swapActiveAndPassive.
+	// Actually, it should work! This is because we are subtracting pointer addresses in the heap structure.
     return heap->active - heap->passive;
 }
 
