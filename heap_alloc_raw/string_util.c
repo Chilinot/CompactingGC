@@ -3,8 +3,11 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include "gc.h"
-
-
+#ifdef __SPARC__
+int PLATFORM = 1;
+#else
+int PLATFORM = 0;
+#endif
 /**
  * Concatinates a '*' or a 'r' on to the headerstring depending on platform,
  * number of items and size of item.
@@ -15,14 +18,14 @@
  *@return Returns the concatinated string.
  */
 
-char* concateFormatString(int value, char* headerString, int size, char* rOrStar){
+char* concateFormatString(int value, char* headerString, int size, char* rOrStar, int is64or32){
   int wholeSize = (value * size);
-  int temp = wholeSize;
-  if(wholeSize <= 4){
-    strcat(headerString, rOrStar);
-  }
-  else{
-    if(sizeof(void*) == 4){
+  int temp = wholeSize;{
+    if(sizeof(void*) == 4 && is64or32 == 0){
+      if(wholeSize <= 4){
+	strcat(headerString, rOrStar);
+	return headerString;
+      }
       wholeSize = wholeSize / 4;
       for(int i = 0; i < wholeSize; i++){
 	strcat(headerString, rOrStar);	
@@ -31,15 +34,19 @@ char* concateFormatString(int value, char* headerString, int size, char* rOrStar
 	strcat(headerString, rOrStar);
       }
     }
-    if(sizeof(void*) == 8){
-      if(wholeSize < 8){
+    if(sizeof(void*) == 8 && is64or32 == 1){
+      if(wholeSize <= 8){
 	strcat(headerString, rOrStar);
+	if(strcmp(rOrStar, "r") == 0){
+	  strcat(headerString, rOrStar);
+	}
+	return headerString;
       }
-      wholeSize = wholeSize / 8;
+      wholeSize = wholeSize / 4;
       for(int i = 0; i < wholeSize; i++){
 	strcat(headerString, rOrStar);
       }
-      if (temp % 8 != 0){
+      if (temp % 4 != 0){
 	strcat(headerString, rOrStar);
       }
     }
@@ -68,6 +75,17 @@ int returnDigit(char* layout, int digitPos){
 }
 
 
+int checkForLongOrDouble(char* layout){
+  for(int i = 0; i < strlen(layout); i++){
+    if(layout[i] == 'l' || layout[i] == 'd'){
+      return 1;
+    }
+  }
+  return 0;
+}
+      
+
+
 /**
  * Searches from current position after non-integer or until end of string and returns that
  * position
@@ -80,12 +98,12 @@ int newPos(char* layout, int currentPos){
   int i;
   int newPos;
   for(i = currentPos; i < strlen(layout); i++){
-      if(isdigit(layout[i])){
-      }
-      else{
-	newPos = i;
-	return newPos;
-      }
+    if(isdigit(layout[i])){
+    }
+    else{
+      newPos = i;
+      return newPos;
+    }
   }
   newPos = i;
   return newPos;
@@ -101,10 +119,27 @@ int newPos(char* layout, int currentPos){
 
 char* formatStringToHeaderString(char* layout){
   char* headerString;
+  int longOrDoubleExists;
+  int is64or32;
+  if(sizeof(void*) == 8){
+    is64or32 = 1;
+  }
   if(sizeof(void*) == 4){
+    is64or32 = 0;
+  }
+  if(PLATFORM == 1){
+    longOrDoubleExists = checkForLongOrDouble(layout);
+    if(longOrDoubleExists == 1){
+      is64or32 = 1;
+    }
+    else{
+      is64or32 = 0;
+    }
+  }
+  if(is64or32 == 1){
     headerString = malloc(sizeof(layout)+1);
   }
-  if(sizeof(void*) == 8){
+  if(is64or32 == 0){
     headerString = malloc(sizeof(layout)+1);
   }
   if(layout == NULL){
@@ -115,61 +150,89 @@ char* formatStringToHeaderString(char* layout){
   char* star = "*";
   int length = strlen(layout);  
   int value;
+
+
   for(int newPosition = 0; newPosition < length; newPosition++){
     if(isdigit(layout[newPosition])){
       value = returnDigit(layout, newPosition);
       newPosition = newPos(layout, newPosition);
       if(length == newPosition){
-	concateFormatString(value, headerString, 1, r);
+	concateFormatString(value, headerString, 1, r, is64or32);
 	return headerString;
       }
     }
     else{
       value = 1;
     }
-      if(layout[newPosition] == '*') {
-	int size = sizeof(void*);
-	concateFormatString(value, headerString, size, star); 
-      }
-      if(layout[newPosition] != 'c' && layout[newPosition] != '*' && layout[newPosition] != 'l' && layout[newPosition] != 'd' && layout[newPosition] != 'i' && layout[newPosition] != 'f'){
-	puts("Not a valid formatstring");
-	exit(0);
-      }
-      if(layout[newPosition] == 'c') {
+    if(layout[newPosition] == '*') {
+      int size = sizeof(void*);
+      concateFormatString(value, headerString, size, star, is64or32 ); 
+    }
+    if(layout[newPosition] != 'c' && layout[newPosition] != '*' && layout[newPosition] != 'l' && layout[newPosition] != 'd' && layout[newPosition] != 'i' && layout[newPosition] != 'f'){
+      puts("Not a valid formatstring");
+      exit(0);
+    }
+    if(layout[newPosition] == 'c') {
+      if(sizeof(void*) == 4){
 	if (layout[newPosition + 1] == 'c'){
 	  newPosition++;
 	}
 	if (layout[newPosition + 1] == 'c'){
 	  newPosition++;
 	}
-      	if (layout[newPosition + 1] == 'c'){
+	if (layout[newPosition + 1] == 'c'){
 	  newPosition++;
 	}
-	int size = sizeof(char);
-	concateFormatString(value, headerString, size, r); 
       }
-      if(layout[newPosition] == 'l') {
-	int size = sizeof(long);
-	concateFormatString(value, headerString, size, r); 
+      if(sizeof(void*) == 8){
+	if (layout[newPosition + 1] == 'c'){
+	  newPosition++;
+	}
+	if (layout[newPosition + 1] == 'c'){
+	  newPosition++;
+	}
+	if (layout[newPosition + 1] == 'c'){
+	  newPosition++;
+	}
+	if (layout[newPosition + 1] == 'c'){
+	  newPosition++;
+	}
+	if (layout[newPosition + 1] == 'c'){
+	  newPosition++;
+	}
+	if (layout[newPosition + 1] == 'c'){
+	  newPosition++;
+	}
+	
+	if (layout[newPosition + 1] == 'c'){
+	  newPosition++;
+	}
       }
-      if(layout[newPosition] == 'i') {
-	int size = sizeof(int);
-	concateFormatString(value, headerString, size, r); 
-      }
-      if(layout[newPosition] == 'd') {
-	int size = sizeof(double);
-	concateFormatString(value, headerString, size, r); 
-      }
-      if(layout[newPosition] == 'f') {
-	int size = sizeof(float);
-	concateFormatString(value, headerString, size, r); 
-      }
+      int size = sizeof(char);
+      concateFormatString(value, headerString, size, r, is64or32); 
+    }
+    if(layout[newPosition] == 'l') {
+      int size = sizeof(long);
+      concateFormatString(value, headerString, size, r, is64or32); 
+    }
+    if(layout[newPosition] == 'i'){
+      int size = sizeof(int);
+      concateFormatString(value, headerString, size, r, is64or32); 
+    }
+    if(layout[newPosition] == 'd') {
+      int size = sizeof(double);
+      concateFormatString(value, headerString, size, r, is64or32); 
+    }
+    if(layout[newPosition] == 'f') {
+      int size = sizeof(float);
+      concateFormatString(value, headerString, size, r, is64or32); 
+    }
   }
   return headerString;
 }
 
 int main(int argc, char* argv[]){
- char * test = formatStringToHeaderString(argv[1]);
+  char * test = formatStringToHeaderString(argv[1]);
   printf("%s\n",test);
-return 0;
+  return 0;
 }
