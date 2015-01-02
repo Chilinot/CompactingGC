@@ -13,25 +13,6 @@ int clean_suite_1(void) {
 
 // --- UNIT TESTS ---
 
-testInit() {
-	// Test with not enough memory space.
-	Heap heap = heap_init(1);
-	CU_ASSERT(heap == NULL);
-	
-	// Test with exactly enough space to fit structure.
-	heap = heap_init(sizeof(struct heap_s));
-	CU_ASSERT(heap == NULL);
-
-	// Test with enough space.
-	heap = heap_init(sizeof(struct heap_s) + 10);
-	CU_ASSERT(heap != NULL);
-	
-	free(heap);
-}
-
-testGetGrowthDirection() {
-	
-}
 
 // --- MAIN ---
 
@@ -51,8 +32,7 @@ int main() {
 	
 	/* add the tests to the suites */
 	if (
-		(NULL == CU_add_test(pSuite1, "test of heap_init()", testInit)) ||
-		(NULL == CU_add_test(pSuite1, "test of heap_getGrowthDirection()", testGetGrowthDirection))
+		
 	) {
 		CU_cleanup_registry();
 		return CU_get_error();

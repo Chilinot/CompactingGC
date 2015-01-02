@@ -69,29 +69,27 @@ void* heap_copyFromActiveToPassive(Heap heap, void *data) {
 	//TODO heap_copyFromActiveToPassive needs to be remade.
 	// Should it recurse over the object and copy any object this object is pointing to?
 
-//     HeapBlock block = GET_HEAPBLOCK(data);
-// 
-//     void* header = (void*) block;
-//     size_t data_size = header_getSize(header);
-// 
-//     HeapBlock passive_block = heap_allocatePassive(heap, header, data_size);
-// 
-//     char* active_data = GET_DATABLOCK(block->header);
-//     char* passive_data = GET_DATABLOCK(passive_block->header);
-// 
-//     for(size_t i = 0; i < data_size; i++) {
-//         passive_data[i] = active_data[i];
-//     }
-// 
-//     heap_markAsCopied(data, passive_data);
-// 
-//     return (void *) passive_data;
+    HeapBlock block = GET_HEAPBLOCK(data);
+
+    void* header = (void*) block;
+    size_t data_size = header_getSize(header);
+
+    HeapBlock passive_block = heap_allocatePassive(heap, header, data_size);
+
+    char* active_data = GET_DATABLOCK(block->header);
+    char* passive_data = GET_DATABLOCK(passive_block->header);
+
+    for(size_t i = 0; i < data_size; i++) {
+        passive_data[i] = active_data[i];
+    }
+
+    heap_markAsCopied(data, passive_data);
+
+    return (void *) passive_data;
 }
 
 int heap_getGrowthDirection(Heap heap) {
-	//TODO remake heap_getGrowthDirection since it will not work after a call to heap_swapActiveAndPassive.
-	// Actually, it should work! This is because we are subtracting pointer addresses in the heap structure.
-    return heap->active - heap->passive;
+    return &heap->active < &heap->passive ? 1 : -1;
 }
 
 void heap_markAsCopied(void* data, void* forwarding_address) {
