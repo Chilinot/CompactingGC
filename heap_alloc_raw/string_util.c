@@ -21,7 +21,7 @@ int PLATFORM = 0;
 char* concateFormatString(int value, char* headerString, int size, char* rOrStar, int is64or32){
   int wholeSize = (value * size);
   int temp = wholeSize;{
-    if(sizeof(void*) == 4 && is64or32 == 0){
+    if(is64or32 == 0){
       if(wholeSize <= 4){
 	strcat(headerString, rOrStar);
 	return headerString;
@@ -34,7 +34,7 @@ char* concateFormatString(int value, char* headerString, int size, char* rOrStar
 	strcat(headerString, rOrStar);
       }
     }
-    if(sizeof(void*) == 8 && is64or32 == 1){
+    if(is64or32 == 1){
       if(wholeSize <= 8){
 	strcat(headerString, rOrStar);
 	if(strcmp(rOrStar, "r") == 0){
