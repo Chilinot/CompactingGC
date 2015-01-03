@@ -11,16 +11,15 @@
 jmp_buf env; \
 if (setjmp(env)) abort(); \
 
-extern char** environ;
 
-int count = 0;
-void countplusone(void** neveruse){
-  count++;
-}
-
-
-
+/** 
+Finds all the possible pointers that points on the stack to the memoryspace where; 
+heapStart < memoryspace < heapEnd
+and calls the function "foreach" for every pointer found.   
+*/
+ 
 void stackIterator( void* heapStart, void* heapEnd,  void (*foreach)(void**)){
+  extern char** environ;
   Dump_registers();
   #ifdef __GNUC__
   void* stackTop = __builtin_frame_address(0);
@@ -42,15 +41,5 @@ void stackIterator( void* heapStart, void* heapEnd,  void (*foreach)(void**)){
   }   
   
 }
-  
+   
 
-int main(int argc, char* argv[]){
-  size_t isize = 320;
-  void* myHeap = malloc(isize*sizeof(void*));
-  void* alpha = myHeap+4;
-  void* beta = myHeap+23;
-  count = 0; 
-  stackIterator((void*)myHeap , (void*)myHeap+isize, &countplusone);
-  printf("%d\n",count); 
-  free(myHeap);
-}
