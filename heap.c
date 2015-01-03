@@ -33,6 +33,26 @@ void heap_del(Heap heap) {
     free(heap);
 }
 
+void* heap_allocate_raw(Heap heap, size_t bytes) {
+	char string[bytes];
+	for(int i = 0; i < bytes; i++) {
+		string[i] = 'c';
+	}
+	string[bytes] = '\0';
+	return heap_allocate_struct(heap, &string);
+}
+
+void* heap_allocate_struct(Heap heap, char* structure) {
+	void* header = header_fromFormatString(structure);
+	size_t bytes = header_getSize(header);
+	return heap_allocate(heap, header, bytes);
+}
+
+void* heap_allocate_union(Heap heap, size_t bytes, s_trace_f f) {
+	void* header = header_objectSpecificFunction(f);
+	return heap_allocate(heap, header, bytes);
+}
+
 void* heap_allocate(Heap heap, void* header, size_t bytes) {
     HeapBlock block = heap->active_pointer;
 	

@@ -29,9 +29,11 @@ testInit() {
 	free(heap);
 }
 
-testGetGrowthDirection() {
-	
+testDel() {
+	//This method can only be tested with valgrind.
 }
+
+
 
 // --- MAIN ---
 
@@ -52,7 +54,7 @@ int main() {
 	/* add the tests to the suites */
 	if (
 		(NULL == CU_add_test(pSuite1, "test of heap_init()", testInit)) ||
-		(NULL == CU_add_test(pSuite1, "test of heap_getGrowthDirection()", testGetGrowthDirection))
+		(NULL == CU_add_test(pSuite1, "test of heap_del()", testDel))
 	) {
 		CU_cleanup_registry();
 		return CU_get_error();
