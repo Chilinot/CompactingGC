@@ -115,24 +115,33 @@ void testformatStringToHeaderString() {
   char* layout = "2i22c**l";
   char* layout1 = "";
   char* layout2 = "22";
-  if(sizeof(void*)== 4){
+  
+  #ifdef (__sparc__)
+    char* test1 = formatStringToHeaderString(layout);
+    CU_ASSERT(strcmp(test1,"rrrrrrrr**r") == 0);
+    char* test2 = formatStringToHeaderString(layout1);  
+    CU_ASSERT(strcmp(test2,"") == 0);
+    char* test3 = formatStringToHeaderString(layout2);
+    CU_ASSERT(strcmp(test3,"rrrrrr") == 0);
+  
+  
+  #ifdef (__linux__)
     char* test1 = formatStringToHeaderString(layout);
     CU_ASSERT(strcmp(test1,"rrrrrrrr**r") == 0);
     char* test2 = formatStringToHeaderString(layout1);
     CU_ASSERT(strcmp(test2,"") == 0);
     char* test3 = formatStringToHeaderString(layout2);
     CU_ASSERT(strcmp(test3,"rrrrrr") == 0);
-
-  }
-  else{
+  
+  #ifdef (__sun)  
     char* test1 = formatStringToHeaderString(layout);
     CU_ASSERT(strcmp(test1, "rrrrrrrr**rr") == 0);
     char* test2 = formatStringToHeaderString(layout1);
     CU_ASSERT(strcmp(test2,"") == 0);
     char* test3 = formatStringToHeaderString(layout2);
     CU_ASSERT(strcmp(test3,"rrrrrr") == 0);
+  #endif
   }
-}
 
 int main()
 {
