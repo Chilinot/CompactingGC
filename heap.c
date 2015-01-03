@@ -12,16 +12,21 @@ Heap heap_init (size_t bytes) {
 
 	// This is the amount of bytes available to the user.
 	size_t allocateable = bytes - sizeof (struct heap_s);
+	
+	// This is the amount of bytes per block (active or passive block).
+	size_t blocksize = allocateable / 2;
 
-	// Make sure the available space can be split in half and still be properly aligned.
-	if ( (allocateable / 2) % sizeof (void *) != 0) {
+	// Make sure the block sizes are properly aligned.
+	if (blocksize % sizeof (void *) != 0) {
 		return NULL;
 	}
 
 	Heap heap = malloc (bytes);
 
+	heap->heapsize = allocateable;
+	
 	heap->active = ( (char *) heap) + sizeof (struct heap_s);
-	heap->passive = ( (char *) heap->active) + (allocateable / 2);
+	heap->passive = ( (char *) heap->active) + blocksize;
 
 	heap->active_pointer = heap->active;
 	heap->passive_pointer = heap->passive;
