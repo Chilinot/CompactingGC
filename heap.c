@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdint.h>
 #include "heap.h"
 #include "heap_rep.h"
 #include "header.h"
@@ -114,4 +115,18 @@ void heap_swapActiveAndPassive(Heap heap) {
 
 	// The passive pointer is reset to the beginning as no live data is stored there.
 	heap->passive_pointer = heap->passive;
+}
+
+Heap heap_getStart(Heap heap){
+  return heap->active;
+}
+
+Heap heap_getEnd(Heap heap){
+  /* Heap end;
+  end = abs( ((uintptr_t)heap->passive) - ((uintptr_t)(heap->active)) ) * 2 + sizeof(struct)
+    {
+      
+  };);
+  */
+  return NULL; //end;
 }
