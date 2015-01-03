@@ -1,8 +1,9 @@
+#include <stdlib.h>
+
 #ifndef __HEAP__
 #define __HEAP__
 
-#include <stdlib.h>
-
+// This structure is defined in heap_rep.c
 typedef struct heap_s *Heap;
 
 /**
@@ -68,15 +69,5 @@ int heap_hasBeenCopied(void* data);
  * @param heap - The heap to work on.
  */
 void heap_swapActiveAndPassive(Heap heap);
-
-/**
-* Calculates the growth direction of the heap.
-* A negative value indicates that it grows upward.
-* A positive value indicates that it grows downward.
-*
-* @param heap - The heap to calculate the direction of.
-* @return Int that indicates growth direction.
-*/
-int heap_getGrowthDirection(Heap heap);
 
 #endif
