@@ -4,21 +4,16 @@
 #include <setjmp.h>
 #include <assert.h>
 #include <stdint.h>
+#include "stack.h"
 //#include "../../heap.h"
-
 
 #define Dump_registers() \
 jmp_buf env; \
 if (setjmp(env)) abort(); \
 
 
-/** 
-Finds all the possible pointers that points on the stack to the memoryspace where; 
-heapStart < memoryspace < heapEnd
-and calls the function "foreach" for every pointer found.   
-*/
  
-void stackIterator( void* heapStart, void* heapEnd,  void (*foreach)(void**)){
+void stackIterator(void* heapStart, void* heapEnd,  void (*foreach)(void**)){
   extern char** environ;
   Dump_registers();
   #ifdef __GNUC__
@@ -42,4 +37,5 @@ void stackIterator( void* heapStart, void* heapEnd,  void (*foreach)(void**)){
   
 }
    
+
 
