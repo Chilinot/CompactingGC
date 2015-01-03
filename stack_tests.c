@@ -1,16 +1,21 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
+#include <setjmp.h>
+#include <assert.h>
+#include <stdint.h>
 #include "CUnit/Basic.h"
+#include "stack.h"
 
 
 int init_suite1(void)
 {
-
+  return 0;
 }
 
 int clean_suite1(void)
 {
-
+  return 0;
 }
 
 
@@ -26,7 +31,7 @@ void testSTACKITERATOR(void)
   void* beta = myHeap+23;
   count = 0; 
   stackIterator((void*)myHeap , (void*)myHeap+isize, &countplusone);
-  printf("%d\n",count); 
+  CU_ASSERT(2 == count); 
   free(myHeap);
 }
 
@@ -38,7 +43,7 @@ void testSTACKITERATOR(void)
 int main()
 {
    CU_pSuite pSuite = NULL;
-
+   
    /* initialize the CUnit test registry */
    if (CUE_SUCCESS != CU_initialize_registry())
       return CU_get_error();
@@ -51,8 +56,7 @@ int main()
    }
 
    /* add the tests to the suite */
-   /* NOTE - ORDER IS IMPORTANT - MUST TEST fread() AFTER fprintf() */
-   if (NULL == CU_add_test(pSuite, "test of fprintf()", testFPRINTF))
+   if ((NULL == CU_add_test(pSuite, "test of stackIterator()", testSTACKITERATOR)))
    {
       CU_cleanup_registry();
       return CU_get_error();

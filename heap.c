@@ -89,10 +89,6 @@ void* heap_copyFromActiveToPassive(Heap heap, void *data) {
     return (void *) passive_data;
 }
 
-int heap_getGrowthDirection(Heap heap) {
-    return &heap->active < &heap->passive ? 1 : -1;
-}
-
 void heap_markAsCopied(void* data, void* forwarding_address) {
 	HeapBlock block = GET_HEAPBLOCK(data);
 	void* new_header = header_forwardingAddress(forwarding_address);
