@@ -33,7 +33,16 @@ testDel() {
 	//This method can only be tested with valgrind.
 }
 
-
+testAllocStruct() {
+	Heap heap = heap_init(sizeof(struct heap_s) + 4 * sizeof(void*));
+	CU_ASSERT(heap != NULL);
+	
+	void* foo = heap_allocate_struct(heap, "r");
+	
+	strcpy(foo, "foo");
+	
+	CU_ASSERT(strcmp(foo, "foo") == 0);
+}
 
 // --- MAIN ---
 
@@ -54,7 +63,7 @@ int main() {
 	/* add the tests to the suites */
 	if (
 		(NULL == CU_add_test(pSuite1, "test of heap_init()", testInit)) ||
-		(NULL == CU_add_test(pSuite1, "test of heap_del()", testDel))
+		(NULL == CU_add_test(pSuite1, "test of heap_allocate_struct()", testAllocStruct))
 	) {
 		CU_cleanup_registry();
 		return CU_get_error();
