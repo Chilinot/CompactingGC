@@ -114,7 +114,7 @@ void testnewPos(){
 void testformatStringToHeaderString() {
   char* layout = "2i22c**l";
   char* layout1 = "";
-  char* layout2 = "-22";
+  char* layout2 = "22";
   if(sizeof(void*)== 4){
     char* test1 = formatStringToHeaderString(layout);
     CU_ASSERT(strcmp(test1,"rrrrrrrr**r") == 0);
@@ -126,11 +126,11 @@ void testformatStringToHeaderString() {
   }
   else{
     char* test1 = formatStringToHeaderString(layout);
-    CU_ASSERT(strcmp(test1, "rrrr**r") == 0);
+    CU_ASSERT(strcmp(test1, "rrrrrrrr**rr") == 0);
     char* test2 = formatStringToHeaderString(layout1);
     CU_ASSERT(strcmp(test2,"") == 0);
     char* test3 = formatStringToHeaderString(layout2);
-    CU_ASSERT(strcmp(test3,"rrr") == 0);
+    CU_ASSERT(strcmp(test3,"rrrrrr") == 0);
   }
 }
 

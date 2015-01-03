@@ -2,8 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
-#include "gc.h"
-#ifdef __SPARC__
+#include "string_util.h"
+#ifdef __sparc__
 int PLATFORM = 1;
 #else
 int PLATFORM = 0;
@@ -21,20 +21,20 @@ int PLATFORM = 0;
 char* concateFormatString(int value, char* headerString, int size, char* rOrStar, int is64or32){
   int wholeSize = (value * size);
   int temp = wholeSize;{
-    if(is64or32 == 0){
-      if(wholeSize <= 4){
+    if(is64or32 == 0){ // 32bit platform
+      if(wholeSize <= 4){ // If type can fit in a word
 	strcat(headerString, rOrStar);
 	return headerString;
       }
-      wholeSize = wholeSize / 4;
+      wholeSize = wholeSize / 4; // r is 4 bytes
       for(int i = 0; i < wholeSize; i++){
 	strcat(headerString, rOrStar);	
       }
-      if (temp % 4 != 0){
+      if (temp % 4 != 0){ // If any remainder, add to string
 	strcat(headerString, rOrStar);
       }
     }
-    if(is64or32 == 1){
+    if(is64or32 == 1){ // 64bit platform
       if(wholeSize <= 8){
 	strcat(headerString, rOrStar);
 	if(strcmp(rOrStar, "r") == 0){
@@ -74,6 +74,12 @@ int returnDigit(char* layout, int digitPos){
   return atoi(stringValue);
 }
 
+
+/**
+ * True if character l or d exists in the formatstring
+ *@param layout The formatstring
+ *@return Returns 1 if true, else 0
+ */
 
 int checkForLongOrDouble(char* layout){
   for(int i = 0; i < strlen(layout); i++){
@@ -121,7 +127,7 @@ char* formatStringToHeaderString(char* layout){
   char* headerString;
   int longOrDoubleExists;
   int is64or32;
-  if(sizeof(void*) == 8){
+  if(sizeof(void*) == 8){ // Check on which platform the program is run
     is64or32 = 1;
   }
   if(sizeof(void*) == 4){
@@ -154,15 +160,15 @@ char* formatStringToHeaderString(char* layout){
 
   for(int newPosition = 0; newPosition < length; newPosition++){
     if(isdigit(layout[newPosition])){
-      value = returnDigit(layout, newPosition);
-      newPosition = newPos(layout, newPosition);
+      value = returnDigit(layout, newPosition); // value is the integer-value before a character
+      newPosition = newPos(layout, newPosition); // change position to next character if possible
       if(length == newPosition){
 	concateFormatString(value, headerString, 1, r, is64or32);
 	return headerString;
       }
     }
     else{
-      value = 1;
+      value = 1; // default value
     }
     if(layout[newPosition] == '*') {
       int size = sizeof(void*);
@@ -172,7 +178,7 @@ char* formatStringToHeaderString(char* layout){
       puts("Not a valid formatstring");
       exit(0);
     }
-    if(layout[newPosition] == 'c') {
+    if(layout[newPosition] == 'c') { // Check if several chars are in a row
       if(sizeof(void*) == 4){
 	if (layout[newPosition + 1] == 'c'){
 	  newPosition++;
@@ -230,9 +236,10 @@ char* formatStringToHeaderString(char* layout){
   }
   return headerString;
 }
-
+/*
 int main(int argc, char* argv[]){
   char * test = formatStringToHeaderString(argv[1]);
   printf("%s\n",test);
   return 0;
 }
+*/
