@@ -10,10 +10,11 @@ typedef struct heap_block {
 } *HeapBlock;
 
 typedef struct heap_s {
-    void *active_pointer;  // Like the stack pointer, but for the heap.
-    void *passive_pointer; // Like the above.
-    void *active;   // Points to the active part of the heap.
-    void *passive;  // Same as above but for the passive.
+	size_t heapsize; // This is total heap size without the size of this structure. Basically active + passive.
+	void *active_pointer;  // Like the stack pointer, but for the heap.
+	void *passive_pointer; // Like the above.
+	void *active;   // Points to the active part of the heap.
+	void *passive;  // Same as above but for the passive.
 };
 
 /**
