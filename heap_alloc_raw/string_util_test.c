@@ -34,6 +34,7 @@ void testconcateFormatString() {
     free(headerString);
     headerString = calloc(32,4);
  
+ 
     char* test3 = concateFormatString(1, headerString, 0, empty);
     CU_ASSERT(strcmp(test3, "") == 0);
   
