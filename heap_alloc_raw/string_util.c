@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include "string_util.h"
+
 #ifdef __sparc__
 int PLATFORM = 1;
 #else
@@ -176,7 +177,7 @@ char* formatStringToHeaderString(char* layout){
     }
     if(layout[newPosition] != 'c' && layout[newPosition] != '*' && layout[newPosition] != 'l' && layout[newPosition] != 'd' && layout[newPosition] != 'i' && layout[newPosition] != 'f'){
       puts("Not a valid formatstring");
-      exit(0);
+      return NULL;
     }
     if(layout[newPosition] == 'c') { // Check if several chars are in a row
       if(sizeof(void*) == 4){
