@@ -1,4 +1,3 @@
-
 #include "CUnit/Basic.h"
 #include "string_util.h"
 #include <stdlib.h>
@@ -6,6 +5,14 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
+
+
+#ifdef __sparc__
+int SPARC = 1;
+#else
+int SPARC = 0;
+#endif
+
 
 int init_suite_2(void){
   return 0;
@@ -27,52 +34,53 @@ void testconcateFormatString() {
     headerString = calloc(64, 8);
   }
   if(sizeof(void*) == 4){   
-   
-    char* test2 = concateFormatString(1, headerString, 4, star);
+    int bit32 = 0;
+    char* test2 = concateFormatString(1, headerString, 4, star, bit32);
     CU_ASSERT(strcmp(test2, "*") == 0);
     
     free(headerString);
     headerString = calloc(32,4);
  
  
-    char* test3 = concateFormatString(1, headerString, 0, empty);
+    char* test3 = concateFormatString(1, headerString, 0, empty, bit32);
     CU_ASSERT(strcmp(test3, "") == 0);
   
 
-    char* test4 = concateFormatString(0, headerString, 0, star);
+    char* test4 = concateFormatxString(0, headerString, 0, star, bit32);
     CU_ASSERT(strcmp(test4, "") == 0);
 
-    char* test5 = concateFormatString(3, headerString, 1, r);
+    char* test5 = concateFormatString(3, headerString, 1, r, bit32);
     CU_ASSERT(strcmp(test5, "r") == 0);
     
     free(headerString);
     headerString = calloc(32,4);
 
-    char* test6 = concateFormatString(3, headerString, 4, r);
+    char* test6 = concateFormatString(3, headerString, 4, r, bit32);
     CU_ASSERT(strcmp(test6, "rrr") == 0);
 
     free(headerString);
   
   }
   if(sizeof(void*) == 8){
-    char* test1 = concateFormatString(1, headerString, 8, star);
+    int bit64 = 1;
+    char* test1 = concateFormatString(1, headerString, 8, star, bit64);
     CU_ASSERT(strcmp(test1, "*") == 0);
     free(headerString);
     headerString = calloc(32,4);
 
-    char* test2 = concateFormatString(1, headerString, 0, empty);
+    char* test2 = concateFormatString(1, headerString, 0, empty, bit64);
     CU_ASSERT(strcmp(test2, "") == 0);
     
-    char* test3 = concateFormatString(0, headerString, 0, star);
+    char* test3 = concateFormatString(0, headerString, 0, star, bit64);
     CU_ASSERT(strcmp(test3, "") == 0);
  
-    char* test4 = concateFormatString(7, headerString, 1, r);
+    char* test4 = concateFormatString(7, headerString, 1, r, bit64);
     CU_ASSERT(strcmp(test4, "r") == 0);
 
     free(headerString);
     headerString = calloc(32,4);
 
-    char* test5 = concateFormatString(3, headerString, 4, r);
+    char* test5 = concateFormatString(3, headerString, 4, r, bit64);
     CU_ASSERT(strcmp(test5, "rr") == 0);
 
     free(headerString);
@@ -116,32 +124,38 @@ void testformatStringToHeaderString() {
   char* layout = "2i22c**l";
   char* layout1 = "";
   char* layout2 = "22";
-  
-  #ifdef (__sparc__)
+  char* layout3 = "ici";
+  char* layout4 = "cdc";
+  char* layout5 = "icc*c";
+  char* layout6 = "5c2*";
+
+if(sizeof(void*) == 4 && SPARC == 1){ //tests for the sparc
     char* test1 = formatStringToHeaderString(layout);
     CU_ASSERT(strcmp(test1,"rrrrrrrr**r") == 0);
     char* test2 = formatStringToHeaderString(layout1);  
     CU_ASSERT(strcmp(test2,"") == 0);
     char* test3 = formatStringToHeaderString(layout2);
     CU_ASSERT(strcmp(test3,"rrrrrr") == 0);
+    char* test4 = formatStringToHeaderString(layout3);
+    CU_ASSERT(strcmp(test4, "rrr") == 0);
+  }
   
-  
-  #ifdef (__linux__)
+  if(sizeof(void*) == 8){ //tests for linux 64-bit
     char* test1 = formatStringToHeaderString(layout);
     CU_ASSERT(strcmp(test1,"rrrrrrrr**r") == 0);
     char* test2 = formatStringToHeaderString(layout1);
     CU_ASSERT(strcmp(test2,"") == 0);
     char* test3 = formatStringToHeaderString(layout2);
     CU_ASSERT(strcmp(test3,"rrrrrr") == 0);
-  
-  #ifdef (__sun)  
+  }
+  if(sizeof(void*) == 4){ //test for solars 32-bit
     char* test1 = formatStringToHeaderString(layout);
     CU_ASSERT(strcmp(test1, "rrrrrrrr**rr") == 0);
     char* test2 = formatStringToHeaderString(layout1);
     CU_ASSERT(strcmp(test2,"") == 0);
     char* test3 = formatStringToHeaderString(layout2);
     CU_ASSERT(strcmp(test3,"rrrrrr") == 0);
-  #endif
+  } 
   }
 
 int main()
