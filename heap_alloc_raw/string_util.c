@@ -237,6 +237,22 @@ char* formatStringToHeaderString(char* layout){
   }
   return headerString;
 }
+
+
+size_t headerStringToSize(char* layout){
+  
+  switch(*layout){
+  case 'r':
+    return sizeof(int) + headerStringToSize(layout + 1);
+  case '*':
+    return sizeof(void*) + headerStringToSize(layout + 1);
+  case '\0':
+    return 0;
+  }
+
+  return 0; // should not happen
+
+}
 /*
 int main(int argc, char* argv[]){
   char * test = formatStringToHeaderString(argv[1]);
