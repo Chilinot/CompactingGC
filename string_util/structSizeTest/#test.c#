@@ -10,7 +10,7 @@
 #endif
 
 #ifndef ICPU
-#define ICPU "ok‰nd"
+#define ICPU "ok√§nd"
 #endif
 
 
@@ -68,11 +68,13 @@ struct struct5{
 
 
 struct struct6{
-  char a;
-  void* b;
+
+  int i ;
+  char c;
+  int a;
 };
 
-
+//qwd
 
 struct struct7{
   char a;  
@@ -139,6 +141,8 @@ int main(){
   printSize(long);
   printSize(long long);
   printSize(short);
+
+  printSize(float);
   printSize(struct struct1);
   printSize(struct struct2);
   printSize(struct struct3);
