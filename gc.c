@@ -6,6 +6,7 @@
 #include "heap_iterator.h"
 #include "linkedlist.h"
 
+
 Heap h_init(size_t bytes) {
   /* 
    * 1. Create a heap from the heap module with the given amount of bytes.
@@ -22,7 +23,6 @@ void h_delete(Heap h) {
    */
  
   heap_del(h);
-  
 }
 
 void h_delete_dbg(Heap h, void* dbg_value) {
@@ -31,6 +31,12 @@ void h_delete_dbg(Heap h, void* dbg_value) {
    * 2. Call h_delete() with the given heap.
    * 3. Overwrite the values on the stack with the dbg_value using pointers from #1.
    */
+  void setPointerTodbg_value(void** pointer){
+    pointer = dbg_value;
+  }
+
+  stackiterator(heapstart, heapend, setPointerTodbg_value);
+  heap_del(h);
 }
 
 size_t h_avail(Heap h) {
