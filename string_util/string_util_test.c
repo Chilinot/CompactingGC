@@ -35,12 +35,12 @@ void testconcateFormatString() {
   }
   if(sizeof(void*) == 4){   
     int bit32 = 0;
+    int bit64 = 1;
     char* test2 = concateFormatString(1, headerString, 4, star, bit32);
     CU_ASSERT(strcmp(test2, "*") == 0);
     
     free(headerString);
     headerString = calloc(32,4);
- 
  
     char* test3 = concateFormatString(1, headerString, 0, empty, bit32);
     CU_ASSERT(strcmp(test3, "") == 0);
@@ -58,9 +58,31 @@ void testconcateFormatString() {
     char* test6 = concateFormatString(3, headerString, 4, r, bit32);
     CU_ASSERT(strcmp(test6, "rrr") == 0);
 
+    /*tests for the SPARC */
+    
+    if(SPARC == 1){
+    char* test7 = concateFormatString(1, headerString, 4, star, bit64);
+    CU_ASSERT(strcmp(test7,"*") == 0);
+    
+    char* test8 = concateFormatString(1, headerString, 0, empty, bit64);
+    CU_ASSERT(strcmp(test8, "") == 0);
+    
+    char* test9 = concateFormatString(0, headerString, 4, star, bit64);
+    CU_ASSERT(strcmp(test9, "") == 0);
+    
+    char* test10 = concateFormatString(3, headerString, 1, r, bit64);
+    CU_ASSERT(strcmp(test10, "rr") == 0);
+    
+    char* test11 = concateFormatString(3, headerString, 4, r, bit64);
+    CU_ASSERT(strcmp(test11, "rrrr") == 0);
+    }
+    
     free(headerString);
+    
+
   
   }
+
   if(sizeof(void*) == 8){
     int bit64 = 1;
     char* test1 = concateFormatString(1, headerString, 8, star, bit64);
@@ -75,13 +97,13 @@ void testconcateFormatString() {
     CU_ASSERT(strcmp(test3, "") == 0);
  
     char* test4 = concateFormatString(7, headerString, 1, r, bit64);
-    CU_ASSERT(strcmp(test4, "r") == 0);
+    CU_ASSERT(strcmp(test4, "rr") == 0);
 
     free(headerString);
     headerString = calloc(32,4);
 
     char* test5 = concateFormatString(3, headerString, 4, r, bit64);
-    CU_ASSERT(strcmp(test5, "rr") == 0);
+    CU_ASSERT(strcmp(test5, "rrrr") == 0);
 
     free(headerString);
   }
@@ -94,10 +116,6 @@ void testreturnDigit() {
 
   int test1 = returnDigit(layout, 0);
   CU_ASSERT(test1 == 2);
-  int test2 = returnDigit(layout, -1);
-  CU_ASSERT(test2 == false);
-  int test3 = returnDigit(layout, strlen(layout+1));
-  CU_ASSERT(test3 == false);
   int test4 = returnDigit(layout, 3);
   CU_ASSERT(test4 == false);
   int test5 = returnDigit(layout, 7);
@@ -174,9 +192,21 @@ void testformatStringToHeaderString() {
 
   }
   
+  /*
+  char* layout = "2i22c**l";
+  char* layout1 = "";
+  char* layout2 = "22";
+  char* layout3 = "ici";
+  char* layout4 = "cdc";
+  char* layout5 = "icc*c";
+  char* layout6 = "5c2*";
+  char* layout7 = "cic";
+  */
+
   if(sizeof(void*) == 8){ //tests for linux 64-bit
+    puts("hej/n");
     char* test1 = formatStringToHeaderString(layout);
-    CU_ASSERT(strcmp(test1,"rrrrrrrr**r") == 0);
+    CU_ASSERT(strcmp(test1,"rrrrrrrr**rr") == 0);
     char* test2 = formatStringToHeaderString(layout1);
     CU_ASSERT(strcmp(test2,"") == 0);
     char* test3 = formatStringToHeaderString(layout2);

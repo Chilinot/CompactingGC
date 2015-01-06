@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <assert.h>
 #include "string_util.h"
 
 #ifdef __sparc__
@@ -47,7 +48,7 @@ char* concateFormatString(int value, char* headerString, int size, char* rOrStar
       for(int i = 0; i < wholeSize; i++){
 	strcat(headerString, rOrStar);
       }
-      if (temp % 4 != 0){
+      if (temp % 8 != 0){
 	strcat(headerString, rOrStar);
       }
     }
@@ -64,6 +65,7 @@ char* concateFormatString(int value, char* headerString, int size, char* rOrStar
  */
 
 int returnDigit(char* layout, int digitPos){
+  assert(digitPos >= 0 && digitPos <= strlen(layout));
   int nr = 0;
   for(int i = digitPos; i < strlen(layout); i++){
     if(isdigit(layout[i])){
@@ -90,7 +92,7 @@ int checkForPointerDoubleLong(char* layout){
       }
     }
     else{
-      if(layout[i] == 'l' || layout[i] == 'd'){
+      if( layout[i] == 'd'){
 	return 1;
       }
     }
