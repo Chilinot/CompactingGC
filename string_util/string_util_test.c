@@ -46,7 +46,7 @@ void testconcateFormatString() {
     CU_ASSERT(strcmp(test3, "") == 0);
   
 
-    char* test4 = concateFormatxString(0, headerString, 0, star, bit32);
+    char* test4 = concateFormatString(0, headerString, 4, star, bit32);
     CU_ASSERT(strcmp(test4, "") == 0);
 
     char* test5 = concateFormatString(3, headerString, 1, r, bit32);
@@ -71,7 +71,7 @@ void testconcateFormatString() {
     char* test2 = concateFormatString(1, headerString, 0, empty, bit64);
     CU_ASSERT(strcmp(test2, "") == 0);
     
-    char* test3 = concateFormatString(0, headerString, 0, star, bit64);
+    char* test3 = concateFormatString(0, headerString, 8, star, bit64);
     CU_ASSERT(strcmp(test3, "") == 0);
  
     char* test4 = concateFormatString(7, headerString, 1, r, bit64);
@@ -130,22 +130,23 @@ void testformatStringToHeaderString() {
   char* layout6 = "5c2*";
   char* layout7 = "cic";
 
-  char* alfa = "lic*";
-  struct alfa{
+  char* Alfa = "lic*";
+
+  struct a{
     long a;
     int b;
     char c;
     void* d;
-  }
+  }alfa;
 
-  char* beta = "cfic";
+  char* Beta = "cfic";
 
-  struct beta{
+  struct b{
     char a;
     float b;
     int c;
     char d;
-  }
+  }beta;
 
   if(sizeof(void*) == 4 && SPARC == 1){ //tests for the sparc
     char* test1 = formatStringToHeaderString(layout);
@@ -165,10 +166,10 @@ void testformatStringToHeaderString() {
     char* test8 = formatStringToHeaderString(layout7);
     CU_ASSERT(strcmp(test8, "rrr") == 0);
       
-    char* test9 = formatStringToHeaderString(alfa);
+    char* test9 = formatStringToHeaderString(Alfa);
     CU_ASSERT(headerStringToSize(test9) == sizeof(alfa));
 
-    char* test10 = formatStringToHeaderString(beta);
+    char* test10 = formatStringToHeaderString(Beta);
     CU_ASSERT(headerStringToSize(test10) == sizeof(beta));
 
   }
@@ -191,15 +192,15 @@ void testformatStringToHeaderString() {
     char* test8 = formatStringToHeaderString(layout7);
     CU_ASSERT(strcmp(test8, "rrr") == 0);
 
-    char* test9 = formatStringToHeaderString(alfa);
+    char* test9 = formatStringToHeaderString(Alfa);
     CU_ASSERT(headerStringToSize(test9) == sizeof(alfa));
     
-    char* test10 = formatStringToHeaderString(beta);
+    char* test10 = formatStringToHeaderString(Beta);
     CU_ASSERT(headerStringToSize(test10) == sizeof(beta));
 
 
   }
-  if(sizeof(void*) == 4){ //test for solars 32-bit
+  if(sizeof(void*) == 4 && SPARC != SPARC){ //test for solars 32-bit
     char* test1 = formatStringToHeaderString(layout);
     CU_ASSERT(strcmp(test1, "rrrrrrrr**rr") == 0);
     char* test2 = formatStringToHeaderString(layout1);
@@ -217,10 +218,10 @@ void testformatStringToHeaderString() {
     char* test8 = formatStringToHeaderString(layout7);
     CU_ASSERT(strcmp(test8, "rrr") == 0);
     
-    char* test9 = formatStringToHeaderString(alfa);
+    char* test9 = formatStringToHeaderString(Alfa);
     CU_ASSERT(headerStringToSize(test9) == sizeof(alfa));
 
-    char* test10 = formatStringToHeaderString(beta);
+    char* test10 = formatStringToHeaderString(Beta);
     CU_ASSERT(headerStringToSize(test10) == sizeof(beta));
     
   } 

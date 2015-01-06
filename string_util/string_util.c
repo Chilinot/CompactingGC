@@ -23,7 +23,7 @@ char* concateFormatString(int value, char* headerString, int size, char* rOrStar
   int wholeSize = (value * size);
   int temp = wholeSize;{
     if(is64or32 == 0){ // 32bit platform
-      if(wholeSize <= 4){ // If type can fit in a word
+      if(wholeSize <= 4 && wholeSize > 0){ // If type can fit in a word
 	strcat(headerString, rOrStar);
 	return headerString;
       }
@@ -36,7 +36,7 @@ char* concateFormatString(int value, char* headerString, int size, char* rOrStar
       }
     }
     if(is64or32 == 1){ // 64bit platform
-      if(wholeSize <= 8){
+      if(wholeSize <= 8 && wholeSize > 0){
 	strcat(headerString, rOrStar);
 	if(strcmp(rOrStar, "r") == 0){
 	  strcat(headerString, rOrStar);
@@ -264,9 +264,10 @@ int checkForPointerDoubleLong(char* layout){
     return 0; // should not happen
 
   }
-
+/*
   int main(int argc, char* argv[]){
     char * test = formatStringToHeaderString(argv[1]);
     printf("%s\n",test);
     return 0;
   }
+*/

@@ -16,7 +16,7 @@ int returnDigit(char* string, int digitPos);
 
 int newPos(char* string, int currentpost);
 
-int checkForLongOrDouble(char* string);
+int checkForPointerDoubleLong(char* string);
 
 char* concateFormatString(int value, char* headerString, int size, char* rOrStar, int is64or32);
 
