@@ -85,4 +85,18 @@ header_type header_getHeaderType(void *header);
  */
 size_t header_getSize(void* header);
 
+
+/**
+ f anropas med alla pekare som headerns objekt har,
+där pekare som functionen anropas med beskriver hur mycket ifrån objektets adress pekare verkligen är,
+Objektet är den data som header beskriver och hör till.
+
+
+@param header en pekare 
+@param f en funktion
+ */
+void header_pointerIterator(void* header, void(f*)(void*));
+
+
 #endif
+
