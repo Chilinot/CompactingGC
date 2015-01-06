@@ -27,12 +27,7 @@ void testconcateFormatString() {
   char* star = "*";
   char* empty = "";
   char* r = "r";
-  if(sizeof(void*) == 4){
-    headerString = calloc(32, 4);
-  }
-  if(sizeof(void*) == 8){
-    headerString = calloc(64, 8);
-  }
+  headerString = calloc(100, 1);
   if(sizeof(void*) == 4){   
     int bit32 = 0;
     int bit64 = 1;
@@ -189,7 +184,16 @@ void testformatStringToHeaderString() {
 
     char* test10 = formatStringToHeaderString(Beta);
     CU_ASSERT(headerStringToSize(test10) == sizeof(beta));
-
+    free(test1);
+    free(test2);
+    free(test3);
+    free(test4);
+    free(test5);
+    free(test6);
+    free(test7);
+    free(test8);
+    free(test9);
+    free(test10);
   }
   
   /*
@@ -204,8 +208,8 @@ void testformatStringToHeaderString() {
   */
 
   if(sizeof(void*) == 8){ //tests for linux 64-bit
-    puts("hej/n");
     char* test1 = formatStringToHeaderString(layout);
+    printf("\n%s\n", test1);
     CU_ASSERT(strcmp(test1,"rrrrrrrr**rr") == 0);
     char* test2 = formatStringToHeaderString(layout1);
     CU_ASSERT(strcmp(test2,"") == 0);
@@ -216,8 +220,10 @@ void testformatStringToHeaderString() {
     char* test5 = formatStringToHeaderString(layout4);
     CU_ASSERT(strcmp(test5, "rrrrrr") == 0);
     char* test6 = formatStringToHeaderString(layout5);
+    printf("\n%s\n", test6);    
     CU_ASSERT(strcmp(test6, "rr*rr") == 0);
     char* test7 = formatStringToHeaderString(layout6);
+    printf("\n%s\n", test7);
     CU_ASSERT(strcmp(test7, "rr**") == 0);
     char* test8 = formatStringToHeaderString(layout7);
     CU_ASSERT(strcmp(test8, "rrr") == 0);
@@ -227,10 +233,20 @@ void testformatStringToHeaderString() {
     
     char* test10 = formatStringToHeaderString(Beta);
     CU_ASSERT(headerStringToSize(test10) == sizeof(beta));
-
+    
+    free(test1);
+    free(test2);
+    free(test3);
+    free(test4);
+    free(test5);
+    free(test6);
+    free(test7);
+    free(test8);
+    free(test9);
+    free(test10);
 
   }
-  if(sizeof(void*) == 4 && SPARC != SPARC){ //test for solars 32-bit
+  if(sizeof(void*) == 4 && SPARC == 0){ // test for solars 32-bit
     char* test1 = formatStringToHeaderString(layout);
     CU_ASSERT(strcmp(test1, "rrrrrrrr**rr") == 0);
     char* test2 = formatStringToHeaderString(layout1);
@@ -253,7 +269,17 @@ void testformatStringToHeaderString() {
 
     char* test10 = formatStringToHeaderString(Beta);
     CU_ASSERT(headerStringToSize(test10) == sizeof(beta));
-    
+
+    free(test1);
+    free(test2);
+    free(test3);
+    free(test4);
+    free(test5);
+    free(test6);
+    free(test7);
+    free(test8);
+    free(test9);
+    free(test10);    
   } 
 }
 

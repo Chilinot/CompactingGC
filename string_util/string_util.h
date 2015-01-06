@@ -20,5 +20,7 @@ int checkForPointerDoubleLong(char* string);
 
 char* concateFormatString(int value, char* headerString, int size, char* rOrStar, int is64or32);
 
+int lenghtOfFormatStringToAllocate(char* layout);
+
 
 #endif

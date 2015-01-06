@@ -56,6 +56,22 @@ char* concateFormatString(int value, char* headerString, int size, char* rOrStar
   return headerString;
 }
 
+
+int lengthOfFormatStringToAllocate(char* layout){
+  int headerLength = 0;
+  for(int i = 0; i < strlen(layout); i++){
+    if isdigit(layout[i]){
+	headerLength += returnDigit(layout, i) *2;
+	i = newPos(layout, i);
+      }
+    else{
+    headerLength += 2;
+    }
+  }
+  return headerLength;
+}
+
+
 /**
  * Searches for integers in a row in a substring until end of string or a non-integer item is found
  * and converts the string of integers to an integer. 
@@ -136,9 +152,14 @@ int checkForPointerDoubleLong(char* layout){
     char* headerString;
     int longOrDoubleExists;
     int is64or32;
+    if(layout == NULL){
+      puts("No formatstring to allocate");
+      exit(0);
+    }
+    
     if(sizeof(void*) == 8){
       if(checkForPointerDoubleLong(layout) == 1){ // Check on which platform the program is run
-      is64or32 = 1;
+	is64or32 = 1;
       }
       else{
 	is64or32 = 0;
@@ -156,16 +177,9 @@ int checkForPointerDoubleLong(char* layout){
 	is64or32 = 0;
       }
     }
-    if(is64or32 == 1){
-      headerString = malloc(sizeof(layout)+1);
-    }
-    if(is64or32 == 0){
-      headerString = malloc(sizeof(layout)+1);
-    }
-    if(layout == NULL){
-      puts("No formatstring to allocate");
-      exit(0);
-    }
+    
+    headerString = calloc(lengthOfFormatStringToAllocate(layout), 1);
+
     char* r = "r";
     char* star = "*";
     int length = strlen(layout);  
@@ -266,10 +280,12 @@ int checkForPointerDoubleLong(char* layout){
     return 0; // should not happen
 
   }
+
 /*
   int main(int argc, char* argv[]){
     char * test = formatStringToHeaderString(argv[1]);
     printf("%s\n",test);
+    int test1 = lengthOfFormatStringToAllocate(argv[1]);
     return 0;
   }
 */
