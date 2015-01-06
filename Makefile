@@ -30,3 +30,7 @@ test_heapIterator: heapIterator.c heapIterator.h heapIterator_tests.c
 test_linkedlist: linkedlist.c linkedlist.h linkedlist_tests.c
 	$(C_COMPILER) $(C_OPTIONS) linkedlist.c linkedlist_tests.c -o linkedlist_unittests -lcunit
 	./linkedlist_unittests
+	
+test_stack: stack.c stack.h stack_tests.c
+	$(C_COMPILER) $(C_OPTIONS) stack.c stack_tests.c -o stack_unittests -lcunit
+	./stack_unittests

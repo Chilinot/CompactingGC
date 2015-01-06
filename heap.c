@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdint.h>
 #include "heap.h"
 #include "heap_rep.h"
 #include "header.h"
@@ -80,13 +81,13 @@ void *heap_allocatePassive (Heap heap, void *header, size_t bytes) {
 	HeapBlock block = heap->passive_pointer;
 
 	// Make sure the bytes are properly aligned.
-	bytes = bytes + (bytes % sizeof (void *));
+	bytes = bytes + (bytes % sizeof(void*));
 
 	block->header = header;
 
-	void *data_pointer = heap->passive_pointer + sizeof (void *);
+	void* data_pointer = heap->passive_pointer + sizeof(void*);
 
-	heap->passive_pointer += bytes + sizeof (void *);
+	heap->passive_pointer += bytes + sizeof(void*);
 
 	return data_pointer;
 }

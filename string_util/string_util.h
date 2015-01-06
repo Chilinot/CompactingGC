@@ -10,5 +10,17 @@
 
 char* formatStringToHeaderString(char* layout); 
 
+size_t headerStringToSize(char* layout);
+
+int returnDigit(char* string, int digitPos);
+
+int newPos(char* string, int currentpost);
+
+int checkForPointerDoubleLong(char* string);
+
+char* concateFormatString(int value, char* headerString, int size, char* rOrStar, int is64or32);
+
+int lenghtOfFormatStringToAllocate(char* layout);
+
 
 #endif

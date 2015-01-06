@@ -20,12 +20,12 @@ typedef struct heap_s {
 /**
  * Allocates an object on the passive area of the heap similar to
  * how heap_allocate allocates memory on the active area.
- * 
+ *
  * @param heap - The heap to allocate on.
  * @param header - The header to use for the allocated data.
  * @param bytes - The amount of bytes to allocate.
  * @return Pointer to the allocated memory space.
  */
-void* heap_allocatePassive(heap_s *heap, void* header, size_t bytes);
+void* heap_allocatePassive(heap_s* heap, void* header, size_t bytes);
 
 #endif
