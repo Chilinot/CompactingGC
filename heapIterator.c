@@ -22,6 +22,9 @@ void *heapIterator(Heap h, void *obj){
   if(heap_hasBeenCopied(obj) == true){
     return header_clearHeaderTypeBits(GET_HEAPBLOCK(obj));
   }
+  else if(header_getHeaderType(obj) == FUNCTION_POINTER){
+    return ((*((s_trace_f)(heap_sheader_clearHeaderTypeBits(obj))))(h, &heapIterator, obj));
+  }
   //else
   void *newObjPlats = heap_copyFromActiveToPassive(h, obj);
   void g(void *p){
