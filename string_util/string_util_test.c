@@ -61,20 +61,20 @@ void testconcateFormatString() {
     /*tests for the SPARC */
     
     if(SPARC == 1){
-    char* test7 = concateFormatString(1, headerString, 4, star, bit64);
-    CU_ASSERT(strcmp(test7,"*") == 0);
+      char* test7 = concateFormatString(1, headerString, 4, star, bit64);
+      CU_ASSERT(strcmp(test7,"*") == 0);
     
-    char* test8 = concateFormatString(1, headerString, 0, empty, bit64);
-    CU_ASSERT(strcmp(test8, "") == 0);
+      char* test8 = concateFormatString(1, headerString, 0, empty, bit64);
+      CU_ASSERT(strcmp(test8, "") == 0);
     
-    char* test9 = concateFormatString(0, headerString, 4, star, bit64);
-    CU_ASSERT(strcmp(test9, "") == 0);
+      char* test9 = concateFormatString(0, headerString, 4, star, bit64);
+      CU_ASSERT(strcmp(test9, "") == 0);
     
-    char* test10 = concateFormatString(3, headerString, 1, r, bit64);
-    CU_ASSERT(strcmp(test10, "rr") == 0);
+      char* test10 = concateFormatString(3, headerString, 1, r, bit64);
+      CU_ASSERT(strcmp(test10, "rr") == 0);
     
-    char* test11 = concateFormatString(3, headerString, 4, r, bit64);
-    CU_ASSERT(strcmp(test11, "rrrr") == 0);
+      char* test11 = concateFormatString(3, headerString, 4, r, bit64);
+      CU_ASSERT(strcmp(test11, "rrrr") == 0);
     }
     
     free(headerString);
@@ -147,6 +147,15 @@ void testformatStringToHeaderString() {
   char* layout5 = "icc*c";
   char* layout6 = "5c2*";
   char* layout7 = "cic";
+  char* layout8 = "8c2i**";
+  char* layout9 = "9c2i**";
+  char* layout10 = "ii**";
+  char* layout11 = "iii**";
+  char* layout12 = "3i**";
+  char* layout13 = "*iii";
+  char* layout14 = "cci*";
+  char* layout15 = "*ci";
+  char* layout16 = "*cccccci";
 
   char* Alfa = "lic*";
 
@@ -169,64 +178,133 @@ void testformatStringToHeaderString() {
   if(sizeof(void*) == 4 && SPARC == 1){ //tests for the sparc
     char* test1 = formatStringToHeaderString(layout);
     CU_ASSERT(strcmp(test1,"rrrrrrrr**r") == 0);
+    free(test1);
     char* test2 = formatStringToHeaderString(layout1);  
     CU_ASSERT(strcmp(test2,"") == 0);
+    free(test2);
     char* test3 = formatStringToHeaderString(layout2);
     CU_ASSERT(strcmp(test3,"rrrrr") == 0);
+    free(test3);
     char* test4 = formatStringToHeaderString(layout3);
     CU_ASSERT(strcmp(test4, "rrr") == 0);
+    free(test4);
     char* test5 = formatStringToHeaderString(layout4);
     CU_ASSERT(strcmp(test5, "rrrrrr") == 0);
+    free(test5);
     char* test6 = formatStringToHeaderString(layout5);
     CU_ASSERT(strcmp(test6, "rr*r") == 0);
+    free(test6);
     char* test7 = formatStringToHeaderString(layout6);
     CU_ASSERT(strcmp(test7, "rr**") == 0);
+    free(test7);
     char* test8 = formatStringToHeaderString(layout7);
     CU_ASSERT(strcmp(test8, "rrr") == 0);
+    free(8);
       
     char* test9 = formatStringToHeaderString(Alfa);
     CU_ASSERT(headerStringToSize(test9) == sizeof(alfa));
+    free(test9);
 
     char* test10 = formatStringToHeaderString(Beta);
     CU_ASSERT(headerStringToSize(test10) == sizeof(beta));
-
+    free(test10);
   }
   
   /*
-  char* layout = "2i22c**l";
-  char* layout1 = "";
-  char* layout2 = "22";
-  char* layout3 = "ici";
-  char* layout4 = "cdc";
-  char* layout5 = "icc*c";
-  char* layout6 = "5c2*";
-  char* layout7 = "cic";
-  */
+    char* layout = "2i22c**l";
+    char* layout1 = "";
+    char* layout2 = "22";
+    char* layout3 = "ici";
+    char* layout4 = "cdc";
+    char* layout5 = "icc*c";
+    char* layout6 = "5c2*";
+    char* layout7 = "cic";
+    char* layout8 = "8c2i**";
+    char* layout9 = "9c2i**";
+    char* layout10 = "ii**";
+    char* layout11 = "iii**";
+    char* layout12 = "3i**";
+    char* layout13 = "*iii";
+    char* layout14 = "cci*";
+    char* layout15 = "*ci";
+    char* layout16 = "*cccccci";
+    -  */
 
+  
+
+
+  
   if(sizeof(void*) == 8){ //tests for linux 64-bit
     puts("hej/n");
     char* test1 = formatStringToHeaderString(layout);
-    CU_ASSERT(strcmp(test1,"rrrrrrrr**rr") == 0);
+    CU_ASSERT(strcmp(test1,"rrrrrrrr**rr") == 0);    
+    free(test1);
     char* test2 = formatStringToHeaderString(layout1);
     CU_ASSERT(strcmp(test2,"") == 0);
+    free(test2);
     char* test3 = formatStringToHeaderString(layout2);
     CU_ASSERT(strcmp(test3,"rrrrrr") == 0);
+    free(test3);
     char* test4 = formatStringToHeaderString(layout3);
     CU_ASSERT(strcmp(test4, "rrr") == 0);
+    free(test4);
     char* test5 = formatStringToHeaderString(layout4);
     CU_ASSERT(strcmp(test5, "rrrrrr") == 0);
+    free(test5);
     char* test6 = formatStringToHeaderString(layout5);
     CU_ASSERT(strcmp(test6, "rr*rr") == 0);
+    free(test6);
     char* test7 = formatStringToHeaderString(layout6);
     CU_ASSERT(strcmp(test7, "rr**") == 0);
+    free(test7);
     char* test8 = formatStringToHeaderString(layout7);
     CU_ASSERT(strcmp(test8, "rrr") == 0);
-
+    free(test8);
     char* test9 = formatStringToHeaderString(Alfa);
     CU_ASSERT(headerStringToSize(test9) == sizeof(alfa));
-    
+    free(test9);
     char* test10 = formatStringToHeaderString(Beta);
     CU_ASSERT(headerStringToSize(test10) == sizeof(beta));
+    free(test10);
+    /*
+      char* layout8 = "8c2i**";
+      char* layout9 = "9c2i**";
+      char* layout10 = "ii**";
+      char* layout11 = "iii**";
+      char* layout12 = "3i**";
+      char* layout13 = "*iii";
+      char* layout14 = "cci*";
+      char* layout15 = "*ci";
+      char* layout16 = "*cccccci";
+    */
+      
+  char* test11 = formatStringToHeaderString(layout8);
+    CU_ASSERT(strcmp(test11,"rrrr**") == 0);
+    free(test11);
+    char* test12 = formatStringToHeaderString(layout9);
+    CU_ASSERT(strcmp(test12,"rrrrrr**") == 0);
+    free(test12);
+    char* test13 = formatStringToHeaderString(layout10);
+    CU_ASSERT(strcmp(test13,"rr**") == 0);
+    free(test13);
+    char* test14 = formatStringToHeaderString(layout11);
+    CU_ASSERT(strcmp(test14,"rrrr**") == 0);
+    free(test14);
+    char* test15 = formatStringToHeaderString(layout12);
+    CU_ASSERT(strcmp(test15,"rrrr**") == 0);
+    free(test15);
+    char* test16 = formatStringToHeaderString(layout13);
+    CU_ASSERT(strcmp(test16,"*rrrr") == 0);
+    free(test6);
+    char* test17 = formatStringToHeaderString(layout14);
+    CU_ASSERT(strcmp(test17,"rr*") == 0);
+    free(test17);
+    char* test18 = formatStringToHeaderString(layout15);
+    CU_ASSERT(strcmp(test18,"*rr") == 0);
+    free(test18);
+    char* test19 = formatStringToHeaderString(layout16);
+    CU_ASSERT(strcmp(test19,"*rrrr") == 0);
+    free(test19);
 
 
   }
