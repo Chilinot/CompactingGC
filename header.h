@@ -95,7 +95,7 @@ Objektet är den data som header beskriver och hör till.
 @param header en pekare 
 @param f en funktion
  */
-void header_pointerIterator(void* header, void(f*)(void*));
+void header_pointerIterator(void* header, void(*f)(void*));
 
 
 #endif
