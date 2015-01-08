@@ -175,12 +175,16 @@ void testPointerIterator() {
 
 
   void testfun(void *offset){
+    bool hasFoundAPointer = false;
     for(int i=0; i<pointersToBeFind_Length; i++){
       if(offset == pointersToBeFind[i]){
 	CU_ASSERT(pointerHasBeFound[i] == false); //check that the pointer has not already been found
 	pointerHasBeFound[i] = true;
+	CU_ASSERT(hasFoundAPointer == false);
+	hasFoundAPointer = true;
       }
     }
+    CU_ASSERT(hasFoundAPointer == true);
   };
   
   
