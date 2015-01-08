@@ -37,8 +37,8 @@ void testAllocStruct() {
 	Heap heap = heap_init(sizeof(struct heap_s) + 4 * sizeof(void*));
 	CU_ASSERT(heap != NULL);
 	
-	void* foo = heap_allocate_struct(heap, "r");
-	void* bar = heap_allocate_struct(heap, "r");
+	void* foo = heap_allocate_struct(heap, "i");
+	void* bar = heap_allocate_struct(heap, "i");
 	
 	strcpy(foo, "foo");
 	strcpy(bar, "foo");
