@@ -149,6 +149,24 @@ void testAllocatePassive() {
 	free(heap);
 }
 
+void testAllocate() {
+	Heap heap = heap_init(sizeof(struct heap_s) + 4 * sizeof(void*));
+	CU_ASSERT(heap != NULL);
+	
+	void* header = header_fromFormatString("cccc");
+	
+	char* foo = heap_allocate(heap, header, header_getSize(header), &heap->active_pointer);
+	char* bar = heap_allocate(heap, header, header_getSize(header), &heap->active_pointer);
+	
+	strcpy(foo, "foo");
+	strcpy(bar, "bar");
+	
+	CU_ASSERT(strcmp(foo, "foo") == 0);
+	CU_ASSERT(strcmp(bar, "bar") == 0);
+	
+	free(heap);
+}
+
 void testSizeLeft() {
 	Heap heap = heap_init(sizeof(struct heap_s) + 8 * sizeof(void*));
 	CU_ASSERT(heap != NULL);
@@ -206,7 +224,7 @@ int main() {
 		(NULL == CU_add_test(pSuite1, "test of heap_allocate_union()", testAllocUnion)) ||
 		(NULL == CU_add_test(pSuite1, "test of heap_allocateActive()", testAllocateActive)) ||
 		(NULL == CU_add_test(pSuite1, "test of heap_allocatePassive()", testAllocatePassive)) ||
-// 		(NULL == CU_add_test(pSuite1, "test of heap_allocate()", testAllocate)) ||
+		(NULL == CU_add_test(pSuite1, "test of heap_allocate()", testAllocate)) ||
 		(NULL == CU_add_test(pSuite1, "test of heap_sizeLeft()", testSizeLeft)) ||
 		(NULL == CU_add_test(pSuite1, "test of heap_copyFromActiveToPassive()", testCopyFromActiveToPassive))
 	) {
