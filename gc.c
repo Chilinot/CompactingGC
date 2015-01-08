@@ -43,10 +43,21 @@ size_t h_avail(Heap h) {
 	/*
 	 * 1. Call function in heap module that returns the available size and return that value.
 	 */
-
+        
 }
 
 size_t h_gc(Heap h) {
+
+  void f(void** stackPekare){
+    *stackPekare = heapIterator(h, *stackPekare);
+  }
+
+  stackIterator(heap_getActiveStart(h)-1, heap_getActiveEnd(h)+1, &f);  
+
+  heap_swapActiveAndPassive(h);
+
+  return h_avail(h);
+
 	/*
 	 * 1. Call stack tracer to retrieve pointers to all places in the stack that contains pointers to the heap.
 	 * 2. Use pointers from #1 to call heap iterator that iterates over the heap and finds pointers to other objects on the heap.
