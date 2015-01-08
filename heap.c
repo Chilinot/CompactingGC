@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include <stdint.h>
 #include "heap.h"
 #include "heap_rep.h"
@@ -6,14 +7,16 @@
 #include "string_util/string_util.h"
 
 Heap heap_init(size_t bytes) {
+	
+	size_t struct_size = sizeof(struct heap_s);
 
-	if(bytes <= sizeof(struct heap_s)) {
+	if(bytes <= struct_size) {
 		// The given space is too small.
 		return NULL;
 	}
 
 	// This is the amount of bytes available to the user.
-	size_t allocateable = bytes - sizeof(struct heap_s);
+	size_t allocateable = bytes - struct_size;
 
 	// This is the amount of bytes per block (active or passive block).
 	size_t blocksize = allocateable / 2;
@@ -23,12 +26,12 @@ Heap heap_init(size_t bytes) {
 		return NULL;
 	}
 
-	Heap heap = malloc(bytes);
+	Heap heap = calloc(bytes, 1);
 
 	heap->heapsize = allocateable;
 
-	heap->active = ((char*) heap) + sizeof(struct heap_s);
-	heap->passive = ((char*) heap->active) + blocksize;
+	heap->active = (void*) (((char*) heap) + struct_size);
+	heap->passive = (void*) (((char*) heap->active) + blocksize);
 
 	heap->active_pointer = heap->active;
 	heap->passive_pointer = heap->passive;
@@ -54,41 +57,34 @@ void* heap_allocate_raw(Heap heap, size_t bytes) {
 void* heap_allocate_struct(Heap heap, char* structure) {
 	void* header = header_fromFormatString(formatStringToHeaderString(structure));
 	size_t bytes = header_getSize(header);
-	return heap_allocate(heap, header, bytes);
+	return heap_allocateActive(heap, header, bytes);
 }
 
 void* heap_allocate_union(Heap heap, size_t bytes, s_trace_f f) {
 	void* header = header_objectSpecificFunction(f);
-	return heap_allocate(heap, header, bytes);
+	return heap_allocateActive(heap, header, bytes);
 }
 
-void* heap_allocate(Heap heap, void* header, size_t bytes) {
-	HeapBlock block = heap->active_pointer;
-
-	// Make sure the bytes are properly aligned.
-	// This will not work in all cases, but for this project it should work fine.
-	bytes = bytes + (bytes % sizeof(void*));
-
-	block->header = header;
-
-	heap->active_pointer = ((char*) heap->active_pointer) + sizeof(void*) + bytes;
-
-	return (void*) (((void*) &block->header) + 1);
+void* heap_allocateActive(Heap heap, void* header, size_t bytes) {
+	return heap_allocate(heap, header, bytes, &heap->active_pointer);
 }
 
 void* heap_allocatePassive(Heap heap, void* header, size_t bytes) {
-	HeapBlock block = heap->passive_pointer;
+	return heap_allocate(heap, header, bytes, &heap->passive_pointer);
+}
 
+void* heap_allocate(Heap heap, void* header, size_t bytes, void** block_pointer) {
+	HeapBlock block = *block_pointer;
+	
 	// Make sure the bytes are properly aligned.
+	// This will not work in all cases, but for this project it should work fine.
 	bytes = bytes + (bytes % sizeof(void*));
-
+	
 	block->header = header;
-
-	void* data_pointer = heap->passive_pointer + 1;
-
-	heap->passive_pointer += bytes + 1;
-
-	return data_pointer;
+	
+	*block_pointer = ((char*) *block_pointer) + sizeof(void*) + bytes;
+	
+	return (((void*) &block->header) + 1);
 }
 
 void* heap_copyFromActiveToPassive(Heap heap, void* data) {
@@ -98,13 +94,11 @@ void* heap_copyFromActiveToPassive(Heap heap, void* data) {
 
 	HeapBlock block = GET_HEAPBLOCK(data);
 
-	void* header = (void*) block;
+	void* header = block->header;
 	size_t data_size = header_getSize(header);
 
-	HeapBlock passive_block = heap_allocatePassive(heap, header, data_size);
-
-	char* active_data = GET_DATABLOCK(block->header);
-	char* passive_data = GET_DATABLOCK(passive_block->header);
+	char* active_data = data;
+	char* passive_data = heap_allocatePassive(heap, header, data_size);
 
 	for(size_t i = 0; i < data_size; i++) {
 		passive_data[i] = active_data[i];
@@ -139,4 +133,21 @@ void heap_swapActiveAndPassive(Heap heap) {
 	heap->passive_pointer = heap->passive;
 }
 
+size_t heap_sizeLeft(Heap heap) {
+	size_t blocksize = heap->heapsize / 2;
+	
+	char* active_start = heap->active;
+	char* active_pointer = heap->active_pointer;
+	
+	size_t bytes_used = active_pointer - active_start;
+	
+	return blocksize - bytes_used;
+}
 
+void* heap_getActiveStart(Heap heap) {
+	return heap->active;
+}
+
+void* heap_getActiveEnd(Heap heap) {
+	return heap->active_pointer;
+}

@@ -73,7 +73,7 @@ void* heap_allocate_union(Heap heap, size_t bytes, s_trace_f f);
 * @param bytes - The amount of bytes to allocate.
 * @return Pointer to the allocated memory space.
 */
-void* heap_allocate(Heap heap, void* header, size_t bytes);
+void* heap_allocateActive(Heap heap, void* header, size_t bytes);
 
 /**
  * Copies the data from the pointer pointing to a part in the active heap to the first
@@ -110,5 +110,30 @@ int heap_hasBeenCopied(void* data);
  * @param heap - The heap to work on.
  */
 void heap_swapActiveAndPassive(Heap heap);
+
+/**
+ * Returns the amount of bytes left that can be allocated.
+ * 
+ * @param heap - The heap to check free space.
+ * @return The amount of bytes left that can be allocated for usage.
+ */
+size_t heap_sizeLeft(Heap heap);
+
+/**
+ * Returns pointer to the start of the active block in the given heap.
+ * 
+ * @param heap - The heap to get the start of.
+ * @return Pointer to the start of the active heap block.
+ */
+void* heap_getActiveStart(Heap heap);
+
+/**
+ * Returns pointer to the end of the currently allocated memory in the active heap block
+ * of the given heap.
+ * 
+ * @param heap - The heap to get the end of.
+ * @return Pointer to the end of the active heap block.
+ */
+void* heap_getActiveEnd(Heap heap);
 
 #endif

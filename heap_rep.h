@@ -1,8 +1,8 @@
 #ifndef __HEAP_REP__
 #define __HEAP_REP__
 
-#define GET_HEAPBLOCK(p) ((HeapBlock) p - sizeof(void*))
-#define GET_DATABLOCK(p) ((void*) p + sizeof(void*))
+#define GET_HEAPBLOCK(p) ((HeapBlock) (((void*) p) - 1))
+#define GET_DATABLOCK(p) (((void*) p) + 1)
 
 typedef struct heap_block {
     void *header; // Contains all metadata.
@@ -27,5 +27,16 @@ struct heap_s {
  * @return Pointer to the allocated memory space.
  */
 void* heap_allocatePassive(struct heap_s* heap, void* header, size_t bytes);
+
+/**
+ * Allocates memory based on the given pointers.
+ * 
+ * @param heap - The heap to allocate memory in.
+ * @param header - The header to use for the allocated memory.
+ * @param bytes - The amount of bytes to allocate.
+ * @param block_pointer - Double pointer to start of allocatable space.
+ * @return Returns pointer to allocated memory space.
+ */
+void* heap_allocate(struct heap_s* heap, void* header, size_t bytes, void** block_pointer);
 
 #endif
