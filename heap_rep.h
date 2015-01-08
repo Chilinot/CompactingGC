@@ -9,7 +9,7 @@ typedef struct heap_block {
     // Directly after the header pointer is the data.
 } *HeapBlock;
 
-typedef struct heap_s {
+struct heap_s {
 	size_t heapsize; // This is total heap size without the size of this structure. Basically active + passive.
 	void *active_pointer;  // Like the stack pointer, but for the heap.
 	void *passive_pointer; // Like the above.
@@ -26,6 +26,6 @@ typedef struct heap_s {
  * @param bytes - The amount of bytes to allocate.
  * @return Pointer to the allocated memory space.
  */
-void* heap_allocatePassive(heap_s* heap, void* header, size_t bytes);
+void* heap_allocatePassive(struct heap_s* heap, void* header, size_t bytes);
 
 #endif
