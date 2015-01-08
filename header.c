@@ -180,7 +180,7 @@ Objektet är den data som header beskriver och hör till.
 @param header en pekare 
 @param f en funktion
  */
-void header_pointerIterator(void* header, void(f*)(void*)) {
+void header_pointerIterator(void* header, void(*f)(void*)) {
   char* cursor = 0;
 	switch(header_getHeaderType(header)) {
 		case BITVECTOR:
@@ -199,7 +199,7 @@ void header_pointerIterator(void* header, void(f*)(void*)) {
 					  cursor += sizeof(int)/sizeof(char);
 						break;
 					case POINTER_TOKEN:
-					  (f*)((void*)(cursor));
+					  (*f)((void*)(cursor));
 					  cursor += sizeof(void*)/sizeof(char);
 						break;
 						
@@ -219,7 +219,7 @@ void header_pointerIterator(void* header, void(f*)(void*)) {
 					  cursor += sizeof(int)/sizeof(char);
 						break;
 					case '*':
-					  (f*)((void*)(cursor));
+					  (*f)((void*)(cursor));
 					  cursor += sizeof(void*)/sizeof(char);
 						break;
 				}

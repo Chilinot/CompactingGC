@@ -2,6 +2,7 @@
 #include "CUnit/Basic.h"
 #include <stdio.h>
 #include <stdint.h>
+#include <stdbool.h>
 
 // --- SUITES ---
 int init_suite_1(void) {
@@ -156,6 +157,61 @@ void testGetSize() {
 	CU_ASSERT(size == header_getSize(header));
 }
 
+
+void testPointerIterator() {
+
+  char* testString = "*rr**r*";
+    
+  void* pointersToBeFind[] = {(void*) (0*sizeof(void*)  + 0*sizeof(int)), // Xrr**r*
+			      (void*) (1*sizeof(void*)  + 2*sizeof(int)), // *rrX*r*
+			      (void*) (2*sizeof(void*)  + 2*sizeof(int)), // *rr*Xr*
+			      (void*) (3*sizeof(void*)  + 3*sizeof(int))  // *rr**rX
+  };
+  size_t pointersToBeFind_Length = sizeof(pointersToBeFind)/sizeof(pointersToBeFind[0]);
+  bool pointerHasBeFound[pointersToBeFind_Length];
+  for(int i=0; i<pointersToBeFind_Length; i++){
+    pointerHasBeFound[i] = false;
+  }
+
+
+  void testfun(void *offset){
+    for(int i=0; i<pointersToBeFind_Length; i++){
+      if(offset == pointersToBeFind[i]){
+	CU_ASSERT(pointerHasBeFound[i] == false); //check that the pointer has not already been found
+	pointerHasBeFound[i] = true;
+      }
+    }
+  };
+  
+  
+  
+  //clear pointerHasBeFound
+  for(int i=0; i<pointersToBeFind_Length; i++){ //clear pointerHasBeFound
+    pointerHasBeFound[i] = false;
+  }
+  
+  void* testHeader = header_fromFormatString(testString); //bitvector
+  header_pointerIterator(testHeader, &testfun);
+
+  //Checks that all pointers have been found.
+  for(int i=0; i<pointersToBeFind_Length; i++){
+    CU_ASSERT(pointerHasBeFound[i] == true); 
+  }
+
+  //clear pointerHasBeFound
+  for(int i=0; i<pointersToBeFind_Length; i++){ 
+    pointerHasBeFound[i] = false;
+  }
+
+  testHeader = strdup(testString); //headerstring
+  header_pointerIterator(testHeader, &testfun);
+  free(testHeader);
+  //Checks that all pointers have been found.
+  for(int i=0; i<pointersToBeFind_Length; i++){
+    CU_ASSERT(pointerHasBeFound[i] == true); //check that
+  }
+}
+
 // --- MAIN ---
 
 int main() {
@@ -174,13 +230,14 @@ int main() {
 	}
 
 	/* add the tests to the suites */
-	if(
-	    (NULL == CU_add_test(pSuite1, "test of header_clearHeaderTypeBits()", testClearHeaderTypeBits)) ||
-	    (NULL == CU_add_test(pSuite1, "test of header_getHeaderType()", testGetHeaderType)) ||
-	    (NULL == CU_add_test(pSuite1, "test of header_forwardingAddress()", testForwardingAddress)) ||
-	    (NULL == CU_add_test(pSuite1, "test of header_fromFormatString()", testFromFormatString)) ||
-	    (NULL == CU_add_test(pSuite1, "test of header_objectSpecificFunction()", testObjectSpecificFunction)) ||
-	    (NULL == CU_add_test(pSuite1, "test of header_getSize()", testGetSize))
+	if (
+		(NULL == CU_add_test(pSuite1, "test of header_clearHeaderTypeBits()", testClearHeaderTypeBits)) ||
+		(NULL == CU_add_test(pSuite1, "test of header_getHeaderType()", testGetHeaderType)) ||
+		(NULL == CU_add_test(pSuite1, "test of header_forwardingAddress()", testForwardingAddress)) ||
+		(NULL == CU_add_test(pSuite1, "test of header_fromFormatString()", testFromFormatString)) ||
+		(NULL == CU_add_test(pSuite1, "test of header_objectSpecificFunction()", testObjectSpecificFunction)) ||
+	(NULL == CU_add_test(pSuite1, "test of header_getSize()", testGetSize)) || 
+	(NULL == CU_add_test(pSuite1, "test of header_pointerIterator()", testPointerIterator)) 
 	) {
 		CU_cleanup_registry();
 		return CU_get_error();

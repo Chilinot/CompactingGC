@@ -17,19 +17,23 @@ int clean_suite1(void) {
 }
 
 
-void testSTACKITERATOR(void) {
-	int count = 0;
-	void countplusone(void** neveruse) {
-		count++;
-	}
-	size_t isize = 320;
-	void* myHeap = malloc(isize * sizeof(void*));
-	void* alpha = myHeap + 4;
-	void* beta = myHeap + 23;
-	count = 0;
-	stackIterator((void*)myHeap , (void*)myHeap + isize, &countplusone);
-	CU_ASSERT(2 == count);
-	free(myHeap);
+void testSTACKITERATOR(void)
+{
+  int count = 0;
+  void testfun(void** pointer){
+    count++;
+    *pointer = NULL;
+  }
+  size_t isize = 320;
+  void* myHeap = malloc(isize*sizeof(void*));
+  void* alpha = myHeap+4;
+  void* beta = myHeap+23;
+  count = 0; 
+  stackIterator((void*)myHeap , (void*)myHeap+isize, &testfun);
+  CU_ASSERT(2 == count); 
+  CU_ASSERT(alpha == NULL); 
+  CU_ASSERT(beta == NULL); 
+  free(myHeap);
 }
 
 
