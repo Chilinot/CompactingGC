@@ -41,7 +41,7 @@ void heap_del(Heap heap) {
 }
 
 void* heap_allocate_raw(Heap heap, size_t bytes) {
-	char string[bytes];
+	char string[bytes + 1];
 
 	for(int i = 0; i < bytes; i++) {
 		string[i] = 'c';
