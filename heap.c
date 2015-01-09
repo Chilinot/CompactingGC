@@ -61,7 +61,7 @@ void* heap_allocate_raw(Heap heap, size_t bytes) {
 }
 
 void* heap_allocate_struct(Heap heap, char* structure) {
-	void* header = header_fromFormatString(structure);
+	void* header = header_fromFormatString(heap, structure);
 	
 #ifdef HEAP_DEBUG
 	puts("heap_allocate_struct() header binary:");

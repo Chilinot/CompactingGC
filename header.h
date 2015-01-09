@@ -43,10 +43,11 @@ typedef enum {
  *  r - To represent sizeof(int)
  *  * - To represent sizeof(void*)
  *
+ * @param heap - The heap strings should be allocated on if needed.
  * @param string - The string to base the header on.
  * @return The header created.
  */
-void* header_fromFormatString(char* string);
+void* header_fromFormatString(Heap heap, char* string);
 
 /**
  * Creates a header that is a forwarding address.

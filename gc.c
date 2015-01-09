@@ -3,7 +3,7 @@
 #include "header.h"
 #include "stack.h"
 #include "heap_rep.h"
-#include "heap_iterator.h"
+#include "heapIterator.h"
 #include "linkedlist.h"
 
 

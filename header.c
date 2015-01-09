@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdio.h>
 #include "header.h"
+#include "heap.h"
 #include "string_util/string_util.h"
 
 /**
@@ -68,7 +69,7 @@ void* header_forwardingAddress(void* pointer) {
 	return (void*) cast_pointer;
 }
 
-void* header_fromFormatString(char* string) {
+void* header_fromFormatString(Heap heap, char* string) {
 	// True if the string will fit inside a void*-4 else false.
 	// It subtracts four to make sure the bitvector terminator and the header type will fit.
 	
@@ -109,7 +110,10 @@ void* header_fromFormatString(char* string) {
 	}
 	else {
 		// Return a copy of the string allocated on the real heap.
-		return (void*) strdup(string);
+		char* string_copy = heap_allocate_raw(heap, strlen(string) + 1);
+		strcpy(string_copy, string);
+		
+		return (void*) strdup(string_copy);
 	}
 }
 

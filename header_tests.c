@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include "heap.h"
+#include "heap_rep.h"
 
 // --- SUITES ---
 int init_suite_1(void) {
@@ -55,9 +57,11 @@ void testForwardingAddress() {
 
 void testFromFormatString() {
 
+	Heap heap = heap_init(sizeof(struct heap_s) + 40 * sizeof(void*));
+
 	// -- TEST SMALL STRING - Always a bitvector.
 
-	void* header = header_fromFormatString("*ii*");
+	void* header = header_fromFormatString(heap, "*ii*");
 
 	// Check type bits to make sure it is a bitvector.
 	CU_ASSERT((((intptr_t) header) & 0b11) == 0b11);
@@ -90,12 +94,11 @@ void testFromFormatString() {
 
 	medium_string[27] = '\0';
 
-	header = header_fromFormatString(medium_string);
+	header = header_fromFormatString(heap, medium_string);
 
 	if(sizeof(void*) == 4) {  // 32 bit system
 		// Check if it is a pointer.
 		CU_ASSERT((((intptr_t) header) & 0b11) == 0b00);
-		free(header);
 	}
 	else if(sizeof(void*) == 8) {  // 64 bit system
 		// Check if it is a bitvector.
@@ -125,15 +128,12 @@ void testFromFormatString() {
 	large_string[127] = '\0';
 
 	// Retrieve value to test.
-	header = header_fromFormatString(large_string);
+	header = header_fromFormatString(heap, large_string);
 
 	// Check type bits to make sure it is a string pointer.
 	CU_ASSERT((((intptr_t) header) & 0b11) == 0b00);
 
-	// Clear the type bits.
-	header = (void*)(((intptr_t) header) & ~0b11);
-
-	free(header);
+	heap_del(heap);
 }
 
 void testObjectSpecificFunction() {
@@ -141,8 +141,10 @@ void testObjectSpecificFunction() {
 }
 
 void testGetSize() {
+	Heap heap = heap_init(sizeof(struct heap_s) + 40 * sizeof(void*));
+
 	// This assumes that header_fromFormatString() is working.
-	void* header = header_fromFormatString("*ii*");
+	void* header = header_fromFormatString(heap, "*ii*");
 
 	int size = (sizeof(void*) * 2) + (sizeof(int) * 2);
 	int header_size = header_getSize(header);
@@ -150,69 +152,79 @@ void testGetSize() {
 	CU_ASSERT(header_size == size);
 
 	// 47 chars, should always return a string pointer not a vector.
-	header = header_fromFormatString("iiiiiiiiiiiii**ii*ii***iii**ii**ii*i*i**iii*iii");
+	header = header_fromFormatString(heap, "iiiiiiiiiiiii**ii*ii***iii**ii**ii*i*i**iii*iii");
 	size = (sizeof(void*) * 15) + (sizeof(int) * 32);
-	
+
 	CU_ASSERT(size == header_getSize(header));
+
+	heap_del(heap);
 }
 
 
 void testPointerIterator() {
 
-  char* testString = "*rr**r*";
-    
-  void* pointersToBeFind[] = {(void*) (0*sizeof(void*)  + 0*sizeof(int)), // Xrr**r*
-			      (void*) (1*sizeof(void*)  + 2*sizeof(int)), // *rrX*r*
-			      (void*) (2*sizeof(void*)  + 2*sizeof(int)), // *rr*Xr*
-			      (void*) (3*sizeof(void*)  + 3*sizeof(int))  // *rr**rX
-  };
-  size_t pointersToBeFind_Length = sizeof(pointersToBeFind)/sizeof(pointersToBeFind[0]);
-  bool pointerHasBeFound[pointersToBeFind_Length];
-  for(int i=0; i<pointersToBeFind_Length; i++){
-    pointerHasBeFound[i] = false;
-  }
+	Heap heap = heap_init(sizeof(struct heap_s) + 40 * sizeof(void*));
+
+	char* testString = "*ii**i*";
+
+	void* pointersToBeFind[] = {(void*)(0 * sizeof(void*)  + 0 * sizeof(int)), // Xrr**r*
+	                            (void*)(1 * sizeof(void*)  + 2 * sizeof(int)), // *rrX*r*
+	                            (void*)(2 * sizeof(void*)  + 2 * sizeof(int)), // *rr*Xr*
+	                            (void*)(3 * sizeof(void*)  + 3 * sizeof(int)) // *rr**rX
+	                           };
+	size_t pointersToBeFind_Length = sizeof(pointersToBeFind) / sizeof(pointersToBeFind[0]);
+	bool pointerHasBeFound[pointersToBeFind_Length];
+
+	for(int i = 0; i < pointersToBeFind_Length; i++) {
+		pointerHasBeFound[i] = false;
+	}
 
 
-  void testfun(void *offset){
-    bool hasFoundAPointer = false;
-    for(int i=0; i<pointersToBeFind_Length; i++){
-      if(offset == pointersToBeFind[i]){
-	CU_ASSERT(pointerHasBeFound[i] == false); //check that the pointer has not already been found
-	pointerHasBeFound[i] = true;
-	CU_ASSERT(hasFoundAPointer == false);
-	hasFoundAPointer = true;
-      }
-    }
-    CU_ASSERT(hasFoundAPointer == true);
-  };
-  
-  
-  
-  //clear pointerHasBeFound
-  for(int i=0; i<pointersToBeFind_Length; i++){ //clear pointerHasBeFound
-    pointerHasBeFound[i] = false;
-  }
-  
-  void* testHeader = header_fromFormatString(testString); //bitvector
-  header_pointerIterator(testHeader, &testfun);
+	void testfun(void * offset) {
+		bool hasFoundAPointer = false;
 
-  //Checks that all pointers have been found.
-  for(int i=0; i<pointersToBeFind_Length; i++){
-    CU_ASSERT(pointerHasBeFound[i] == true); 
-  }
+		for(int i = 0; i < pointersToBeFind_Length; i++) {
+			if(offset == pointersToBeFind[i]) {
+				CU_ASSERT(pointerHasBeFound[i] == false); //check that the pointer has not already been found
+				pointerHasBeFound[i] = true;
+				CU_ASSERT(hasFoundAPointer == false);
+				hasFoundAPointer = true;
+			}
+		}
 
-  //clear pointerHasBeFound
-  for(int i=0; i<pointersToBeFind_Length; i++){ 
-    pointerHasBeFound[i] = false;
-  }
+		CU_ASSERT(hasFoundAPointer == true);
+	};
 
-  testHeader = strdup(testString); //headerstring
-  header_pointerIterator(testHeader, &testfun);
-  free(testHeader);
-  //Checks that all pointers have been found.
-  for(int i=0; i<pointersToBeFind_Length; i++){
-    CU_ASSERT(pointerHasBeFound[i] == true); //check that
-  }
+
+
+	//clear pointerHasBeFound
+	for(int i = 0; i < pointersToBeFind_Length; i++) { //clear pointerHasBeFound
+		pointerHasBeFound[i] = false;
+	}
+
+	void* testHeader = header_fromFormatString(heap, testString); //bitvector
+	header_pointerIterator(testHeader, &testfun);
+
+	//Checks that all pointers have been found.
+	for(int i = 0; i < pointersToBeFind_Length; i++) {
+		CU_ASSERT(pointerHasBeFound[i] == true);
+	}
+
+	//clear pointerHasBeFound
+	for(int i = 0; i < pointersToBeFind_Length; i++) {
+		pointerHasBeFound[i] = false;
+	}
+
+	testHeader = strdup(testString); //headerstring
+	header_pointerIterator(testHeader, &testfun);
+	free(testHeader);
+
+	//Checks that all pointers have been found.
+	for(int i = 0; i < pointersToBeFind_Length; i++) {
+		CU_ASSERT(pointerHasBeFound[i] == true); //check that
+	}
+
+	heap_del(heap);
 }
 
 // --- MAIN ---
@@ -233,14 +245,14 @@ int main() {
 	}
 
 	/* add the tests to the suites */
-	if (
-		(NULL == CU_add_test(pSuite1, "test of header_clearHeaderTypeBits()", testClearHeaderTypeBits)) ||
-		(NULL == CU_add_test(pSuite1, "test of header_getHeaderType()", testGetHeaderType)) ||
-		(NULL == CU_add_test(pSuite1, "test of header_forwardingAddress()", testForwardingAddress)) ||
-		(NULL == CU_add_test(pSuite1, "test of header_fromFormatString()", testFromFormatString)) ||
-		(NULL == CU_add_test(pSuite1, "test of header_objectSpecificFunction()", testObjectSpecificFunction)) ||
-	(NULL == CU_add_test(pSuite1, "test of header_getSize()", testGetSize)) || 
-	(NULL == CU_add_test(pSuite1, "test of header_pointerIterator()", testPointerIterator)) 
+	if(
+	    (NULL == CU_add_test(pSuite1, "test of header_clearHeaderTypeBits()", testClearHeaderTypeBits)) ||
+	    (NULL == CU_add_test(pSuite1, "test of header_getHeaderType()", testGetHeaderType)) ||
+	    (NULL == CU_add_test(pSuite1, "test of header_forwardingAddress()", testForwardingAddress)) ||
+	    (NULL == CU_add_test(pSuite1, "test of header_fromFormatString()", testFromFormatString)) ||
+	    (NULL == CU_add_test(pSuite1, "test of header_objectSpecificFunction()", testObjectSpecificFunction)) ||
+	    (NULL == CU_add_test(pSuite1, "test of header_getSize()", testGetSize)) ||
+	    (NULL == CU_add_test(pSuite1, "test of header_pointerIterator()", testPointerIterator))
 	) {
 		CU_cleanup_registry();
 		return CU_get_error();
