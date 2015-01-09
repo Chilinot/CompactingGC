@@ -101,17 +101,17 @@ void testAllocRaw() {
 }
 
 void testAllocUnion() {
-	Heap heap = heap_init(sizeof(struct heap_s) + 4 * sizeof(void*));
+	Heap heap = heap_init(sizeof(struct heap_s) + 8 * sizeof(void*));
 	CU_ASSERT(heap != NULL);
 	free(heap);
 }
 
 void testAllocateActive() {
-	Heap heap = heap_init(sizeof(struct heap_s) + 12 * sizeof(void*));
+	Heap heap = heap_init(sizeof(struct heap_s) + 24 * sizeof(void*));
 	CU_ASSERT(heap != NULL);
 	
-	void* foo_header = header_fromFormatString("ii");
-	void* bar_header = header_fromFormatString("ii");
+	void* foo_header = header_fromFormatString(heap, "ii");
+	void* bar_header = header_fromFormatString(heap, "ii");
 	
 	int* foo = heap_allocateActive(heap, foo_header, 2 * sizeof(int));
 	int* bar = heap_allocateActive(heap, bar_header, 2 * sizeof(int));
@@ -132,11 +132,11 @@ void testAllocateActive() {
 }
 
 void testAllocatePassive() {
-	Heap heap = heap_init(sizeof(struct heap_s) + 12 * sizeof(void*));
+	Heap heap = heap_init(sizeof(struct heap_s) + 24 * sizeof(void*));
 	CU_ASSERT(heap != NULL);
 	
-	void* foo_header = header_fromFormatString("ii");
-	void* bar_header = header_fromFormatString("ii");
+	void* foo_header = header_fromFormatString(heap, "ii");
+	void* bar_header = header_fromFormatString(heap, "ii");
 	
 	int* foo = heap_allocatePassive(heap, foo_header, 2 * sizeof(int));
 	int* bar = heap_allocatePassive(heap, bar_header, 2 * sizeof(int));
@@ -157,10 +157,10 @@ void testAllocatePassive() {
 }
 
 void testAllocate() {
-	Heap heap = heap_init(sizeof(struct heap_s) + 4 * sizeof(void*));
+	Heap heap = heap_init(sizeof(struct heap_s) + 24 * sizeof(void*));
 	CU_ASSERT(heap != NULL);
 	
-	void* header = header_fromFormatString("cccc");
+	void* header = header_fromFormatString(heap, "cccc");
 	
 	char* foo = heap_allocate(heap, header, header_getSize(header), &heap->active_pointer);
 	char* bar = heap_allocate(heap, header, header_getSize(header), &heap->active_pointer);
@@ -175,7 +175,7 @@ void testAllocate() {
 }
 
 void testSizeLeft() {
-	Heap heap = heap_init(sizeof(struct heap_s) + 8 * sizeof(void*));
+	Heap heap = heap_init(sizeof(struct heap_s) + 24 * sizeof(void*));
 	CU_ASSERT(heap != NULL);
 	
 	void* foo = heap_allocate_struct(heap, "*");
@@ -188,7 +188,7 @@ void testSizeLeft() {
 }
 
 void testCopyFromActiveToPassive() {
-	Heap heap = heap_init(sizeof(struct heap_s) + 12 * sizeof(void*));
+	Heap heap = heap_init(sizeof(struct heap_s) + 24 * sizeof(void*));
 	CU_ASSERT(heap != NULL);
 	
 	char* foo = heap_allocate_struct(heap, "cccc");
