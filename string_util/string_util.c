@@ -213,7 +213,7 @@ char* formatStringToHeaderString(char* layout) {
 		if(layout[newPosition] == '*') {
 			int size = sizeof(void*);
 			concateFormatString(value, headerString, size, star, is64or32);
-			printf("%d\n", prevSize);
+// 			printf("%d\n", prevSize);
 			prevSize = 0;
 		}
 

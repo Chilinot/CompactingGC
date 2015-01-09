@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdio.h>
 #include "header.h"
+#include "string_util/string_util.h"
 
 /**
  * Defines number of bits per token.
@@ -70,6 +71,9 @@ void* header_forwardingAddress(void* pointer) {
 void* header_fromFormatString(char* string) {
 	// True if the string will fit inside a void*-4 else false.
 	// It subtracts four to make sure the bitvector terminator and the header type will fit.
+	
+	string = formatStringToHeaderString(string);
+	
 	bool useVector = strlen(string) <= (TOKENS_PER_POINTER - 4);
 
 	if(useVector) {
@@ -172,62 +176,68 @@ size_t header_getSize(void* header) {
 }
 
 /**
- f anropas med alla pekare som headerns objekt har,
-där pekare som functionen anropas med beskriver hur mycket ifrån objektets adress pekare verkligen är,
-Objektet är den data som header beskriver och hör till.
-
-
-@param header en pekare 
-@param f en funktion
+ * f anropas med alla pekare som headerns objekt har,
+ * där pekare som functionen anropas med beskriver hur mycket ifrån objektets adress pekare verkligen är,
+ * Objektet är den data som header beskriver och hör till.
+ *
+ *
+ * @param header en pekare
+ * @param f en funktion
  */
-void header_pointerIterator(void* header, void(*f)(void*)) {
-  char* cursor = 0;
+void header_pointerIterator(void* header, void (*f)(void*)) {
+	char* cursor = 0;
+
 	switch(header_getHeaderType(header)) {
-		case BITVECTOR:
-		  for(int i = TOKENS_PER_POINTER * BITS_PER_TOKEN - BITS_PER_TOKEN; i >= 2; i -= 2) {				  
-		    intptr_t shifted = ((intptr_t) 0b11) << i; // varfor??
-				
-				intptr_t bits = ((intptr_t) header) & shifted;
-				bits = (bits >> i) & 0b11;
-				
-				if(bits == TERMINATOR_TOKEN) {
-					break; // Stop the loop.
-				}
-				
-				switch(bits) {
-					case INT_TOKEN:
-					  cursor += sizeof(int)/sizeof(char);
-						break;
-					case POINTER_TOKEN:
-					  (*f)((void*)(cursor));
-					  cursor += sizeof(void*)/sizeof(char);
-						break;
-						
-					// This is only reached if the header is not properly formatted.
-					default:
- 						return 0;
-				}
+	case BITVECTOR:
+		for(int i = TOKENS_PER_POINTER * BITS_PER_TOKEN - BITS_PER_TOKEN; i >= 2; i -= 2) {
+			intptr_t shifted = ((intptr_t) 0b11) << i; // varfor??
+
+			intptr_t bits = ((intptr_t) header) & shifted;
+			bits = (bits >> i) & 0b11;
+
+			if(bits == TERMINATOR_TOKEN) {
+				break; // Stop the loop.
 			}
-			break;
-		
-		case POINTER_TO_STRING:
-			header = header_clearHeaderTypeBits(header);
-			char *string = (char*) header;
-			for(int i = 0; string[i] != '\0'; i++) {
-			  switch(string[i]) {
-					case 'r':
-					  cursor += sizeof(int)/sizeof(char);
-						break;
-					case '*':
-					  (*f)((void*)(cursor));
-					  cursor += sizeof(void*)/sizeof(char);
-						break;
-				}
+
+			switch(bits) {
+			case INT_TOKEN:
+				cursor += sizeof(int) / sizeof(char);
+				break;
+
+			case POINTER_TOKEN:
+				(*f)((void*)(cursor));
+				cursor += sizeof(void*) / sizeof(char);
+				break;
+
+				// This is only reached if the header is not properly formatted.
+			default:
+				return;
 			}
-			break;
-			
-		default:
-			return 0;
+		}
+
+		break;
+
+	case POINTER_TO_STRING:
+		header = header_clearHeaderTypeBits(header);
+		char* string = (char*) header;
+
+		for(int i = 0; string[i] != '\0'; i++) {
+			switch(string[i]) {
+			case 'r':
+				cursor += sizeof(int) / sizeof(char);
+				break;
+
+			case '*':
+				(*f)((void*)(cursor));
+				cursor += sizeof(void*) / sizeof(char);
+				break;
+			}
+		}
+
+		break;
+
+	default:
+		return;
 	}
 
 	return;

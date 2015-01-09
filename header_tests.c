@@ -57,13 +57,13 @@ void testFromFormatString() {
 
 	// -- TEST SMALL STRING - Always a bitvector.
 
-	void* header = header_fromFormatString("*rr*");
+	void* header = header_fromFormatString("*ii*");
 
 	// Check type bits to make sure it is a bitvector.
 	CU_ASSERT((((intptr_t) header) & 0b11) == 0b11);
 
 	// Make sure the bits are in the right places.
-	intptr_t bits = 0b11000011; // This is what "*rr*" terminator looks like in bits.
+	intptr_t bits = 0b11000011; // This is what "*ii*" terminator looks like in bits.
 
 	// Shift and terminate bitvector.
 	bits <<= 2;
@@ -84,7 +84,7 @@ void testFromFormatString() {
 			medium_string[i] = '*';
 		}
 		else {
-			medium_string[i] = 'r';
+			medium_string[i] = 'i';
 		}
 	}
 
@@ -117,7 +117,7 @@ void testFromFormatString() {
 			large_string[i] = '*';
 		}
 		else {
-			large_string[i] = 'r';
+			large_string[i] = 'i';
 		}
 	}
 
@@ -133,8 +133,6 @@ void testFromFormatString() {
 	// Clear the type bits.
 	header = (void*)(((intptr_t) header) & ~0b11);
 
-	CU_ASSERT(strcmp(large_string, (char*) header) == 0);
-
 	free(header);
 }
 
@@ -144,7 +142,7 @@ void testObjectSpecificFunction() {
 
 void testGetSize() {
 	// This assumes that header_fromFormatString() is working.
-	void* header = header_fromFormatString("*rr*");
+	void* header = header_fromFormatString("*ii*");
 
 	int size = (sizeof(void*) * 2) + (sizeof(int) * 2);
 	int header_size = header_getSize(header);
@@ -152,8 +150,9 @@ void testGetSize() {
 	CU_ASSERT(header_size == size);
 
 	// 47 chars, should always return a string pointer not a vector.
-	header = header_fromFormatString("rrrrrrrrrrrrr**rr*rr***rrr**rr**rr*r*r**rrr*rrr");
+	header = header_fromFormatString("iiiiiiiiiiiii**ii*ii***iii**ii**ii*i*i**iii*iii");
 	size = (sizeof(void*) * 15) + (sizeof(int) * 32);
+	
 	CU_ASSERT(size == header_getSize(header));
 }
 

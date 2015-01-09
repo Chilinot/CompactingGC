@@ -37,3 +37,6 @@
 
 # Unittests
 *unittests
+
+# Git merge conflicts
+*.orig
