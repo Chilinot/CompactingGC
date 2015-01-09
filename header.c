@@ -105,6 +105,8 @@ void* header_fromFormatString(Heap heap, char* string) {
 
 		// Mark the two type bits as a bitvector.
 		header |= 0b11;
+		
+		free(string);
 
 		return (void*) header;
 	}
@@ -112,6 +114,8 @@ void* header_fromFormatString(Heap heap, char* string) {
 		// Return a copy of the string allocated on the real heap.
 		char* string_copy = heap_allocate_raw(heap, strlen(string) + 1);
 		strcpy(string_copy, string);
+		
+		free(string);
 		
 		return (void*) strdup(string_copy);
 	}

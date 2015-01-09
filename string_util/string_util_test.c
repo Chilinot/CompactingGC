@@ -257,24 +257,34 @@ void testformatStringToHeaderString() {
   if(sizeof(void*) == 4 && SPARC != SPARC){ //test for solars 32-bit
     char* test1 = formatStringToHeaderString(layout);
     CU_ASSERT(strcmp(test1, "rrrrrrrr**rr") == 0);
+	free(test1);
     char* test2 = formatStringToHeaderString(layout1);
     CU_ASSERT(strcmp(test2,"") == 0);
+	free(test2);
     char* test3 = formatStringToHeaderString(layout2);
     CU_ASSERT(strcmp(test3,"rrrrrr") == 0);
+	free(test3);
     char* test4 = formatStringToHeaderString(layout3);
     CU_ASSERT(strcmp(test4, "rrrr") == 0);
+	free(test4);
     char* test5 = formatStringToHeaderString(layout4);
     CU_ASSERT(strcmp(test5, "rrrr") == 0);
+	free(test5);
     char* test6 = formatStringToHeaderString(layout5);
     CU_ASSERT(strcmp(test6, "rr*r") == 0);
+	free(test6);
     char* test7 = formatStringToHeaderString(layout6);
     CU_ASSERT(strcmp(test7, "rr**") == 0);
+	free(test7);
     char* test8 = formatStringToHeaderString(layout7);
     CU_ASSERT(strcmp(test8, "rrr") == 0);
+	free(test8);
     char* test9 = formatStringToHeaderString(Alfa);
     CU_ASSERT(headerStringToSize(test9) == sizeof(alfa));
+	free(test9);
     char* test10 = formatStringToHeaderString(Beta);
     CU_ASSERT(headerStringToSize(test10) == sizeof(beta));
+	free(test10);
   }
 }
 int main(){
