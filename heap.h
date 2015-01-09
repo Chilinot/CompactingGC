@@ -15,21 +15,21 @@ typedef void *(*trace_f)(Heap h, void *obj);
 typedef void *(*s_trace_f)(Heap h, trace_f f, void *obj);
 
 /**
-* Creates a heap with the given size in bytes.
-* Only half of the given amount will be usable at all times due
-* to it being split into an active and a passive area.
-*
-* Returns null if the given size does not have space enough
-* to fit metadata required by the heap.
-*
-* @param bytes - The heap size in amount of bytes.
-* @return Pointer to the new heap, or null if the given space is too small.
-*/
+ * Creates a heap with the given size in bytes.
+ * Only half of the given amount will be usable at all times due
+ * to it being split into an active and a passive area.
+ *
+ * Returns null if the given size does not have space enough
+ * to fit metadata required by the heap.
+ *
+ * @param bytes - The heap size in amount of bytes.
+ * @return Pointer to the new heap, or null if the given space is too small.
+ */
 Heap heap_init(size_t bytes);
 
 /**
-* De-allocates the given heap.
-*/
+ * De-allocates the given heap.
+ */
 void heap_del(Heap heap);
 
 /**
@@ -66,13 +66,13 @@ void* heap_allocate_raw(Heap heap, size_t bytes);
 void* heap_allocate_union(Heap heap, size_t bytes, s_trace_f f);
 
 /**
-* Allocates the given amount of bytes on the given heap.
-*
-* @param heap - The heap to allocate data on.
-* @param header - The header that describes what is to be stored on the heap.
-* @param bytes - The amount of bytes to allocate.
-* @return Pointer to the allocated memory space.
-*/
+ * Allocates the given amount of bytes on the given heap.
+ *
+ * @param heap - The heap to allocate data on.
+ * @param header - The header that describes what is to be stored on the heap.
+ * @param bytes - The amount of bytes to allocate.
+ * @return Pointer to the allocated memory space.
+ */
 void* heap_allocateActive(Heap heap, void* header, size_t bytes);
 
 /**
