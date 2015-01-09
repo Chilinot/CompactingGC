@@ -182,7 +182,7 @@ void testSizeLeft() {
 	
 	size_t left = heap_sizeLeft(heap);
 	
-	CU_ASSERT(left == 2 * sizeof(void*));
+	CU_ASSERT(left == 10 * sizeof(void*));
 	
 	free(heap);
 }
