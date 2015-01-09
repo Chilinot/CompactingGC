@@ -3,6 +3,13 @@
 #include "heap_rep.h"
 #include "header.h"
 
+// Comment this row to disable debug output.
+#define HEAP_TESTS_DEBUG
+
+#ifdef HEAP_TESTS_DEBUG
+#include "debug.h"
+#endif
+
 // --- SUITES ---
 int init_suite_1(void) {
 	return 0;
@@ -187,14 +194,44 @@ void testCopyFromActiveToPassive() {
 	char* foo = heap_allocate_struct(heap, "cccc");
 	strcpy(foo, "foo");
 	
+#ifdef HEAP_TESTS_DEBUG
+	printf("\nfoo pointer: %p\n", foo);
+	printf("foo: %s\n", foo);
+#endif
+	
 	CU_ASSERT(strcmp(foo, "foo") == 0);
+	
+	void* prev_header = (void*) (((char*) foo) - sizeof(void*));
+	CU_ASSERT(header_getHeaderType(prev_header) == BITVECTOR);
+	
+#ifdef HEAP_TESTS_DEBUG
+	puts("Header type:");
+	switch(header_getHeaderType(prev_header)) {
+		case BITVECTOR:
+			puts("BITVECTOR");
+			break;
+		case FORWARDING_ADDRESS:
+			puts("FORWARDING_ADDRESS");
+			break;
+		default:
+			puts("NOT BITVECTOR OR FORWARDING_ADDRESS");
+			printBits(sizeof(void*), prev_header);
+			break;
+	}
+#endif
 	
 	char* bar = heap_copyFromActiveToPassive(heap, (void*) foo);
 	
 	CU_ASSERT(strcmp(foo, bar) == 0);
 	
-	printf("\nfoo: %s\n", foo);
+	void* header = (void*) ((char*) foo) - sizeof(void*);
+	CU_ASSERT(header_getHeaderType(header) == FORWARDING_ADDRESS);
+	
+#ifdef HEAP_TESTS_DEBUG
+	printf("foo pointer: %p\n", foo);
+	printf("foo: %s\n", foo);
 	printf("bar: %s\n", bar);
+#endif
 	
 	free(heap);
 }

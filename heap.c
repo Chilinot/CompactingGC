@@ -4,7 +4,13 @@
 #include "heap.h"
 #include "heap_rep.h"
 #include "header.h"
-#include "string_util/string_util.h"
+
+// Comment the following row to disable debug output
+// #define HEAP_DEBUG
+
+#ifdef HEAP_DEBUG
+#include "debug.h"
+#endif
 
 Heap heap_init(size_t bytes) {
 	
@@ -55,7 +61,13 @@ void* heap_allocate_raw(Heap heap, size_t bytes) {
 }
 
 void* heap_allocate_struct(Heap heap, char* structure) {
-	void* header = header_fromFormatString(formatStringToHeaderString(structure));
+	void* header = header_fromFormatString(structure);
+	
+#ifdef HEAP_DEBUG
+	puts("heap_allocate_struct() header binary:");
+	printBits(sizeof(void*), &header);
+#endif
+	
 	size_t bytes = header_getSize(header);
 	return heap_allocateActive(heap, header, bytes);
 }
@@ -84,7 +96,7 @@ void* heap_allocate(Heap heap, void* header, size_t bytes, void** block_pointer)
 	
 	*block_pointer = ((char*) *block_pointer) + sizeof(void*) + bytes;
 	
-	return (((void*) &block->header) + 1);
+	return (((char*) &block->header) + sizeof(void*));
 }
 
 void* heap_copyFromActiveToPassive(Heap heap, void* data) {
@@ -96,23 +108,66 @@ void* heap_copyFromActiveToPassive(Heap heap, void* data) {
 
 	void* header = block->header;
 	size_t data_size = header_getSize(header);
+	
+#ifdef HEAP_DEBUG
+	printf("\ndata_size: %zu\n", data_size);
+	
+	puts("Header binary #1:");
+	printBits(sizeof(void*), &header);
+	puts("");
+#endif
 
 	char* active_data = data;
 	char* passive_data = heap_allocatePassive(heap, header, data_size);
+	
+#ifdef HEAP_DEBUG
+	puts("Passive data binary #1:");
+	printBits(sizeof(void*), &passive_data);
+	puts("");
+#endif
 
 	for(size_t i = 0; i < data_size; i++) {
+#ifdef HEAP_DEBUG
+		puts("active_data char:");
+		printf("%c\n", active_data[i]);
+		puts("");
+#endif
 		passive_data[i] = active_data[i];
 	}
+	
+#ifdef HEAP_DEBUG
+	puts("Passive data binary #2:");
+	printBits(sizeof(void*), &passive_data);
+	puts("");
+#endif
 
 	heap_markAsCopied(data, passive_data);
+	
+#ifdef HEAP_DEBUG
+	puts("Header binary #2 ought to be forwarding address:");
+	printBits(sizeof(void*), &block->header);
+	puts("");
+#endif
 
 	return (void*) passive_data;
 }
 
 void heap_markAsCopied(void* data, void* forwarding_address) {
 	HeapBlock block = GET_HEAPBLOCK(data);
+	
+#ifdef HEAP_DEBUG
+	puts("header and forwardinng address:");
+	printBits(sizeof(void*), &block->header);
+	printBits(sizeof(void*), &forwarding_address);
+#endif
+	
 	void* new_header = header_forwardingAddress(forwarding_address);
 	block->header = new_header;
+	
+#ifdef HEAP_DEBUG
+	puts("header");
+	printBits(sizeof(void*), &new_header);
+#endif
 }
 
 int heap_hasBeenCopied(void* data) {

@@ -1,8 +1,8 @@
 #ifndef __HEAP_REP__
 #define __HEAP_REP__
 
-#define GET_HEAPBLOCK(p) ((HeapBlock) (((void*) p) - 1))
-#define GET_DATABLOCK(p) (((void*) p) + 1)
+#define GET_HEAPBLOCK(p) ((HeapBlock) (((char*) p) - sizeof(void*)))
+#define GET_DATABLOCK(p) ((void*) (((char*) p) + sizeof(void*)))
 
 typedef struct heap_block {
     void *header; // Contains all metadata.

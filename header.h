@@ -38,6 +38,10 @@ typedef enum {
  * The least significant bits of the returned pointer shows if it is a bitvector or pointer.
  * If the two last bits (little-endian) are equal to 00 then it is a pointer.
  * If they are equal to 11 then it is a bitvector.
+ * 
+ * Allowed characters in the string is:
+ *  r - To represent sizeof(int)
+ *  * - To represent sizeof(void*)
  *
  * @param string - The string to base the header on.
  * @return The header created.

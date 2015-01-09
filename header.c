@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdio.h>
 #include "header.h"
+#include "string_util/string_util.h"
 
 /**
  * Defines number of bits per token.
@@ -70,6 +71,9 @@ void* header_forwardingAddress(void* pointer) {
 void* header_fromFormatString(char* string) {
 	// True if the string will fit inside a void*-4 else false.
 	// It subtracts four to make sure the bitvector terminator and the header type will fit.
+	
+	string = formatStringToHeaderString(string);
+	
 	bool useVector = strlen(string) <= (TOKENS_PER_POINTER - 4);
 
 	if(useVector) {

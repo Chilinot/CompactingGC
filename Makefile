@@ -15,12 +15,12 @@ clean:
 %:	%.c
 	$(C_COMPILER) $(C_OPTIONS) $< -o $@
 	
-test_header: header.c header.h header_tests.c
-	$(C_COMPILER) $(C_OPTIONS) header_tests.c header.c -o header_unittests -lcunit
+test_header: header.c header.h header_tests.c string_util/string_util.c string_util/string_util.h
+	$(C_COMPILER) $(C_OPTIONS) header_tests.c header.c string_util/string_util.c -o header_unittests -lcunit
 	./header_unittests
 	
-test_heap: heap.c heap_rep.h heap.h heap_tests.c header.h header.c string_util/string_util.c string_util/string_util.h
-	$(C_COMPILER) $(C_OPTIONS) heap_tests.c heap.c header.c string_util/string_util.c -o heap_unittests -lcunit
+test_heap: heap.c heap_rep.h heap.h heap_tests.c header.h header.c string_util/string_util.c string_util/string_util.h debug.c debug.h
+	$(C_COMPILER) $(C_OPTIONS) heap_tests.c heap.c header.c string_util/string_util.c debug.c -o heap_unittests -lcunit
 	./heap_unittests
 
 test_heapIterator: heapIterator.c heapIterator.h heapIterator_tests.c
