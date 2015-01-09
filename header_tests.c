@@ -132,12 +132,6 @@ void testFromFormatString() {
 	// Clear the type bits.
 	header = (void*)(((intptr_t) header) & ~0b11);
 
-	CU_ASSERT(strcmp(large_string, (char*) header) == 0);
-	
-	puts("");
-	puts(large_string);
-	puts((char*) header);
-
 	free(header);
 }
 
@@ -157,11 +151,6 @@ void testGetSize() {
 	// 47 chars, should always return a string pointer not a vector.
 	header = header_fromFormatString("iiiiiiiiiiiii**ii*ii***iii**ii**ii*i*i**iii*iii");
 	size = (sizeof(void*) * 15) + (sizeof(int) * 32);
-	
-	printf("\n%d\n", size);
-	printf("%d\n", header_getSize(header));
-	puts("iiiiiiiiiiiii**ii*ii***iii**ii**ii*i*i**iii*iii");
-	puts((char*)(((intptr_t) header) & ~0b11));
 	
 	CU_ASSERT(size == header_getSize(header));
 }
