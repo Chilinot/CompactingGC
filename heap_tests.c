@@ -4,7 +4,7 @@
 #include "header.h"
 
 // Comment this row to disable debug output.
-#define HEAP_TESTS_DEBUG
+//#define HEAP_TESTS_DEBUG
 
 #ifdef HEAP_TESTS_DEBUG
 #include "debug.h"
@@ -201,37 +201,124 @@ void testCopyFromActiveToPassive() {
 	
 	CU_ASSERT(strcmp(foo, "foo") == 0);
 	
-	void* prev_header = (void*) (((char*) foo) - sizeof(void*));
-	CU_ASSERT(header_getHeaderType(prev_header) == BITVECTOR);
+	HeapBlock block = GET_HEAPBLOCK(foo);
+	
+	CU_ASSERT(header_getHeaderType(block->header) == BITVECTOR);
 	
 #ifdef HEAP_TESTS_DEBUG
-	puts("Header type:");
-	switch(header_getHeaderType(prev_header)) {
+	printf("Header type: ");
+	switch(header_getHeaderType(block->header)) {
 		case BITVECTOR:
 			puts("BITVECTOR");
+			break;
+		case POINTER_TO_STRING:
+			puts("POINTER_TO_STRING");
 			break;
 		case FORWARDING_ADDRESS:
 			puts("FORWARDING_ADDRESS");
 			break;
-		default:
-			puts("NOT BITVECTOR OR FORWARDING_ADDRESS");
-			printBits(sizeof(void*), prev_header);
+		case FUNCTION_POINTER:
+			puts("FUNCTION_POINTER");
 			break;
 	}
+	printBits(sizeof(void*), &block->header);
 #endif
 	
 	char* bar = heap_copyFromActiveToPassive(heap, (void*) foo);
 	
 	CU_ASSERT(strcmp(foo, bar) == 0);
-	
-	void* header = (void*) ((char*) foo) - sizeof(void*);
-	CU_ASSERT(header_getHeaderType(header) == FORWARDING_ADDRESS);
+	CU_ASSERT(header_getHeaderType(block->header) == FORWARDING_ADDRESS);
 	
 #ifdef HEAP_TESTS_DEBUG
 	printf("foo pointer: %p\n", foo);
 	printf("foo: %s\n", foo);
 	printf("bar: %s\n", bar);
 #endif
+	
+	free(heap);
+}
+
+void testMarkAsCopied() {
+	Heap heap = heap_init(sizeof(struct heap_s) + 4 * sizeof(void*));
+	CU_ASSERT(heap != NULL);
+	
+	void* foo = heap_allocate_struct(heap, "*");
+	char* string = "foobar";
+	
+	heap_markAsCopied(foo, &string);
+	
+	HeapBlock block = GET_HEAPBLOCK(foo);
+	void* header = block->header;
+	
+	CU_ASSERT(header_getHeaderType(header) == FORWARDING_ADDRESS);
+	
+	header = header_clearHeaderTypeBits(header);
+	
+	CU_ASSERT(strcmp(*((char**)header), string) == 0);
+	
+	free(heap);
+}
+
+void testHasBeenCopied() {
+	Heap heap = heap_init(sizeof(struct heap_s) + 4 * sizeof(void*));
+	CU_ASSERT(heap != NULL);
+	
+	void* foo = heap_allocate_struct(heap, "*");
+	
+	CU_ASSERT(!heap_hasBeenCopied(foo));
+	
+	heap_copyFromActiveToPassive(heap, foo);
+	
+	CU_ASSERT(heap_hasBeenCopied(foo));
+	
+	free(heap);
+}
+
+void testSwapActiveAndPassive() {
+	Heap heap = heap_init(sizeof(struct heap_s) + 4 * sizeof(void*));
+	CU_ASSERT(heap != NULL);
+	
+	void* active = heap->active;
+	void* active_pointer = heap->active_pointer;
+	
+	void* passive = heap->passive;
+	void* passive_pointer = heap->passive_pointer;
+	
+	heap_swapActiveAndPassive(heap);
+	
+	// Check if they have been swapped.
+	CU_ASSERT(heap->active == passive);
+	CU_ASSERT(heap->passive == active);
+	
+	// Check if active pointer has been set to first empty in the old active area.
+	CU_ASSERT(heap->active_pointer == passive_pointer);
+	
+	// Check if passive pointer has been reset to the start.
+	CU_ASSERT(heap->passive_pointer == heap->passive);
+	
+	free(heap);
+}
+
+void testGetActiveStart() {
+	Heap heap = heap_init(sizeof(struct heap_s) + 4 * sizeof(void*));
+	CU_ASSERT(heap != NULL);
+	
+	CU_ASSERT(heap->active == heap_getActiveStart(heap));
+	
+	free(heap);
+}
+
+void testGetActiveEnd() {
+	Heap heap = heap_init(sizeof(struct heap_s) + 4 * sizeof(void*));
+	CU_ASSERT(heap != NULL);
+	
+	void* active_pointer = heap->active_pointer;
+	
+	CU_ASSERT(active_pointer == heap_getActiveEnd(heap));
+	
+	heap_allocate_raw(heap, 4);
+	
+	CU_ASSERT(active_pointer != heap_getActiveEnd(heap));
 	
 	free(heap);
 }
@@ -263,7 +350,12 @@ int main() {
 		(NULL == CU_add_test(pSuite1, "test of heap_allocatePassive()", testAllocatePassive)) ||
 		(NULL == CU_add_test(pSuite1, "test of heap_allocate()", testAllocate)) ||
 		(NULL == CU_add_test(pSuite1, "test of heap_sizeLeft()", testSizeLeft)) ||
-		(NULL == CU_add_test(pSuite1, "test of heap_copyFromActiveToPassive()", testCopyFromActiveToPassive))
+		(NULL == CU_add_test(pSuite1, "test of heap_copyFromActiveToPassive()", testCopyFromActiveToPassive)) ||
+		(NULL == CU_add_test(pSuite1, "test of heap_markAsCopied()", testMarkAsCopied)) ||
+		(NULL == CU_add_test(pSuite1, "test of heap_hasBeenCopied()", testHasBeenCopied)) ||
+		(NULL == CU_add_test(pSuite1, "test of heap_swapActiveAndPassive()", testSwapActiveAndPassive)) ||
+		(NULL == CU_add_test(pSuite1, "test of heap_getActiveStart()", testGetActiveStart)) ||
+		(NULL == CU_add_test(pSuite1, "test of heap_getActiveEnd()", testGetActiveEnd))
 	) {
 		CU_cleanup_registry();
 		return CU_get_error();
