@@ -1,5 +1,6 @@
 #include "debug.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 void printBits(size_t const size, void const * const ptr) {
 	unsigned char *b = (unsigned char*) ptr;
