@@ -101,12 +101,16 @@ void* heap_allocate(Heap heap, void* header, size_t bytes, void** block_pointer)
 
 void* heap_copyFromActiveToPassive(Heap heap, void* data) {
 
-	//TODO heap_copyFromActiveToPassive needs to be remade.
-	// Should it recurse over the object and copy any object this object is pointing to?
-
 	HeapBlock block = GET_HEAPBLOCK(data);
 
 	void* header = block->header;
+	
+	// Since strings are also stored as separate objects on our heap they need to be copied as well.
+	if(header_getHeaderType(header) == POINTER_TO_STRING) {
+		header = heap_copyFromActiveToPassive(heap, header_clearHeaderTypeBits(header));
+		header = header_setHeaderType(header, POINTER_TO_STRING);
+	}
+	
 	size_t data_size = header_getSize(header);
 	
 #ifdef HEAP_DEBUG
