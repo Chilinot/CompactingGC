@@ -3,6 +3,12 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <assert.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stddef.h>
+#include <ctype.h>
+#include <stdint.h>
 
 
 #ifdef __sparc__
@@ -54,6 +60,9 @@ char* concateFormatString(int value, int size, char* rOrStar, char* headerString
   return headerString;
 }
 */
+
+size_t headerStringToSize(char* layout);
+char* formatStringToHeaderString(char* layout );
 
 int returnDigit(char* layout, int digitPos){
   assert(digitPos >= 0 && digitPos <= strlen(layout));
@@ -216,7 +225,7 @@ int returnsizeof(char character){
 
 #define RETURNALIGNOF(type) offsetof(struct {char a:1; type b;}, b)
 
-size_t returnalignof(char type){
+size_t returnalignof(char character){
   if(character == 'i'){
     return RETURNALIGNOF(int);
   }
@@ -257,7 +266,7 @@ char* convertformatStringWithoutDigitsToHeaderString(char* formatString, char* h
   int previousSize = 0;
   totalPadding = 0;
   int adress = 0;
-  for(int i = 0; formatstring[i] != '\0';){
+  for(int i = 0; formatString[i] != '\0';){
     char currentChar = formatString[i];
     int size = returnsizeof(currentChar);
     
@@ -282,37 +291,6 @@ char* convertformatStringWithoutDigitsToHeaderString(char* formatString, char* h
   while(adress-headerStringToSize(headerString)<=0){
       strcat(headerString, "r");
   }
-
-    /*
-    if(size == 1){
-      for(j = i; j < strlen(formatString); j++){
-	
-        if(){
-	  counter++;
-	}
-	i = j;
-      }
-      
-    }
-    if(size == 4){
-      if(is64or32 == 0){
-	if(formatString[i] == '*'){
-	  strcat(headerString, "*");
-	}
-	else{
-	  strcat(headerString, "r");
-	}
-      }
-      else{}
-    }
-    if(size == 8){
-      if(formatString[i] == '*'){
-	strcat(headerString, "r");
-      }
-      else{}
-    }
-    */
-  }
   return headerString;
 }
 
@@ -331,7 +309,7 @@ char* formatStringToHeaderString(char* layout ){
   char* returnHeaderString = convertformatStringWithoutDigitsToHeaderString(formatString, headerString, padding);
  
   free(formatString);
-  return returnHeaderString
+  return returnHeaderString;
 }
 
 
