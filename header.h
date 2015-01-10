@@ -101,6 +101,15 @@ size_t header_getSize(void* header);
  */
 void header_pointerIterator(void* header, void(*f)(void*));
 
+/**
+ * Takes the given header and returns the same header but with the type bits set
+ * according to the given type.
+ * 
+ * @param header - The header to base the new header on.
+ * @param type - The type to set the header to.
+ * @return Copy of given header but with the given type instead of the original one.
+ */
+void* header_setHeaderType(void* header, header_type type);
 
 #endif
 

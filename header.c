@@ -250,3 +250,37 @@ void header_pointerIterator(void* header, void (*f)(void*)) {
 
 	return;
 }
+
+void* header_setHeaderType(void* header, header_type type) {
+	
+	intptr_t ptr = (intptr_t) header;
+	
+	// First we need to clear the type bits.
+	ptr = header_clearHeaderTypeBits(ptr);
+	
+	// Now we re set them according to the given type.
+	switch(type) {
+		case POINTER_TO_STRING:
+			ptr |= 0b00;
+			break;
+			
+		case FORWARDING_ADDRESS:
+			ptr |= 0b01;
+			break;
+			
+		case FUNCTION_POINTER:
+			ptr |= 0b10;
+			break;
+			
+		case BITVECTOR:
+			ptr |= 0b11;
+			break;
+		
+		default:
+			// ERROR
+			return NULL;
+	}
+	
+	return ptr;
+}
+

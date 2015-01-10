@@ -227,6 +227,28 @@ void testPointerIterator() {
 	heap_del(heap);
 }
 
+void testSetHeaderType() {
+	char* foo = "foobar";
+	void* header = header_forwardingAddress(&foo);
+	header = header_clearHeaderTypeBits(header);
+	
+	header = header_setHeaderType(header, FORWARDING_ADDRESS);
+	CU_ASSERT(header_getHeaderType(header) == FORWARDING_ADDRESS);
+	
+	header = header_setHeaderType(header, POINTER_TO_STRING);
+	CU_ASSERT(header_getHeaderType(header) == POINTER_TO_STRING);
+	
+	header = header_setHeaderType(header, BITVECTOR);
+	CU_ASSERT(header_getHeaderType(header) == BITVECTOR);
+	
+	header = header_setHeaderType(header, FUNCTION_POINTER);
+	CU_ASSERT(header_getHeaderType(header) == FUNCTION_POINTER);
+	
+	// Make sure the actual value in the header has not been touched even after all of these changes to the type.
+	header = header_clearHeaderTypeBits(header);
+	CU_ASSERT(strcmp(foo, *((char**) header)) == 0);
+}
+
 // --- MAIN ---
 
 int main() {
@@ -252,7 +274,8 @@ int main() {
 	    (NULL == CU_add_test(pSuite1, "test of header_fromFormatString()", testFromFormatString)) ||
 	    (NULL == CU_add_test(pSuite1, "test of header_objectSpecificFunction()", testObjectSpecificFunction)) ||
 	    (NULL == CU_add_test(pSuite1, "test of header_getSize()", testGetSize)) ||
-	    (NULL == CU_add_test(pSuite1, "test of header_pointerIterator()", testPointerIterator))
+	    (NULL == CU_add_test(pSuite1, "test of header_pointerIterator()", testPointerIterator)) ||
+	    (NULL == CU_add_test(pSuite1, "test of header_setType()", testSetHeaderType))
 	) {
 		CU_cleanup_registry();
 		return CU_get_error();
