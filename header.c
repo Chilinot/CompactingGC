@@ -117,7 +117,7 @@ void* header_fromFormatString(Heap heap, char* string) {
 		
 		free(string);
 		
-		return (void*) strdup(string_copy);
+		return (void*) string_copy;
 	}
 }
 
