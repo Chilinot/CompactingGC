@@ -1,5 +1,5 @@
 CC=gcc
-FLAGS= -Wall -ggdb -std=c99
+FLAGS= -Wall -ggdb -std=c99 -pedantic
 
 all: string_util
 
