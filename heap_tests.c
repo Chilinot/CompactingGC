@@ -188,7 +188,7 @@ void testSizeLeft() {
 }
 
 void testCopyFromActiveToPassive() {
-	Heap heap = heap_init(sizeof(struct heap_s) + 24 * sizeof(void*));
+	Heap heap = heap_init(sizeof(struct heap_s) + 128 * sizeof(void*));
 	CU_ASSERT(heap != NULL);
 	
 	char* foo = heap_allocate_struct(heap, "cccc");
@@ -234,6 +234,39 @@ void testCopyFromActiveToPassive() {
 	printf("foo: %s\n", foo);
 	printf("bar: %s\n", bar);
 #endif
+	
+	// This should generate a really large layout string consisting of 128 'c' chars.
+	// That string should then be copied to our heap because it cant fit in a bitvector.
+	// Said string should then also be copied over to the passive heap area if this
+	// allocation is copied. So lets test if it is.
+	
+	char* large_struct = heap_allocate_raw(heap, 128);
+	HeapBlock large_block = GET_HEAPBLOCK(large_struct);
+	char* header_string_1 = header_clearHeaderTypeBits(large_block->header);
+	
+	// First make sure the header is actually a string pointer.
+	CU_ASSERT(header_getHeaderType(large_block->header) == POINTER_TO_STRING);
+	
+	// Is the string stored in our heap?
+	CU_ASSERT(header_string_1 > heap_getActiveStart(heap) && header_string_1 < heap_getActiveEnd(heap));
+	
+	// To test that it is copied properly, let's store some data in it.
+	strcpy(large_struct, "Foobar!");
+	
+	// Let's copy the allocation to the passive area:
+	char* copy_large_struct = heap_copyFromActiveToPassive(heap, large_struct);
+	HeapBlock copy_block = GET_HEAPBLOCK(copy_large_struct);
+	char* header_string_2 = header_clearHeaderTypeBits(copy_block->header);
+	
+	// Basic tests
+	CU_ASSERT(header_getHeaderType(large_block->header) == FORWARDING_ADDRESS);
+	CU_ASSERT(header_getHeaderType(copy_block->header) == POINTER_TO_STRING);
+	
+	CU_ASSERT(strcmp(large_struct, copy_large_struct) == 0);
+	
+	// header_string_2 should not be stored on the active area
+	CU_ASSERT(!(header_string_2 > heap_getActiveStart(heap) && header_string_2 < heap_getActiveEnd(heap)));
+	CU_ASSERT(strcmp(header_string_1, header_string_2) == 0);
 	
 	free(heap);
 }
