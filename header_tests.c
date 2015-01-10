@@ -57,7 +57,7 @@ void testForwardingAddress() {
 
 void testFromFormatString() {
 
-	Heap heap = heap_init(sizeof(struct heap_s) + 40 * sizeof(void*));
+	Heap heap = heap_init(sizeof(struct heap_s) + 256 * sizeof(void*));
 
 	// -- TEST SMALL STRING - Always a bitvector.
 
