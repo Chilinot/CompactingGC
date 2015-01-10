@@ -213,6 +213,32 @@ int returnsizeof(char character){
   return 0;
 }
 
+
+#define RETURNALIGNOF(type) offsetof(struct {char a:1; type b;}, b)
+
+size_t returnalignof(char type){
+  if(character == 'i'){
+    return RETURNALIGNOF(int);
+  }
+  if(character == 'c'){
+    return RETURNALIGNOF(char);
+  }
+  if(character == '*'){
+    return RETURNALIGNOF(void*);
+  }
+  if(character == 'd'){
+    return RETURNALIGNOF(double);
+  }
+  if(character == 'l'){
+    return RETURNALIGNOF(long);
+  }
+  if(character == 'f'){
+    return RETURNALIGNOF(float);
+  }
+  return 0;
+}
+
+/*
 int returnalignof(char type){
   if(sizeof(void*) == 4 && SPARC == 0){ // X86 == true
     if(returnsizeof(type) > 4) 
@@ -220,14 +246,16 @@ int returnalignof(char type){
   }
   return returnsizeof(type);
 }
+*/
 
 //concatefeormatstring körs med (value, size, headerstring, rOrStar, isbit6432) i denna ordning
+#define max(a,b) a>b ? a : b
 char* convertformatStringWithoutDigitsToHeaderString(char* formatString, char* headerString, int totalPadding){
   int sizeStar = sizeof(void*);
   int sizeR    = sizeof(int);
   //  int formatStringLength = strlen(formatstring);
   int previousSize = 0;
-  
+  totalPadding = 0;
   int adress = 0;
   for(int i = 0; formatstring[i] != '\0';){
     char currentChar = formatString[i];
@@ -242,6 +270,7 @@ char* convertformatStringWithoutDigitsToHeaderString(char* formatString, char* h
       if(currentChar == '*'){
 	strcat(headerString, "*");
       }
+      totalPadding = max(returnalignof(currentChar), totalPadding);
       i++;
     }
     while(adress-headerStringToSize(headerString)>= sizeR){
@@ -249,8 +278,10 @@ char* convertformatStringWithoutDigitsToHeaderString(char* formatString, char* h
     }
   }
   // padda ut strukten mot paddingen
-  // bad way to do it, need to be fixed. lots of overhead atm
-  strcat(headerString,"rr");
+  adress += ((totalPadding-(adress%totalPadding))%totalPadding);
+  while(adress-headerStringToSize(headerString)<=0){
+      strcat(headerString, "r");
+  }
 
     /*
     if(size == 1){
