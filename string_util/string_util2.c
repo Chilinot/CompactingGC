@@ -288,7 +288,7 @@ char* convertformatStringWithoutDigitsToHeaderString(char* formatString, char* h
   }
   // padda ut strukten mot paddingen
   adress += ((totalPadding-(adress%totalPadding))%totalPadding);
-  while(adress-headerStringToSize(headerString)<=0){
+  while(adress > headerStringToSize(headerString)){
       strcat(headerString, "r");
   }
   return headerString;
