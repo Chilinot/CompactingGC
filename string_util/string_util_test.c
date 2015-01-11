@@ -1,21 +1,25 @@
 #include "CUnit/Basic.h"
-#include "string_util.h"
+#include "string_util2.h"
 #include <stdlib.h>
 #include <ctype.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
+
 #ifdef __sparc__
 int SPARC = 1;
 #else
 int SPARC = 0;
 #endif
+
 int init_suite_2(void){
   return 0;
 }
 int clean_suite_2(void){
   return 0;
 }
+
+/*
 void testconcateFormatString() {
   char* headerString;
   char* star = "*";
@@ -44,7 +48,7 @@ void testconcateFormatString() {
     headerString = calloc(32,4);
     char* test6 = concateFormatString(3, headerString, 4, r, bit32);
     CU_ASSERT(strcmp(test6, "rrr") == 0);
-    /*tests for the SPARC */
+
     if(SPARC == 1){
       char* test7 = concateFormatString(1, headerString, 4, star, bit64);
       CU_ASSERT(strcmp(test7,"*") == 0);
@@ -77,7 +81,9 @@ void testconcateFormatString() {
     CU_ASSERT(strcmp(test5, "rrrr") == 0);
     free(headerString);
   }
+
 }
+*/
 void testreturnDigit() {
   char* layout = "2i3c1f*52l";
   int test1 = returnDigit(layout, 0);
@@ -100,6 +106,29 @@ void testnewPos(){
   int test5 = newPos(layout,5);
   CU_ASSERT(test5 == 5);
 }
+
+void testformatStringWithoutDigits(){
+  char* layout = "22";
+  char* layout1 = "2i22c**l";
+  char* layout2 = "10i10c10l";
+  char* layout3 = "ifcl*";
+
+  char* test = formatStringWithoutDigits(layout);
+  CU_ASSERT(strcmp(test, "cccccccccccccccccccccc") == 0);
+  free(test);
+  char* test1 = formatStringWithoutDigits(layout1);
+
+  CU_ASSERT(strcmp(test1, "iicccccccccccccccccccccc**l") == 0);
+  free(test1);//           iicccccccccccccccccccccc**l
+  char* test2 = formatStringWithoutDigits(layout2);
+  CU_ASSERT(strcmp(test2, "iiiiiiiiiiccccccccccllllllllll") == 0);
+  free(test2);
+  char* test3 = formatStringWithoutDigits(layout3);
+  CU_ASSERT(strcmp(test3, "ifcl*") == 0);
+  free(test3);
+
+}
+
 void testformatStringToHeaderString() {
   char* layout = "2i22c**l";
   char* layout1 = "";
@@ -133,6 +162,7 @@ void testformatStringToHeaderString() {
     char d;
   }beta;
   if(sizeof(void*) == 4 && SPARC == 1){ //tests for the sparc
+    puts("SPARC");
     char* test1 = formatStringToHeaderString(layout);
     CU_ASSERT(strcmp(test1,"rrrrrrrr**r") == 0);
     free(test1);
@@ -140,7 +170,7 @@ void testformatStringToHeaderString() {
     CU_ASSERT(strcmp(test2,"") == 0);
     free(test2);
     char* test3 = formatStringToHeaderString(layout2);
-    CU_ASSERT(strcmp(test3,"rrrrr") == 0);
+    CU_ASSERT(strcmp(test3,"rrrrrr") == 0);
     free(test3);
     char* test4 = formatStringToHeaderString(layout3);
     CU_ASSERT(strcmp(test4, "rrr") == 0);
@@ -156,7 +186,7 @@ void testformatStringToHeaderString() {
     free(test7);
     char* test8 = formatStringToHeaderString(layout7);
     CU_ASSERT(strcmp(test8, "rrr") == 0);
-    free(8);
+    free(test8);
     char* test9 = formatStringToHeaderString(Alfa);
     CU_ASSERT(headerStringToSize(test9) == sizeof(alfa));
     free(test9);
@@ -184,7 +214,7 @@ void testformatStringToHeaderString() {
     char* layout16 = "*cccccci";
     - */
   if(sizeof(void*) == 8){ //tests for linux 64-bit
-    puts("hej/n");
+    puts("LINUX");
     char* test1 = formatStringToHeaderString(layout);
     CU_ASSERT(strcmp(test1,"rrrrrrrr**rr") == 0);
     free(test1);
@@ -243,7 +273,7 @@ void testformatStringToHeaderString() {
     free(test15);
     char* test16 = formatStringToHeaderString(layout13);
     CU_ASSERT(strcmp(test16,"*rrrr") == 0);
-    free(test6);
+    free(test16);
     char* test17 = formatStringToHeaderString(layout14);
     CU_ASSERT(strcmp(test17,"rr*") == 0);
     free(test17);
@@ -254,9 +284,10 @@ void testformatStringToHeaderString() {
     CU_ASSERT(strcmp(test19,"*rrrr") == 0);
     free(test19);
   }
-  if(sizeof(void*) == 4 && SPARC != SPARC){ //test for solars 32-bit
+  if(sizeof(void*) == 4 && SPARC == 0){ //test for solars 32-bit
+    puts("SOLARIS");
     char* test1 = formatStringToHeaderString(layout);
-    CU_ASSERT(strcmp(test1, "rrrrrrrr**rr") == 0);
+    CU_ASSERT(strcmp(test1, "rrrrrrrr**r") == 0);
 	free(test1);
     char* test2 = formatStringToHeaderString(layout1);
     CU_ASSERT(strcmp(test2,"") == 0);
@@ -265,7 +296,7 @@ void testformatStringToHeaderString() {
     CU_ASSERT(strcmp(test3,"rrrrrr") == 0);
 	free(test3);
     char* test4 = formatStringToHeaderString(layout3);
-    CU_ASSERT(strcmp(test4, "rrrr") == 0);
+    CU_ASSERT(strcmp(test4, "rrr") == 0);
 	free(test4);
     char* test5 = formatStringToHeaderString(layout4);
     CU_ASSERT(strcmp(test5, "rrrr") == 0);
@@ -298,9 +329,10 @@ int main(){
       CU_cleanup_registry();
       return CU_get_error();
     }
-  if((NULL == CU_add_test(pSuite2, "testconcateFormatString", testconcateFormatString)) || (NULL == CU_add_test(pSuite2, "testreturnDigit", testreturnDigit))
-     || (NULL == CU_add_test(pSuite2, "testnewPos", testnewPos))
-     ||(NULL == CU_add_test(pSuite2, "testformatStringToHeaderString", testformatStringToHeaderString)))
+  if((NULL == CU_add_test(pSuite2, "testreturnDigit", testreturnDigit))
+      || (NULL == CU_add_test(pSuite2, "testnewPos", testnewPos))
+      ||(NULL == CU_add_test(pSuite2, "testformatStringToHeaderString", testformatStringToHeaderString))
+     ||(NULL == CU_add_test(pSuite2, "testformatStringWithoutDigits", testformatStringWithoutDigits)))
     {
       CU_cleanup_registry();
       return CU_get_error();

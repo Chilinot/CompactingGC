@@ -1,3 +1,4 @@
+#include <assert.h>
 #include "heap.h"
 #include "linkedlist.h"
 #include "header.h"
@@ -22,16 +23,22 @@ void *heapIterator(Heap h, void *obj){
   if(heap_hasBeenCopied(obj) == true){
     return header_clearHeaderTypeBits(GET_HEAPBLOCK(obj));
   }
-  else if(header_getHeaderType(obj) == FUNCTION_POINTER){
-    return ((*((s_trace_f)(heap_sheader_clearHeaderTypeBits(obj))))(h, &heapIterator, obj));
+  else if(header_getHeaderType(GET_HEAPBLOCK(obj)) == FUNCTION_POINTER){
+    return ((*((s_trace_f)(header_clearHeaderTypeBits(GET_HEAPBLOCK(obj)))))(h, &heapIterator, obj));
   }
   //else
   void *newObjPlats = heap_copyFromActiveToPassive(h, obj);
   void g(void *p){
-    *p = heapIterator(h, *p);
+    *(p+newObjPlats) = heapIterator(h, *(p+newObjPlats));
     return;
   };
   header_pointerIterator(GET_HEAPBLOCK(newObjPlats), &g);
+  
+  //flytar headerString till nya heapen
+  if(header_getHeaderType(GET_HEAPBLOCK(newObj)) == POINTER_TO_STRING){
+    GET_HEAPBLOCK(newObjPlats) = heapIterator(h, header_clearHeaderTypeBits(GET_HEAPBLOCK(newObj)));
+    assert(header_getHeaderType(GET_HEAPBLOCK(newObjPlats)) ==  POINTER_TO_STRING);
+  }
   return newObjPlats;
 }
 
