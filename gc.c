@@ -35,15 +35,17 @@ void h_delete_dbg(Heap h, void* dbg_value) {
 		pointer = dbg_value;
 	}
 
-	stackiterator(heapstart, heapend, setPointerTodbg_value);
+	stackIterator(heap_getActiveStart(h)-1, heap_getActiveEnd(h)+1, setPointerTodbg_value);
+
 	heap_del(h);
 }
 
 size_t h_avail(Heap h) {
+
 	/*
 	 * 1. Call function in heap module that returns the available size and return that value.
 	 */
-        
+  return heap_sizeLeft(h);
 }
 
 size_t h_gc(Heap h) {
@@ -76,12 +78,33 @@ void* h_alloc_data(Heap h, size_t bytes) {
 	 * 2. Create a string with the value in bytes amount of 'c' characters.
 	 * 3. Call the function for allocating objects with strings in the heap module with the newly created string.
 	 */
+  if(h_avail(h) < bytes){
+    if(h_gc(h) < bytes){
+      return NULL;
+    }
+  }
+  //else
+  return heap_allocate_raw(h, bytes);
+  
 }
 
 void* h_alloc_struct(Heap h, char* layout) {
 	/*
 	 * Same as h_alloc_data but here we don't need to create a string.
 	 */
+  char* headerString = formatStringToHeaderString(layout);
+  size_t bytes = headerStringToSize(headerString);
+  free(headerString);
+
+  if(h_avail(h) < bytes){
+    if(h_gc(h) < bytes){
+      return NULL;
+    }
+  }
+  //else
+  return heap_allocate_struct(h, layout);
+  
+  
 }
 
 void* h_alloc_union(Heap h, size_t bytes, s_trace_f f) {
@@ -91,6 +114,16 @@ void* h_alloc_union(Heap h, size_t bytes, s_trace_f f) {
 	 *    If there is still not enough space left in the heap after the garbage collection return null.
 	 * 2. Call function in heap module for allocating objects with function pointers.
 	 */
+
+  if(h_avail(h) < bytes){
+    if(h_gc(h) < bytes){
+      return NULL;
+    }
+  }
+  //else
+  return heap_allocate_union(h, bytes, f);
+  
+
 }
 
 
