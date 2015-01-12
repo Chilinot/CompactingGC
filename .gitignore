@@ -29,5 +29,14 @@
 *.hex
 
 # CLion IDEA
-CMakeLists.txt
 .idea/
+
+# KDevelop IDE
+.kdev4/
+*.kdev4
+
+# Unittests
+*unittests
+
+# Git merge conflicts
+*.orig
