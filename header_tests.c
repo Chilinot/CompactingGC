@@ -163,9 +163,9 @@ void testGetSize() {
 
 void testPointerIterator() {
 
-	Heap heap = heap_init(sizeof(struct heap_s) + 40 * sizeof(void*));
+  //Heap heap = heap_init(sizeof(struct heap_s) + 40 * sizeof(void*));
 
-	char* testString = "*ii**i*";
+	char* testString = "*rr**r*";
 
 	void* pointersToBeFind[] = {(void*)(0 * sizeof(void*)  + 0 * sizeof(int)), // Xrr**r*
 	                            (void*)(1 * sizeof(void*)  + 2 * sizeof(int)), // *rrX*r*
@@ -192,7 +192,7 @@ void testPointerIterator() {
 			}
 		}
 
-		//CU_ASSERT(hasFoundAPointer == true);
+		CU_ASSERT(hasFoundAPointer == true);
 	};
 
 
@@ -202,7 +202,7 @@ void testPointerIterator() {
 		pointerHasBeFound[i] = false;
 	}
 
-	void* testHeader = header_fromFormatString(heap, testString); //bitvector
+	void* testHeader = sizeof(void*) == 4 ? 0b11000011110011010000000000000011 : 0b1100001111001101000000000000000000000000000000000000000000000011;
 	header_pointerIterator(testHeader, &testfun);
 
 	//Checks that all pointers have been found.
@@ -214,17 +214,22 @@ void testPointerIterator() {
 	for(int i = 0; i < pointersToBeFind_Length; i++) {
 		pointerHasBeFound[i] = false;
 	}
-
-	testHeader = strdup(testString); //headerstring
+	
+        char* headerstring = calloc(sizeof(char), 200);
+        while(((intptr_t)(headerstring)) % 4 != 0){
+	  headerstring = headerstring+1;
+	}
+	strcpy(headerstring,testString);
+	//testHeader = strdup(testString); //headerstring
 	header_pointerIterator(testHeader, &testfun);
-	free(testHeader);
+	//free(testHeader);
 
 	//Checks that all pointers have been found.
 	for(int i = 0; i < pointersToBeFind_Length; i++) {
 		CU_ASSERT(pointerHasBeFound[i] == true); //check that
 	}
 
-	heap_del(heap);
+	//heap_del(heap);
 }
 
 void testSetHeaderType() {
