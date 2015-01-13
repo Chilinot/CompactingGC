@@ -1,0 +1,280 @@
+\hypertarget{heap_8h}{}\section{heap.\+h File Reference}
+\label{heap_8h}\index{heap.\+h@{heap.\+h}}
+{\ttfamily \#include $<$stdlib.\+h$>$}\\*
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{heap_8h_acff7c46ae1f4265ad565cc6ccf18dacb}{}typedef struct \hyperlink{structheap__s}{heap\+\_\+s} $\ast$ {\bfseries Heap}\label{heap_8h_acff7c46ae1f4265ad565cc6ccf18dacb}
+
+\item 
+\hypertarget{heap_8h_a06b2359261c4a4b38a68770cac5af7bb}{}typedef void $\ast$($\ast$ {\bfseries trace\+\_\+f}) (\hyperlink{gc_8h_acff7c46ae1f4265ad565cc6ccf18dacb}{Heap} h, void $\ast$obj)\label{heap_8h_a06b2359261c4a4b38a68770cac5af7bb}
+
+\item 
+\hypertarget{heap_8h_aa76b6071b446d0df3c9902129945e6f0}{}typedef void $\ast$($\ast$ {\bfseries s\+\_\+trace\+\_\+f}) (\hyperlink{gc_8h_acff7c46ae1f4265ad565cc6ccf18dacb}{Heap} h, \hyperlink{header_8h_a06b2359261c4a4b38a68770cac5af7bb}{trace\+\_\+f} f, void $\ast$obj)\label{heap_8h_aa76b6071b446d0df3c9902129945e6f0}
+
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{gc_8h_acff7c46ae1f4265ad565cc6ccf18dacb}{Heap} \hyperlink{heap_8h_a4a711c7cc419b39ed96fd862dc25e368}{heap\+\_\+init} (size\+\_\+t bytes)
+\item 
+void \hyperlink{heap_8h_a3930baf840c0c170825b39af52aaf4ee}{heap\+\_\+del} (\hyperlink{gc_8h_acff7c46ae1f4265ad565cc6ccf18dacb}{Heap} heap)
+\item 
+void $\ast$ \hyperlink{heap_8h_a5d32621fcba22304640e6821be9db301}{heap\+\_\+allocate\+\_\+struct} (\hyperlink{gc_8h_acff7c46ae1f4265ad565cc6ccf18dacb}{Heap} heap, char $\ast$structure)
+\item 
+void $\ast$ \hyperlink{heap_8h_adf69500696eae7449f319fab9758eeee}{heap\+\_\+allocate\+\_\+raw} (\hyperlink{gc_8h_acff7c46ae1f4265ad565cc6ccf18dacb}{Heap} heap, size\+\_\+t bytes)
+\item 
+void $\ast$ \hyperlink{heap_8h_ab1e0f93e15f592088ae329a87df50aeb}{heap\+\_\+allocate\+\_\+union} (\hyperlink{gc_8h_acff7c46ae1f4265ad565cc6ccf18dacb}{Heap} heap, size\+\_\+t bytes, \hyperlink{header_8h_aa76b6071b446d0df3c9902129945e6f0}{s\+\_\+trace\+\_\+f} f)
+\item 
+void $\ast$ \hyperlink{heap_8h_a5470f70f1bff0a67ce36fb582e4b541a}{heap\+\_\+allocate\+Active} (\hyperlink{gc_8h_acff7c46ae1f4265ad565cc6ccf18dacb}{Heap} heap, void $\ast$header, size\+\_\+t bytes)
+\item 
+void $\ast$ \hyperlink{heap_8h_ad5cff6a14f152ad2ce643edee896bda8}{heap\+\_\+copy\+From\+Active\+To\+Passive} (\hyperlink{gc_8h_acff7c46ae1f4265ad565cc6ccf18dacb}{Heap} heap, void $\ast$data)
+\item 
+void \hyperlink{heap_8h_ab9d1bf5dc541690c2ee908d0c48029f9}{heap\+\_\+mark\+As\+Copied} (void $\ast$data, void $\ast$forwarding\+\_\+address)
+\item 
+int \hyperlink{heap_8h_a14c0a5db851a453aeffa9cd6c2563db1}{heap\+\_\+has\+Been\+Copied} (void $\ast$data)
+\item 
+void \hyperlink{heap_8h_a25fb135cb191514eee85ba5fedbe474e}{heap\+\_\+swap\+Active\+And\+Passive} (\hyperlink{gc_8h_acff7c46ae1f4265ad565cc6ccf18dacb}{Heap} heap)
+\item 
+size\+\_\+t \hyperlink{heap_8h_ada55f98b95be560ab0cc27379cfef8ed}{heap\+\_\+size\+Left} (\hyperlink{gc_8h_acff7c46ae1f4265ad565cc6ccf18dacb}{Heap} heap)
+\item 
+void $\ast$ \hyperlink{heap_8h_a9f52311164f476308d9fe54c77a9b00b}{heap\+\_\+get\+Active\+Start} (\hyperlink{gc_8h_acff7c46ae1f4265ad565cc6ccf18dacb}{Heap} heap)
+\item 
+void $\ast$ \hyperlink{heap_8h_a07320df6a018af42cc7e4c255981d2c3}{heap\+\_\+get\+Active\+End} (\hyperlink{gc_8h_acff7c46ae1f4265ad565cc6ccf18dacb}{Heap} heap)
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\hypertarget{heap_8h_adf69500696eae7449f319fab9758eeee}{}\index{heap.\+h@{heap.\+h}!heap\+\_\+allocate\+\_\+raw@{heap\+\_\+allocate\+\_\+raw}}
+\index{heap\+\_\+allocate\+\_\+raw@{heap\+\_\+allocate\+\_\+raw}!heap.\+h@{heap.\+h}}
+\subsubsection[{heap\+\_\+allocate\+\_\+raw}]{\setlength{\rightskip}{0pt plus 5cm}void$\ast$ heap\+\_\+allocate\+\_\+raw (
+\begin{DoxyParamCaption}
+\item[{{\bf Heap}}]{heap, }
+\item[{size\+\_\+t}]{bytes}
+\end{DoxyParamCaption}
+)}\label{heap_8h_adf69500696eae7449f319fab9758eeee}
+Allocates a new object on the heap with the given amount of bytes in size. This object is not allowed to have pointers back into the heap.
+
+
+\begin{DoxyParams}{Parameters}
+{\em heap} & -\/ The heap to allocate the object on. \\
+\hline
+{\em bytes} & -\/ The amount of bytes to allocate. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Pointer to the newly allocated memory space. 
+\end{DoxyReturn}
+\hypertarget{heap_8h_a5d32621fcba22304640e6821be9db301}{}\index{heap.\+h@{heap.\+h}!heap\+\_\+allocate\+\_\+struct@{heap\+\_\+allocate\+\_\+struct}}
+\index{heap\+\_\+allocate\+\_\+struct@{heap\+\_\+allocate\+\_\+struct}!heap.\+h@{heap.\+h}}
+\subsubsection[{heap\+\_\+allocate\+\_\+struct}]{\setlength{\rightskip}{0pt plus 5cm}void$\ast$ heap\+\_\+allocate\+\_\+struct (
+\begin{DoxyParamCaption}
+\item[{{\bf Heap}}]{heap, }
+\item[{char $\ast$}]{structure}
+\end{DoxyParamCaption}
+)}\label{heap_8h_a5d32621fcba22304640e6821be9db301}
+Allocates a new object on the heap with the given format string.
+
+Valid characters are the same as for h\+\_\+alloc\+\_\+struct in \hyperlink{gc_8h}{gc.\+h}.
+
+
+\begin{DoxyParams}{Parameters}
+{\em heap} & -\/ The heap to allocate the object on. \\
+\hline
+{\em structure} & -\/ The format string. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Pointer to the newly allocated memory space. 
+\end{DoxyReturn}
+\hypertarget{heap_8h_ab1e0f93e15f592088ae329a87df50aeb}{}\index{heap.\+h@{heap.\+h}!heap\+\_\+allocate\+\_\+union@{heap\+\_\+allocate\+\_\+union}}
+\index{heap\+\_\+allocate\+\_\+union@{heap\+\_\+allocate\+\_\+union}!heap.\+h@{heap.\+h}}
+\subsubsection[{heap\+\_\+allocate\+\_\+union}]{\setlength{\rightskip}{0pt plus 5cm}void$\ast$ heap\+\_\+allocate\+\_\+union (
+\begin{DoxyParamCaption}
+\item[{{\bf Heap}}]{heap, }
+\item[{size\+\_\+t}]{bytes, }
+\item[{{\bf s\+\_\+trace\+\_\+f}}]{f}
+\end{DoxyParamCaption}
+)}\label{heap_8h_ab1e0f93e15f592088ae329a87df50aeb}
+Allocate a new object on a heap with a given size, and object-\/specific trace function.
+
+
+\begin{DoxyParams}{Parameters}
+{\em heap} & -\/ The heap to allocate the object on. \\
+\hline
+{\em bytes} & -\/ The amount of bytes to allocate. \\
+\hline
+{\em f} & -\/ The object specific function. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Pointer to the newly allocated memory space. 
+\end{DoxyReturn}
+\hypertarget{heap_8h_a5470f70f1bff0a67ce36fb582e4b541a}{}\index{heap.\+h@{heap.\+h}!heap\+\_\+allocate\+Active@{heap\+\_\+allocate\+Active}}
+\index{heap\+\_\+allocate\+Active@{heap\+\_\+allocate\+Active}!heap.\+h@{heap.\+h}}
+\subsubsection[{heap\+\_\+allocate\+Active}]{\setlength{\rightskip}{0pt plus 5cm}void$\ast$ heap\+\_\+allocate\+Active (
+\begin{DoxyParamCaption}
+\item[{{\bf Heap}}]{heap, }
+\item[{void $\ast$}]{header, }
+\item[{size\+\_\+t}]{bytes}
+\end{DoxyParamCaption}
+)}\label{heap_8h_a5470f70f1bff0a67ce36fb582e4b541a}
+Allocates the given amount of bytes on the given heap.
+
+
+\begin{DoxyParams}{Parameters}
+{\em heap} & -\/ The heap to allocate data on. \\
+\hline
+{\em header} & -\/ The header that describes what is to be stored on the heap. \\
+\hline
+{\em bytes} & -\/ The amount of bytes to allocate. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Pointer to the allocated memory space. 
+\end{DoxyReturn}
+\hypertarget{heap_8h_ad5cff6a14f152ad2ce643edee896bda8}{}\index{heap.\+h@{heap.\+h}!heap\+\_\+copy\+From\+Active\+To\+Passive@{heap\+\_\+copy\+From\+Active\+To\+Passive}}
+\index{heap\+\_\+copy\+From\+Active\+To\+Passive@{heap\+\_\+copy\+From\+Active\+To\+Passive}!heap.\+h@{heap.\+h}}
+\subsubsection[{heap\+\_\+copy\+From\+Active\+To\+Passive}]{\setlength{\rightskip}{0pt plus 5cm}void$\ast$ heap\+\_\+copy\+From\+Active\+To\+Passive (
+\begin{DoxyParamCaption}
+\item[{{\bf Heap}}]{heap, }
+\item[{void $\ast$}]{data}
+\end{DoxyParamCaption}
+)}\label{heap_8h_ad5cff6a14f152ad2ce643edee896bda8}
+Copies the data from the pointer pointing to a part in the active heap to the first empty slot in the passive part. Will also mark the header of the object in the active part as copied to the passive part. N\+O\+T\+E\+: This does not alter the data in any way, it is a clean copy of the data.
+
+
+\begin{DoxyParams}{Parameters}
+{\em heap} & -\/ The heap to work on. \\
+\hline
+{\em data} & -\/ Pointer pointing to the data to copy over. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Returns pointer to the copied data. This will still be a legal pointer after a call to heap\+\_\+swap\+Active\+And\+Passive function. 
+\end{DoxyReturn}
+\hypertarget{heap_8h_a3930baf840c0c170825b39af52aaf4ee}{}\index{heap.\+h@{heap.\+h}!heap\+\_\+del@{heap\+\_\+del}}
+\index{heap\+\_\+del@{heap\+\_\+del}!heap.\+h@{heap.\+h}}
+\subsubsection[{heap\+\_\+del}]{\setlength{\rightskip}{0pt plus 5cm}void heap\+\_\+del (
+\begin{DoxyParamCaption}
+\item[{{\bf Heap}}]{heap}
+\end{DoxyParamCaption}
+)}\label{heap_8h_a3930baf840c0c170825b39af52aaf4ee}
+De-\/allocates the given heap. \hypertarget{heap_8h_a07320df6a018af42cc7e4c255981d2c3}{}\index{heap.\+h@{heap.\+h}!heap\+\_\+get\+Active\+End@{heap\+\_\+get\+Active\+End}}
+\index{heap\+\_\+get\+Active\+End@{heap\+\_\+get\+Active\+End}!heap.\+h@{heap.\+h}}
+\subsubsection[{heap\+\_\+get\+Active\+End}]{\setlength{\rightskip}{0pt plus 5cm}void$\ast$ heap\+\_\+get\+Active\+End (
+\begin{DoxyParamCaption}
+\item[{{\bf Heap}}]{heap}
+\end{DoxyParamCaption}
+)}\label{heap_8h_a07320df6a018af42cc7e4c255981d2c3}
+Returns pointer to the end of the currently allocated memory in the active heap block of the given heap.
+
+
+\begin{DoxyParams}{Parameters}
+{\em heap} & -\/ The heap to get the end of. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Pointer to the end of the active heap block. 
+\end{DoxyReturn}
+\hypertarget{heap_8h_a9f52311164f476308d9fe54c77a9b00b}{}\index{heap.\+h@{heap.\+h}!heap\+\_\+get\+Active\+Start@{heap\+\_\+get\+Active\+Start}}
+\index{heap\+\_\+get\+Active\+Start@{heap\+\_\+get\+Active\+Start}!heap.\+h@{heap.\+h}}
+\subsubsection[{heap\+\_\+get\+Active\+Start}]{\setlength{\rightskip}{0pt plus 5cm}void$\ast$ heap\+\_\+get\+Active\+Start (
+\begin{DoxyParamCaption}
+\item[{{\bf Heap}}]{heap}
+\end{DoxyParamCaption}
+)}\label{heap_8h_a9f52311164f476308d9fe54c77a9b00b}
+Returns pointer to the start of the active block in the given heap.
+
+
+\begin{DoxyParams}{Parameters}
+{\em heap} & -\/ The heap to get the start of. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Pointer to the start of the active heap block. 
+\end{DoxyReturn}
+\hypertarget{heap_8h_a14c0a5db851a453aeffa9cd6c2563db1}{}\index{heap.\+h@{heap.\+h}!heap\+\_\+has\+Been\+Copied@{heap\+\_\+has\+Been\+Copied}}
+\index{heap\+\_\+has\+Been\+Copied@{heap\+\_\+has\+Been\+Copied}!heap.\+h@{heap.\+h}}
+\subsubsection[{heap\+\_\+has\+Been\+Copied}]{\setlength{\rightskip}{0pt plus 5cm}int heap\+\_\+has\+Been\+Copied (
+\begin{DoxyParamCaption}
+\item[{void $\ast$}]{data}
+\end{DoxyParamCaption}
+)}\label{heap_8h_a14c0a5db851a453aeffa9cd6c2563db1}
+Checks if the object pointed to by the data parameter is marked as copied to the passive part.
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & -\/ Pointer to the object on the active part to check. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+1 if the object has been copied, 0 if not. 
+\end{DoxyReturn}
+\hypertarget{heap_8h_a4a711c7cc419b39ed96fd862dc25e368}{}\index{heap.\+h@{heap.\+h}!heap\+\_\+init@{heap\+\_\+init}}
+\index{heap\+\_\+init@{heap\+\_\+init}!heap.\+h@{heap.\+h}}
+\subsubsection[{heap\+\_\+init}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Heap} heap\+\_\+init (
+\begin{DoxyParamCaption}
+\item[{size\+\_\+t}]{bytes}
+\end{DoxyParamCaption}
+)}\label{heap_8h_a4a711c7cc419b39ed96fd862dc25e368}
+Creates a heap with the given size in bytes. Only half of the given amount will be usable at all times due to it being split into an active and a passive area.
+
+Returns null if the given size does not have space enough to fit metadata required by the heap.
+
+
+\begin{DoxyParams}{Parameters}
+{\em bytes} & -\/ The heap size in amount of bytes. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Pointer to the new heap, or null if the given space is too small. 
+\end{DoxyReturn}
+\hypertarget{heap_8h_ab9d1bf5dc541690c2ee908d0c48029f9}{}\index{heap.\+h@{heap.\+h}!heap\+\_\+mark\+As\+Copied@{heap\+\_\+mark\+As\+Copied}}
+\index{heap\+\_\+mark\+As\+Copied@{heap\+\_\+mark\+As\+Copied}!heap.\+h@{heap.\+h}}
+\subsubsection[{heap\+\_\+mark\+As\+Copied}]{\setlength{\rightskip}{0pt plus 5cm}void heap\+\_\+mark\+As\+Copied (
+\begin{DoxyParamCaption}
+\item[{void $\ast$}]{data, }
+\item[{void $\ast$}]{forwarding\+\_\+address}
+\end{DoxyParamCaption}
+)}\label{heap_8h_ab9d1bf5dc541690c2ee908d0c48029f9}
+Replaces the header of the object pointed to by data parameter with the given forwarding address and marks it as copied.
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & -\/ The object to mark. \\
+\hline
+{\em forwarding\+\_\+address} & -\/ The address the new header should point to. \\
+\hline
+\end{DoxyParams}
+\hypertarget{heap_8h_ada55f98b95be560ab0cc27379cfef8ed}{}\index{heap.\+h@{heap.\+h}!heap\+\_\+size\+Left@{heap\+\_\+size\+Left}}
+\index{heap\+\_\+size\+Left@{heap\+\_\+size\+Left}!heap.\+h@{heap.\+h}}
+\subsubsection[{heap\+\_\+size\+Left}]{\setlength{\rightskip}{0pt plus 5cm}size\+\_\+t heap\+\_\+size\+Left (
+\begin{DoxyParamCaption}
+\item[{{\bf Heap}}]{heap}
+\end{DoxyParamCaption}
+)}\label{heap_8h_ada55f98b95be560ab0cc27379cfef8ed}
+Returns the amount of bytes left that can be allocated.
+
+
+\begin{DoxyParams}{Parameters}
+{\em heap} & -\/ The heap to check free space. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The amount of bytes left that can be allocated for usage. 
+\end{DoxyReturn}
+\hypertarget{heap_8h_a25fb135cb191514eee85ba5fedbe474e}{}\index{heap.\+h@{heap.\+h}!heap\+\_\+swap\+Active\+And\+Passive@{heap\+\_\+swap\+Active\+And\+Passive}}
+\index{heap\+\_\+swap\+Active\+And\+Passive@{heap\+\_\+swap\+Active\+And\+Passive}!heap.\+h@{heap.\+h}}
+\subsubsection[{heap\+\_\+swap\+Active\+And\+Passive}]{\setlength{\rightskip}{0pt plus 5cm}void heap\+\_\+swap\+Active\+And\+Passive (
+\begin{DoxyParamCaption}
+\item[{{\bf Heap}}]{heap}
+\end{DoxyParamCaption}
+)}\label{heap_8h_a25fb135cb191514eee85ba5fedbe474e}
+Marks the active part of the heap as the passive and vice versa.
+
+
+\begin{DoxyParams}{Parameters}
+{\em heap} & -\/ The heap to work on. \\
+\hline
+\end{DoxyParams}
