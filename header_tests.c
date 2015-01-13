@@ -7,7 +7,7 @@
 #include "heap_rep.h"
 
 // Comment this row to disable debug
-#define HEADER_TESTS_DEBUG
+// #define HEADER_TESTS_DEBUG
 
 #ifdef HEADER_TESTS_DEBUG
 #include "debug.h"
@@ -159,13 +159,13 @@ void testGetSize() {
 	CU_ASSERT(header_size == size);
 
 	// 47 chars, should always return a string pointer not a vector.
-	header = header_fromFormatString(heap, "iiiiiiiiiiiii**ii*ii***iii**ii**ii*i*i**iii*iii");
-	size = (sizeof(void*) * 15) + (sizeof(int) * 32);
-	
+	header = header_fromFormatString(heap, "iiiiiiiiiiiiii**ii*ii***iii**ii**ii*ii*ii**iiii*iiii");
+	size = (sizeof(void*) * 15) + (sizeof(int) * 38);
+
 #ifdef HEADER_TESTS_DEBUG
 	puts("");
 	puts((char*)header);
-	puts("iiiiiiiiiiiii**ii*ii***iii**ii**ii*i*i**iii*iii");
+	puts("iiiiiiiiiiiiii**ii*ii***iiii**ii**ii*ii*ii**iiii*iiii");
 #endif
 
 	CU_ASSERT(size == header_getSize(header));
@@ -176,7 +176,7 @@ void testGetSize() {
 
 void testPointerIterator() {
 
-  //Heap heap = heap_init(sizeof(struct heap_s) + 40 * sizeof(void*));
+	//Heap heap = heap_init(sizeof(struct heap_s) + 40 * sizeof(void*));
 
 	char* testString = "*rr**r*";
 
@@ -227,12 +227,14 @@ void testPointerIterator() {
 	for(int i = 0; i < pointersToBeFind_Length; i++) {
 		pointerHasBeFound[i] = false;
 	}
-	
-        char* headerstring = calloc(sizeof(char), 200);
-        while(((intptr_t)(headerstring)) % 4 != 0){
-	  headerstring = headerstring+1;
+
+	char* headerstring = calloc(sizeof(char), 200);
+
+	while(((intptr_t)(headerstring)) % 4 != 0) {
+		headerstring = headerstring + 1;
 	}
-	strcpy(headerstring,testString);
+
+	strcpy(headerstring, testString);
 	//testHeader = strdup(testString); //headerstring
 	header_pointerIterator(testHeader, &testfun);
 	//free(testHeader);
@@ -249,19 +251,19 @@ void testSetHeaderType() {
 	char* foo = "foobar";
 	void* header = header_forwardingAddress(&foo);
 	header = header_clearHeaderTypeBits(header);
-	
+
 	header = header_setHeaderType(header, FORWARDING_ADDRESS);
 	CU_ASSERT(header_getHeaderType(header) == FORWARDING_ADDRESS);
-	
+
 	header = header_setHeaderType(header, POINTER_TO_STRING);
 	CU_ASSERT(header_getHeaderType(header) == POINTER_TO_STRING);
-	
+
 	header = header_setHeaderType(header, BITVECTOR);
 	CU_ASSERT(header_getHeaderType(header) == BITVECTOR);
-	
+
 	header = header_setHeaderType(header, FUNCTION_POINTER);
 	CU_ASSERT(header_getHeaderType(header) == FUNCTION_POINTER);
-	
+
 	// Make sure the actual value in the header has not been touched even after all of these changes to the type.
 	header = header_clearHeaderTypeBits(header);
 	CU_ASSERT(strcmp(foo, *((char**) header)) == 0);

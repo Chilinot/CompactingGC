@@ -5,16 +5,16 @@
 #define GET_DATABLOCK(p) ((void*) (((char*) p) + sizeof(void*)))
 
 typedef struct heap_block {
-    void *header; // Contains all metadata.
-    // Directly after the header pointer is the data.
-} *HeapBlock;
+	void* header; // Contains all metadata.
+	// Directly after the header pointer is the data.
+}* HeapBlock;
 
 struct heap_s {
 	size_t heapsize; // This is total heap size without the size of this structure. Basically active + passive.
-	void *active_pointer;  // Like the stack pointer, but for the heap.
-	void *passive_pointer; // Like the above.
-	void *active;   // Points to the active part of the heap.
-	void *passive;  // Same as above but for the passive.
+	void* active_pointer;  // Like the stack pointer, but for the heap.
+	void* passive_pointer; // Like the above.
+	void* active;   // Points to the active part of the heap.
+	void* passive;  // Same as above but for the passive.
 };
 
 /**
@@ -30,7 +30,7 @@ void* heap_allocatePassive(struct heap_s* heap, void* header, size_t bytes);
 
 /**
  * Allocates memory based on the given pointers.
- * 
+ *
  * @param heap - The heap to allocate memory in.
  * @param header - The header to use for the allocated memory.
  * @param bytes - The amount of bytes to allocate.

@@ -38,7 +38,7 @@ typedef enum {
  * The least significant bits of the returned pointer shows if it is a bitvector or pointer.
  * If the two last bits (little-endian) are equal to 00 then it is a pointer.
  * If they are equal to 11 then it is a bitvector.
- * 
+ *
  * Allowed characters in the string is:
  *  r - To represent sizeof(int)
  *  * - To represent sizeof(void*)
@@ -104,7 +104,7 @@ void header_pointerIterator(void* header, void(*f)(void*));
 /**
  * Takes the given header and returns the same header but with the type bits set
  * according to the given type.
- * 
+ *
  * @param header - The header to base the new header on.
  * @param type - The type to set the header to.
  * @return Copy of given header but with the given type instead of the original one.

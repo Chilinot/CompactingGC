@@ -13,7 +13,7 @@
 #endif
 
 Heap heap_init(size_t bytes) {
-	
+
 	size_t struct_size = sizeof(struct heap_s);
 
 	if(bytes <= struct_size) {
@@ -36,8 +36,8 @@ Heap heap_init(size_t bytes) {
 
 	heap->heapsize = allocateable;
 
-	heap->active = (void*) (((char*) heap) + struct_size);
-	heap->passive = (void*) (((char*) heap->active) + blocksize);
+	heap->active = (void*)(((char*) heap) + struct_size);
+	heap->passive = (void*)(((char*) heap->active) + blocksize);
 
 	heap->active_pointer = heap->active;
 	heap->passive_pointer = heap->passive;
@@ -62,12 +62,12 @@ void* heap_allocate_raw(Heap heap, size_t bytes) {
 
 void* heap_allocate_struct(Heap heap, char* structure) {
 	void* header = header_fromFormatString(heap, structure);
-	
+
 #ifdef HEAP_DEBUG
 	puts("heap_allocate_struct() header binary:");
 	printBits(sizeof(void*), &header);
 #endif
-	
+
 	size_t bytes = header_getSize(header);
 	return heap_allocateActive(heap, header, bytes);
 }
@@ -87,15 +87,15 @@ void* heap_allocatePassive(Heap heap, void* header, size_t bytes) {
 
 void* heap_allocate(Heap heap, void* header, size_t bytes, void** block_pointer) {
 	HeapBlock block = *block_pointer;
-	
+
 	// Make sure the bytes are properly aligned.
 	// This will not work in all cases, but for this project it should work fine.
 	bytes = bytes + (bytes % sizeof(void*));
-	
+
 	block->header = header;
-	
+
 	*block_pointer = ((char*) *block_pointer) + sizeof(void*) + bytes;
-	
+
 	return (((char*) &block->header) + sizeof(void*));
 }
 
@@ -104,18 +104,18 @@ void* heap_copyFromActiveToPassive(Heap heap, void* data) {
 	HeapBlock block = GET_HEAPBLOCK(data);
 
 	void* header = block->header;
-	
+
 	// Since strings are also stored as separate objects on our heap they need to be copied as well.
 	if(header_getHeaderType(header) == POINTER_TO_STRING) {
 		header = heap_copyFromActiveToPassive(heap, header_clearHeaderTypeBits(header));
 		header = header_setHeaderType(header, POINTER_TO_STRING);
 	}
-	
+
 	size_t data_size = header_getSize(header);
-	
+
 #ifdef HEAP_DEBUG
 	printf("\ndata_size: %zu\n", data_size);
-	
+
 	puts("Header binary #1:");
 	printBits(sizeof(void*), &header);
 	puts("");
@@ -123,7 +123,7 @@ void* heap_copyFromActiveToPassive(Heap heap, void* data) {
 
 	char* active_data = data;
 	char* passive_data = heap_allocatePassive(heap, header, data_size);
-	
+
 #ifdef HEAP_DEBUG
 	puts("Passive data binary #1:");
 	printBits(sizeof(void*), &passive_data);
@@ -138,7 +138,7 @@ void* heap_copyFromActiveToPassive(Heap heap, void* data) {
 #endif
 		passive_data[i] = active_data[i];
 	}
-	
+
 #ifdef HEAP_DEBUG
 	puts("Passive data binary #2:");
 	printBits(sizeof(void*), &passive_data);
@@ -146,7 +146,7 @@ void* heap_copyFromActiveToPassive(Heap heap, void* data) {
 #endif
 
 	heap_markAsCopied(data, passive_data);
-	
+
 #ifdef HEAP_DEBUG
 	puts("Header binary #2 ought to be forwarding address:");
 	printBits(sizeof(void*), &block->header);
@@ -158,16 +158,16 @@ void* heap_copyFromActiveToPassive(Heap heap, void* data) {
 
 void heap_markAsCopied(void* data, void* forwarding_address) {
 	HeapBlock block = GET_HEAPBLOCK(data);
-	
+
 #ifdef HEAP_DEBUG
 	puts("header and forwardinng address:");
 	printBits(sizeof(void*), &block->header);
 	printBits(sizeof(void*), &forwarding_address);
 #endif
-	
+
 	void* new_header = header_forwardingAddress(forwarding_address);
 	block->header = new_header;
-	
+
 #ifdef HEAP_DEBUG
 	puts("header");
 	printBits(sizeof(void*), &new_header);
@@ -194,12 +194,12 @@ void heap_swapActiveAndPassive(Heap heap) {
 
 size_t heap_sizeLeft(Heap heap) {
 	size_t blocksize = heap->heapsize / 2;
-	
+
 	char* active_start = heap->active;
 	char* active_pointer = heap->active_pointer;
-	
+
 	size_t bytes_used = active_pointer - active_start;
-	
+
 	return blocksize - bytes_used;
 }
 

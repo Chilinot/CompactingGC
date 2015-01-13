@@ -72,9 +72,9 @@ void* header_forwardingAddress(void* pointer) {
 void* header_fromFormatString(Heap heap, char* string) {
 	// True if the string will fit inside a void*-4 else false.
 	// It subtracts four to make sure the bitvector terminator and the header type will fit.
-	
+
 	string = formatStringToHeaderString(string);
-	
+
 	bool useVector = strlen(string) <= (TOKENS_PER_POINTER - 4);
 
 	if(useVector) {
@@ -105,7 +105,7 @@ void* header_fromFormatString(Heap heap, char* string) {
 
 		// Mark the two type bits as a bitvector.
 		header |= 0b11;
-		
+
 		free(string);
 
 		return (void*) header;
@@ -114,9 +114,9 @@ void* header_fromFormatString(Heap heap, char* string) {
 		// Return a copy of the string allocated on the real heap.
 		char* string_copy = heap_allocate_raw(heap, strlen(string) + 1);
 		strcpy(string_copy, string);
-		
+
 		free(string);
-		
+
 		return (void*) string_copy;
 	}
 }
@@ -185,8 +185,8 @@ size_t header_getSize(void* header) {
 
 /**
  * f anropas med alla pekare som headerns objekt har,
- * där pekare som functionen anropas med beskriver hur mycket ifrån objektets adress pekare verkligen är,
- * Objektet är den data som header beskriver och hör till.
+ * dï¿½r pekare som functionen anropas med beskriver hur mycket ifrï¿½n objektets adress pekare verkligen ï¿½r,
+ * Objektet ï¿½r den data som header beskriver och hï¿½r till.
  *
  *
  * @param header en pekare
@@ -252,35 +252,35 @@ void header_pointerIterator(void* header, void (*f)(void*)) {
 }
 
 void* header_setHeaderType(void* header, header_type type) {
-	
+
 	intptr_t ptr = (intptr_t) header;
-	
+
 	// First we need to clear the type bits.
 	ptr = header_clearHeaderTypeBits(ptr);
-	
+
 	// Now we re set them according to the given type.
 	switch(type) {
-		case POINTER_TO_STRING:
-			ptr |= 0b00;
-			break;
-			
-		case FORWARDING_ADDRESS:
-			ptr |= 0b01;
-			break;
-			
-		case FUNCTION_POINTER:
-			ptr |= 0b10;
-			break;
-			
-		case BITVECTOR:
-			ptr |= 0b11;
-			break;
-		
-		default:
-			// ERROR
-			return NULL;
+	case POINTER_TO_STRING:
+		ptr |= 0b00;
+		break;
+
+	case FORWARDING_ADDRESS:
+		ptr |= 0b01;
+		break;
+
+	case FUNCTION_POINTER:
+		ptr |= 0b10;
+		break;
+
+	case BITVECTOR:
+		ptr |= 0b11;
+		break;
+
+	default:
+		// ERROR
+		return NULL;
 	}
-	
+
 	return ptr;
 }
 

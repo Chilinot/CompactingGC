@@ -6,13 +6,13 @@
 // This structure is defined in heap_rep.c
 typedef struct heap_s* Heap;
 
-// The signature of the trace function 
-typedef void *(*trace_f)(Heap h, void *obj);
+// The signature of the trace function
+typedef void* (*trace_f)(Heap h, void* obj);
 
 // The signature of object-specific trace functions. It will be
 // called for its specific objects, and be given a generic trace
 // function f to be called on each pointer inside obj.
-typedef void *(*s_trace_f)(Heap h, trace_f f, void *obj);
+typedef void* (*s_trace_f)(Heap h, trace_f f, void* obj);
 
 /**
  * Creates a heap with the given size in bytes.
@@ -34,9 +34,9 @@ void heap_del(Heap heap);
 
 /**
  * Allocates a new object on the heap with the given format string.
- * 
+ *
  * Valid characters are the same as for h_alloc_struct in gc.h.
- * 
+ *
  * @param heap - The heap to allocate the object on.
  * @param structure - The format string.
  * @return Pointer to the newly allocated memory space.
@@ -47,7 +47,7 @@ void* heap_allocate_struct(Heap heap, char* structure);
  * Allocates a new object on the heap with the given amount of
  * bytes in size. This object is not allowed to have pointers back
  * into the heap.
- * 
+ *
  * @param heap - The heap to allocate the object on.
  * @param bytes - The amount of bytes to allocate.
  * @return Pointer to the newly allocated memory space.
@@ -57,7 +57,7 @@ void* heap_allocate_raw(Heap heap, size_t bytes);
 /**
  * Allocate a new object on a heap with a given size, and
  * object-specific trace function.
- * 
+ *
  * @param heap - The heap to allocate the object on.
  * @param bytes - The amount of bytes to allocate.
  * @param f - The object specific function.
@@ -113,7 +113,7 @@ void heap_swapActiveAndPassive(Heap heap);
 
 /**
  * Returns the amount of bytes left that can be allocated.
- * 
+ *
  * @param heap - The heap to check free space.
  * @return The amount of bytes left that can be allocated for usage.
  */
@@ -121,7 +121,7 @@ size_t heap_sizeLeft(Heap heap);
 
 /**
  * Returns pointer to the start of the active block in the given heap.
- * 
+ *
  * @param heap - The heap to get the start of.
  * @return Pointer to the start of the active heap block.
  */
@@ -130,7 +130,7 @@ void* heap_getActiveStart(Heap heap);
 /**
  * Returns pointer to the end of the currently allocated memory in the active heap block
  * of the given heap.
- * 
+ *
  * @param heap - The heap to get the end of.
  * @return Pointer to the end of the active heap block.
  */
