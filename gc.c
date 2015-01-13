@@ -29,7 +29,7 @@ void h_delete(Heap h) {
 void h_delete_dbg(Heap h, void* dbg_value) {
 
 	void setPointerTodbg_value(void** pointer) {
-		pointer = dbg_value;
+		*pointer = dbg_value;
 	}
 
 	stackIterator(heap_getActiveStart(h) - 1, heap_getActiveEnd(h) + 1, setPointerTodbg_value);

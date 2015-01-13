@@ -3,7 +3,7 @@
  */
 #ifndef __heapiterator__
 #define __heapiterator__
-
+#include "gc.h"
 /**
  * Objekt flyttas till den passiva/nya delen av heapen om den inte redan är flyttad och markeras som flyttad.
  * Om objektet redan är flyttat kommer det inte flyttas igen, addresen till objektet på passiva delen kommer fortfarande retuneras.
