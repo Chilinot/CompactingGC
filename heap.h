@@ -7,16 +7,17 @@
 #ifndef __HEAP__
 #define __HEAP__
 
+#include "gc.h"
 // This structure is defined in heap_rep.c
-typedef struct heap_s* Heap;
+//typedef struct heap_s* Heap;
 
 // The signature of the trace function
-typedef void* (*trace_f)(Heap h, void* obj);
+//typedef void* (*trace_f)(Heap h, void* obj);
 
 // The signature of object-specific trace functions. It will be
 // called for its specific objects, and be given a generic trace
 // function f to be called on each pointer inside obj.
-typedef void* (*s_trace_f)(Heap h, trace_f f, void* obj);
+//typedef void* (*s_trace_f)(Heap h, trace_f f, void* obj);
 
 /**
  * Creates a heap with the given size in bytes.
