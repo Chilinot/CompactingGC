@@ -6,36 +6,30 @@
 #include "heap.h"
 #include "string_util/string_util.h"
 
-/**
- * Defines number of bits per token.
- */
+
+ // Defines number of bits per token.
 #define BITS_PER_TOKEN 2
 
-/**
- * Defines the amount of chars we can store in a bitvector.
- */
+ // Defines the amount of chars we can store in a bitvector.
 #define TOKENS_PER_POINTER ((sizeof(void*) * 8) / BITS_PER_TOKEN)
 
-/**
- * Defines the bit representation of the bitvector terminator.
- */
+ // Defines the bit representation of the bitvector terminator.
 #define TERMINATOR_TOKEN 0b01
 
-/**
- * Bit representation of the pointer token.
- */
+ // Bit representation of the pointer token.
 #define POINTER_TOKEN 0b11
 
-/**
- * Bit representation of the int token.
- */
+ // Bit representation of the int token.
 #define INT_TOKEN 0b00
 
+// Removes two bits that indicate the type of the header.
 void* header_clearHeaderTypeBits(void* header) {
 	intptr_t cast_header = (intptr_t) header;
 	cast_header &= ~0b11;
 	return (void*) cast_header;
 }
+
+// Returns the type of the given header.
 
 header_type header_getHeaderType(void* header) {
 	intptr_t cast_header = (intptr_t) header;
@@ -63,11 +57,19 @@ header_type header_getHeaderType(void* header) {
 	return ERROR;
 }
 
+// Creates a header that is a forwarding adress.
+
 void* header_forwardingAddress(void* pointer) {
 	intptr_t cast_pointer = (intptr_t) pointer;
 	cast_pointer |= 1;
 	return (void*) cast_pointer;
 }
+
+// Returns a compact version of the string aka bitvector or a pointer to a copy of the string 
+// on the heap if the string will not fit inside a single void-pointer 
+// The least significant bits of the returned pointer shows if it is a bitvector or pointer. 
+// If the two last bits (little endian) are equal to 00 then it is a pointer.
+// If they are equal to 11 then it is a bitvector.
 
 void* header_fromFormatString(Heap heap, char* string) {
 	// True if the string will fit inside a void*-4 else false.
@@ -121,11 +123,16 @@ void* header_fromFormatString(Heap heap, char* string) {
 	}
 }
 
+// Takes a pointer to an object specific garbagecollection function and returns a header pointing to a said
+// function.
+
 void* header_objectSpecificFunction(s_trace_f function) {
 	intptr_t ptr = (intptr_t) function;
 	ptr |= 0b10;
 	return (void*) ptr;
 }
+
+// Returns the size of the object in the header.
 
 size_t header_getSize(void* header) {
 	int antal_r = 0;
@@ -183,15 +190,10 @@ size_t header_getSize(void* header) {
 	return (sizeof(int) * antal_r) + (sizeof(void*) * antal_p);
 }
 
-/**
- * f anropas med alla pekare som headerns objekt har,
- * d�r pekare som functionen anropas med beskriver hur mycket ifr�n objektets adress pekare verkligen �r,
- * Objektet �r den data som header beskriver och h�r till.
- *
- *
- * @param header en pekare
- * @param f en funktion
- */
+// f anropas med alla pekare som headerns objekt har,
+// där pekare som functionen anropas med beskriver hur mycket ifrån objektets adress pekare verkligen är,
+// Objektet är den data som header beskriver och hör till.
+
 void header_pointerIterator(void* header, void (*f)(void*)) {
 	char* cursor = 0;
 
@@ -250,6 +252,8 @@ void header_pointerIterator(void* header, void (*f)(void*)) {
 
 	return;
 }
+
+// Takes the given header and returns the same header but with the typebits set according to the given type.
 
 void* header_setHeaderType(void* header, header_type type) {
 
