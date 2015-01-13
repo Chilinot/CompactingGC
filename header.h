@@ -5,25 +5,25 @@
 
 #ifndef __HEADER__
 #define __HEADER__
-
+#include "gc.h"
 #include <stdlib.h>
 
 /**
  * The opaque data type holding all the heap data
  */
-typedef struct heap_s* Heap;
+//typedef struct heap_s* Heap;
 
 /**
  * The signature of the trace function
  */
-typedef void* (*trace_f)(Heap h, void* obj);
+//typedef void* (*trace_f)(Heap h, void* obj);
 
 /**
  * The signature of object-specific trace functions. It will be
  * called for its specific objects, and be given a generic trace
  * function f to be called on each pointer inside obj.
  */
-typedef void* (*s_trace_f)(Heap h, trace_f f, void* obj);
+//typedef void* (*s_trace_f)(Heap h, trace_f f, void* obj);
 
 /**
  * Used to determine the type of the header.
