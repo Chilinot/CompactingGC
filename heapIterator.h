@@ -1,5 +1,5 @@
 /**
- * @File
+ * @file
  */
 #ifndef __heapiterator__
 #define __heapiterator__
