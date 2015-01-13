@@ -29,7 +29,8 @@ void* heapIterator(Heap h, void* obj) {
 	//else
 	void* newObjPlats = heap_copyFromActiveToPassive(h, obj);
 	void g(void * p) {
-		*(((intptr_t) p) + newObjPlats) = heapIterator(h, *(((intptr_t) p) + newObjPlats));
+	  void** pplusnewObjPlats = (void**)(((intptr_t) p ) + ((intptr_t) newObjPlats ));
+	  *pplusnewObjPlats = heapIterator(h, *pplusnewObjPlats);
 		return;
 	};
 	header_pointerIterator(GET_HEAPBLOCK(newObjPlats), &g);
