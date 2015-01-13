@@ -2,7 +2,7 @@ all: test_all
 
 # Tex settings
 C_COMPILER   = gcc
-C_OPTIONS    = -ggdb -Wall -std=c99 -pedantic
+C_OPTIONS    = -ggdb -Wall -std=c99
 
 # Clean settings
 GEN_EXTENSIONS = *.o *.out

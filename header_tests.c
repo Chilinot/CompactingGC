@@ -6,6 +6,13 @@
 #include "heap.h"
 #include "heap_rep.h"
 
+// Comment this row to disable debug
+#define HEADER_TESTS_DEBUG
+
+#ifdef HEADER_TESTS_DEBUG
+#include "debug.h"
+#endif
+
 // --- SUITES ---
 int init_suite_1(void) {
 	return 0;
@@ -154,6 +161,12 @@ void testGetSize() {
 	// 47 chars, should always return a string pointer not a vector.
 	header = header_fromFormatString(heap, "iiiiiiiiiiiii**ii*ii***iii**ii**ii*i*i**iii*iii");
 	size = (sizeof(void*) * 15) + (sizeof(int) * 32);
+	
+#ifdef HEADER_TESTS_DEBUG
+	puts("");
+	puts((char*)header);
+	puts("iiiiiiiiiiiii**ii*ii***iii**ii**ii*i*i**iii*iii");
+#endif
 
 	CU_ASSERT(size == header_getSize(header));
 
@@ -202,7 +215,7 @@ void testPointerIterator() {
 		pointerHasBeFound[i] = false;
 	}
 
-	void* testHeader = sizeof(void*) == 4 ? 0b11000011110011010000000000000011 : 0b1100001111001101000000000000000000000000000000000000000000000011;
+	void* testHeader = sizeof(void*) == 4 ? (void*) 0b11000011110011010000000000000011 : (void*) 0b1100001111001101000000000000000000000000000000000000000000000011;
 	header_pointerIterator(testHeader, &testfun);
 
 	//Checks that all pointers have been found.
