@@ -1,4 +1,4 @@
-För att bygga och köra programmet använder du "make build"
+För att bygga programmet använder du "make build"
 
 För att köra testerna så använder du "make test_all"
 
