@@ -5,13 +5,13 @@ all: string_util
 
 rebuild: clean all
 
-string_util: string_util2.c
-	$(CC) $(FLAGS) -DMANUAL_TEST -o string_util string_util2.c
+string_util: string_util.c
+	$(CC) $(FLAGS) -DMANUAL_TEST -o string_util string_util.c
 
 .PHONY: clean
 
 test: string_util_test.c 
-	$(CC) $(FLAGS) string_util_test.c string_util2.c -o t -lcunit
+	$(CC) $(FLAGS) string_util_test.c string_util.c -o t -lcunit
 	./t
 
 clean:
