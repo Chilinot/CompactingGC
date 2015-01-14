@@ -2,7 +2,6 @@
 #include "heap.h"
 #include "header.h"
 #include "stack.h"
-#include "heap_rep.h"
 #include "heapIterator.h"
 #include "string_util.h"
 
@@ -100,4 +99,6 @@ void* h_alloc_union(Heap h, size_t bytes, s_trace_f f) {
 	return heap_allocate_union(h, bytes, f);
 }
 
-
+int main(void) {
+	return 0;
+}

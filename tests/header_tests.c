@@ -4,7 +4,6 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "../src/heap.h"
-#include "../src/heap_rep.h"
 
 // Comment this row to disable debug
 // #define HEADER_TESTS_DEBUG

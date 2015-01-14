@@ -1,6 +1,5 @@
 #include "CUnit/Basic.h"
 #include "../src/heap.h"
-#include "../src/heap_rep.h"
 #include "../src/heapIterator.h"
 #include "../src/header.h"
 
