@@ -38,10 +38,10 @@ void testHeapIterator(void){
 	
 	// Make sure stored values are intact.
 	CU_ASSERT(first->integer == 12);
-	CU_ASSERT(first->next_test_struct != NULL);
+	CU_ASSERT(first->next_test_struct == middle);
 	
 	CU_ASSERT(middle->integer == 24);
-	CU_ASSERT(middle->next_test_struct != NULL);
+	CU_ASSERT(middle->next_test_struct == last);
 	
 	CU_ASSERT(last->integer == 48);
 	CU_ASSERT(last->next_test_struct == NULL);
@@ -52,7 +52,7 @@ void testHeapIterator(void){
 	CU_ASSERT(last > heap_getActiveStart(heap) && last < heap_getActiveEnd(heap));
 	
 	// Run heap iterator on the first object.
-	TestNode new_first = heapIterator(heap, first);
+	TestNode new_first = heapIterator(heap, first); // Run heapIterator for the first and only time.
 	TestNode new_middle = new_first->next_test_struct;
 	TestNode new_last = new_middle->next_test_struct;
 	
@@ -60,6 +60,11 @@ void testHeapIterator(void){
 	CU_ASSERT(new_first->integer == 12);
 	CU_ASSERT(new_middle->integer == 24);
 	CU_ASSERT(new_last->integer == 48);
+	
+	// Make sure the copied objects are referencing the copies and not the old objects.
+	CU_ASSERT(new_first != first);
+	CU_ASSERT(new_middle != middle);
+	CU_ASSERT(new_last != last);
 	
 	// Make sure they are no longer on the active part of the heap.
 	CU_ASSERT(!(new_first > heap_getActiveStart(heap) && new_first < heap_getActiveEnd(heap)));
@@ -79,6 +84,8 @@ void testHeapIterator(void){
 	CU_ASSERT(header_clearHeaderTypeBits(first_block->header) == new_first);
 	CU_ASSERT(header_clearHeaderTypeBits(middle_block->header) == new_middle);
 	CU_ASSERT(header_clearHeaderTypeBits(last_block->header) == new_last);
+	
+	heap_del(heap);
 }
 
 // --- MAIN ---
