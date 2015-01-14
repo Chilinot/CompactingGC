@@ -2,8 +2,8 @@
  * @file
 */
 
-#ifndef __HEADER__
-#define __HEADER__
+#ifndef __STACK__
+#define __STACK__
 
 
 
