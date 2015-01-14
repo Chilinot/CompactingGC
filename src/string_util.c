@@ -171,7 +171,7 @@ char* convertformatStringWithoutDigitsToHeaderString(char* formatString, char* h
   int sizeR    = sizeof(int);
   //  int formatStringLength = strlen(formatstring);
  
-  int totalPadding = 0;
+  int totalPadding = 1;
   int adress = 0;
   for(int i = 0; formatString[i] != '\0';){
     char currentChar = formatString[i];

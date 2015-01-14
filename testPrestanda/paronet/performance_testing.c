@@ -1,0 +1,220 @@
+//Testing the performance of the garbage collector as descrubed by assignment specification
+
+//include "../persikan/src/gc.h"
+#include "../../src/gc.h"
+#include "../../src/stack.h" 
+#include "../../src/header.h" 
+#include "../../src/heap.h" 
+#include "../../src/heapIterator.h" 
+#include "../../src/string_util.h" 
+
+
+
+#include "linked_int_list.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+typedef struct pacman{ //Eats up memory, nomnomnom
+  void* dumb0;
+  void* dumb1;
+  void* dumb2;
+  void* dumb3;
+  void* dumb4;
+  void* dumb5;
+  void* dumb6;
+  void* dumb7;
+  void* dumb8;
+  void* dumb9;
+}*pacman;
+
+
+
+int M;
+int N;
+Heap heap;
+
+
+int megabytes = 30000000/((int)sizeof(void*)); //amount of void-pointers to fill 30MB
+
+/*
+  rand_lim taken from stackoverflow, source:
+  http://stackoverflow.com/questions/2999075/generate-a-random-number-within-range/
+ */
+int rand_lim(int limit) {
+/* return a random number between 0 and limit inclusive.
+ */
+
+    int divisor = RAND_MAX/(limit+1);
+    int retval;
+
+    do { 
+        retval = rand() / divisor;
+    } while (retval > limit);
+
+    return retval;
+}
+
+
+void performance_test_gc_1(void){
+  heap = h_init(sizeof(struct heap_s) + 100000000 * sizeof(void *));
+  
+  for (int i = 0; i < megabytes/10; i++) {
+    pacman pacman = h_alloc_struct(heap, "**********");
+  }
+  
+}
+
+void performance_test_gc_2_a(void){
+  heap = h_init(sizeof(struct heap_s) + 10000000 * sizeof(void *));
+  for (int i = 0; i < megabytes/10; i++) {
+    pacman pacman = h_alloc_struct(heap, "**********");
+  }
+}
+
+void performance_test_gc_2_b(void){
+  heap = h_init(sizeof(struct heap_s) + 10000000 * sizeof(void *));
+  List list = create_list_gc(heap);
+  for (int i = 0; i < megabytes/2 + 100; i++) {
+    push_gc(53, list, heap);
+  }
+}
+
+//done, only improper random
+void performance_test_gc_3(void){
+  //heap = h_init(sizeof(struct list_node)*M*4 + sizeof(struct linked_list)*4 + 1024);
+  heap = h_init(sizeof(struct heap_s) + 100000000 * sizeof(void *));
+  //Create lists with M random numbers within respective list's range
+  List list1 = create_list_gc(heap);
+  for (int i = 0; i < M; i++) {
+    push_gc((rand() % 1000000000), list1, heap);
+  }
+  List list2 = create_list_gc(heap);
+  for (int i =0; i < M; i++) {
+    push_gc((rand() % 1000000000)+1000000000, list2, heap);
+  }
+  List list3 = create_list_gc(heap);
+  for (int i = 0; i < M; i++) {
+    push_gc((rand() % 1000000000)+2000000000, list3, heap);
+  }
+  List list4 = create_list_gc(heap);
+  for (int i = 0; i < N; i++) {
+    push_gc((rand() % 1000000000)+3000000000, list4, heap);
+  }
+
+  //Create N random numbers and check if they are within the lists
+  long int numbers[N];
+  for (int i = 0; i < N; i++) {
+    numbers[i] = rand() % 4000000000;
+  }
+  for (int i = 0; i < N; i++) {
+    if(numbers[i] < 1000000000){
+      exists_in_list(numbers[i], list1);
+    }else if(numbers[i] < 2000000000){
+      exists_in_list(numbers[i], list2);
+    }else if(numbers[i] < 3000000000){
+      exists_in_list(numbers[i], list3);
+    }else{
+      exists_in_list(numbers[i], list4);
+    }
+  }  
+}
+
+void performance_test_malloc_1(void){
+  for (int i = 0; i < megabytes/10; i++) {
+    pacman pacman = malloc(sizeof(struct pacman));    
+  }
+
+}
+
+void performance_test_malloc_2(void){
+  pacman PACMAN = {NULL};
+  int numberOfPacmen = 10000000/(sizeof(struct pacman)); //number of pacmen to fill 10MB
+  pacman pacmanArray[numberOfPacmen];
+  for(int j = 0; j < 3; j++){
+    for(int i = 0; i < numberOfPacmen; i++) {
+      pacmanArray[i] = malloc(sizeof(struct pacman));
+      
+    }
+    for (int i = 0; i < numberOfPacmen; i++) {
+      free(pacmanArray[i]);    
+    }  
+  }
+}
+
+//Probably done, not proper random...
+void performance_test_malloc_3(void){
+
+  //Create lists with M random numbers within respective list's range
+  List list1 = create_list_malloc();
+  for (int i = 0; i < M; i++) {
+    push_malloc(rand_lim(1000000000), list1);
+  }
+  List list2 = create_list_malloc();
+  for (int i =0; i < M; i++) {
+    push_malloc(rand_lim(1000000000)+1000000000, list2);
+  }
+  List list3 = create_list_malloc();
+  for (int i = 0; i < M; i++) {
+    push_malloc(rand_lim(1000000000)+2000000000, list3);
+  }
+  List list4 = create_list_malloc();
+  for (int i = 0; i < N; i++) {
+    push_malloc(rand_lim(1000000000)+3000000000, list4);
+  }
+  
+  //Create N random numbers and check if they are within the lists
+  int numbers[N];
+  for (int i = 0; i < N; i++) {
+    numbers[i] = rand_lim(4000000000);
+  }
+  for (int i = 0; i < N; i++) {
+    if(numbers[i] < 1000000000){
+      exists_in_list(numbers[i], list1);
+    }else if(numbers[i] < 2000000000){
+      exists_in_list(numbers[i], list2);
+    }else if(numbers[i] < 3000000000){
+      exists_in_list(numbers[i], list3);
+    }else{
+      exists_in_list(numbers[i], list4);
+    }
+  }  
+  
+}
+
+int main(int argc, char *argv[])
+{
+  M = atoi(argv[1]);
+  N = M/(atoi(argv[2]));
+  clock_t timer;
+  
+  typedef void(*p)(void);
+  p functions[7];
+  functions[0] = performance_test_gc_1;
+  functions[1] = performance_test_malloc_1;
+  functions[2] = performance_test_gc_2_a;
+  functions[3] = performance_test_gc_2_b;
+  functions[4] = performance_test_malloc_2;
+  functions[5] = performance_test_gc_3;
+  functions[6] = performance_test_malloc_3;
+  double results[7];
+
+  for (int i = 0; i < 7; i++) {
+    timer = clock();
+    printf("Running test %d...\n", i+1);
+    functions[i]();
+    timer = clock() - timer;
+    results[i] = ((float)timer)/CLOCKS_PER_SEC;
+  }
+
+  puts("Results for the tests:\n");
+  printf("Using less space than heap size with garbage collection: %f seconds\n", results[0]);
+  printf("Using less space than heap size with malloc: %f seconds\n", results[1]);
+  printf("Creating 30MB data in 10MB heap with garbage collection, heap is full with garbage: %f seconds\n", results[2]);
+  printf("Creating 30MB data in 10MB heap with garbage collection, heap is full with non-garbage %f seconds\n", results[3]);
+  printf("Creating 30MB data with malloc, freeing all of it every 10MB: %f seconds\n", results[4]);
+  printf("List test with garbage collection: %f seconds\n", results[5]);
+  printf("List test with malloc: %f\n", results[6]);
+  free(heap);
+  return 0;
+}
