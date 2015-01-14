@@ -1,5 +1,5 @@
 #include "CUnit/Basic.h"
-#include "string_util2.h"
+#include "string_util.h"
 #include <stdlib.h>
 #include <ctype.h>
 #include <stdio.h>

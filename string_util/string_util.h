@@ -1,5 +1,5 @@
-#ifndef __STRING_UTIL2__
-#define __STRING_UTIL2__
+#ifndef __STRING_UTIL__
+#define __STRING_UTIL__
 
 /**
  *Given a formatstring, converts the string into a headerstring that describes the memorylayout.

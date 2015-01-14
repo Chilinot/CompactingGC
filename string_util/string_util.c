@@ -49,7 +49,7 @@ int newPos(char* layout, int currentPos){
 int lengthOfFormatStringToAllocate(char* layout){ // some overhead here 
   int headerLength = 0;
   for(int i = 0; i < strlen(layout); i++){
-    if isdigit(layout[i]){
+    if(isdigit(layout[i])){
 	headerLength += returnDigit(layout, i) *2;
 	i = newPos(layout, i);
       }
