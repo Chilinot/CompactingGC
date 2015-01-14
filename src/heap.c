@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <stdint.h>
 #include "heap.h"
-#include "heap_rep.h"
 #include "header.h"
 
 // Comment the following row to disable debug output

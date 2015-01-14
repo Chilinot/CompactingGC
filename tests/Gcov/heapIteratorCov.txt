@@ -1,0 +1,10 @@
+Function 'heapIterator'
+Lines executed:80.00% of 10
+
+Function 'g.1875'
+Lines executed:100.00% of 4
+
+File '/home/marcus/IOOPM/Projekt/persikan/src/heapIterator.c'
+Lines executed:85.71% of 14
+Creating 'heapIterator.c.gcov'
+

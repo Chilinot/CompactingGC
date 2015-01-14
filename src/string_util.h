@@ -1,6 +1,8 @@
 #ifndef __STRING_UTIL__
 #define __STRING_UTIL__
 
+#include <stdlib.h>
+
 /**
  *Given a formatstring, converts the string into a headerstring that describes the memorylayout.
  *If no string is given, terminate the program. empty strings will return an empty string.

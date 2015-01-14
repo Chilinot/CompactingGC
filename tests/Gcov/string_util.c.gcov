@@ -1,0 +1,257 @@
+        -:    0:Source:/home/marcus/IOOPM/Projekt/persikan/src/string_util.c
+        -:    0:Graph:string_util.gcno
+        -:    0:Data:string_util.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:#include <assert.h>
+        -:    2:#include <stdio.h>
+        -:    3:#include <stdlib.h>
+        -:    4:#include <string.h>
+        -:    5:#include <stddef.h>
+        -:    6:#include <ctype.h>
+        -:    7:#include <stdint.h>
+        -:    8:#include <stdbool.h>
+        -:    9:#include "string_util.h"
+        -:   10:
+        -:   11:
+       52:   12:int returnDigit(char* layout, int digitPos){
+       52:   13:  if(isdigit(layout[digitPos])== false) {return 0;}
+        -:   14:
+       51:   15:  assert(digitPos >= 0 && digitPos <= strlen(layout));
+       51:   16:  int counter = 0;
+      119:   17:  for(int i = digitPos; i < strlen(layout) ; i++){
+      112:   18:    if(isdigit(layout[i])){
+       68:   19:      counter++;
+        -:   20:    }
+        -:   21:    else
+       44:   22:      break;
+        -:   23:  }
+        -:   24:  
+       51:   25:  char stringValue[strlen(layout)];
+       51:   26:  memcpy(stringValue, layout + digitPos, counter);
+       51:   27:  stringValue[digitPos+counter] = '\0';
+       51:   28:  return atoi(stringValue);
+        -:   29:}
+        -:   30:
+        -:   31:
+        -:   32:
+       54:   33:int newPos(char* layout, int currentPos){
+        -:   34:  int i;
+        -:   35:  int newPos;
+      122:   36:  for(i = currentPos; i < strlen(layout); i++){
+      114:   37:    if(isdigit(layout[i])){
+        -:   38:    }
+        -:   39:    else{
+       46:   40:      newPos = i;
+       46:   41:      return newPos;
+        -:   42:    }
+        -:   43:  }
+        8:   44:  newPos = i;
+        8:   45:  return newPos;
+        -:   46:}
+        -:   47:
+        -:   48:
+       18:   49:int lengthOfFormatStringToAllocate(char* layout){ // some overhead here 
+       18:   50:  int headerLength = 0;
+       87:   51:  for(int i = 0; i < strlen(layout); i++){
+       69:   52:    if(isdigit(layout[i])){
+       10:   53:	headerLength += returnDigit(layout, i) *2;
+       10:   54:	i = newPos(layout, i);
+        -:   55:      }
+        -:   56:    else{
+       59:   57:      headerLength += 2;
+        -:   58:    }
+        -:   59:  }
+       18:   60:  return headerLength;
+        -:   61:}
+        -:   62:
+        -:   63:
+       22:   64:int lengthOfFormatStringWithoutDigitsToAllocate(char* formatString){
+       22:   65:  int sizeToAllocate = 0;
+       22:   66:  int newpos = 0;
+       22:   67:  int oneCharacter = 1;
+      126:   68:  for(int i = newpos; i < strlen(formatString); i++){
+      104:   69:    if(isdigit(formatString[i])){
+       23:   70:      sizeToAllocate += returnDigit(formatString, i);
+       23:   71:      newpos = newPos(formatString, i);
+        -:   72:    
+        -:   73:    }
+        -:   74:    else{
+       81:   75:      sizeToAllocate += oneCharacter;
+        -:   76:    }
+        -:   77:  }
+       22:   78:  return sizeToAllocate + 1; //incase of when there are only chars and we want to add the NULL 
+        -:   79:}
+        -:   80:
+       22:   81:char* formatStringWithoutDigits(char* formatString){
+       22:   82:  char* returnformatStringWithoutDigits = calloc(lengthOfFormatStringWithoutDigitsToAllocate(formatString), sizeof(char));
+        -:   83:
+        -:   84:  char charToString[2]; // for converting one char into a string used for strcat
+       22:   85:  charToString[1] = '\0';
+        -:   86: 
+      103:   87:  for(int i = 0; i < strlen(formatString); i++){
+       83:   88:    if(isdigit(formatString[i])){
+        -:   89:      
+       16:   90:      int numberOfChars = returnDigit(formatString, i); // the amount of chars to add to string
+       16:   91:      int charPos = newPos(formatString, i); // position for next character to add
+       16:   92:      charToString[0] = formatString[charPos];
+        -:   93:      
+       16:   94:      if(charPos == strlen(formatString)){//if there are only digits in formatString
+       46:   95:	for(int k = 0; k < numberOfChars; k++){
+       44:   96:	  strcat(returnformatStringWithoutDigits, "c");
+        -:   97:	}
+        2:   98:	return returnformatStringWithoutDigits;
+        -:   99:      }
+        -:  100:      
+      123:  101:      for(int j = 0; j < numberOfChars; j++){
+      109:  102:	strcat(returnformatStringWithoutDigits, charToString);
+        -:  103:      }
+       14:  104:      i = charPos;
+        -:  105:    }
+        -:  106:    else{
+       67:  107:      charToString[0] = formatString[i];
+       67:  108:      strcat(returnformatStringWithoutDigits, charToString);
+        -:  109:	
+        -:  110:    }
+        -:  111:  }
+        -:  112:
+       20:  113:  return returnformatStringWithoutDigits;
+        -:  114:}
+        -:  115:
+        -:  116:
+        -:  117:
+        -:  118:
+      184:  119:int returnsizeof(char character){
+      184:  120:  if(character == 'i'){
+       42:  121:    return sizeof(int);
+        -:  122:  }
+      142:  123:  if(character == 'c'){
+       86:  124:    return sizeof(char);
+        -:  125:  }
+       56:  126:  if(character == '*'){
+       42:  127:    return sizeof(void*);
+        -:  128:  }
+       14:  129:  if(character == 'd'){
+        8:  130:    return sizeof(double);
+        -:  131:  }
+        6:  132:  if(character == 'l'){
+        2:  133:    return sizeof(long);
+        -:  134:  }
+        4:  135:  if(character == 'f'){
+        4:  136:    return sizeof(float);
+        -:  137:  }
+    #####:  138:  return 0;
+        -:  139:}
+        -:  140:
+        -:  141:
+        -:  142:#define RETURNALIGNOF(type) offsetof(struct {char a:1; type b;}, b)
+        -:  143:
+      353:  144:size_t returnalignof(char character){
+      353:  145:  if(character == 'i'){
+       78:  146:    return RETURNALIGNOF(int);
+        -:  147:  }
+      275:  148:  if(character == 'c'){
+      180:  149:    return RETURNALIGNOF(char);
+        -:  150:  }
+       95:  151:  if(character == '*'){
+       74:  152:    return RETURNALIGNOF(void*);
+        -:  153:  }
+       21:  154:  if(character == 'd'){
+       10:  155:    return RETURNALIGNOF(double);
+        -:  156:  }
+       11:  157:  if(character == 'l'){
+        5:  158:    return RETURNALIGNOF(long);
+        -:  159:  }
+        6:  160:  if(character == 'f'){
+        6:  161:    return RETURNALIGNOF(float);
+        -:  162:  }
+    #####:  163:  return 0;
+        -:  164:}
+        -:  165:
+        -:  166:
+        -:  167:
+        -:  168:#define max(a,b) a>b ? a : b
+       18:  169:char* convertformatStringWithoutDigitsToHeaderString(char* formatString, char* headerString){
+       18:  170:  int sizeStar = sizeof(void*);
+       18:  171:  int sizeR    = sizeof(int);
+        -:  172:  //  int formatStringLength = strlen(formatstring);
+        -:  173: 
+       18:  174:  int totalPadding = 0;
+       18:  175:  int adress = 0;
+      220:  176:  for(int i = 0; formatString[i] != '\0';){
+      184:  177:    char currentChar = formatString[i];
+      184:  178:    int size = returnsizeof(currentChar);
+        -:  179:    
+      184:  180:    if(adress % returnalignof(currentChar)  != 0) { //inte tillåtet att lägga currentchar typ på 
+       48:  181:	adress++;
+        -:  182:      }
+        -:  183:
+        -:  184:    else{ // tillåten adreess för typen av currentChar
+      136:  185:      adress += size;
+      136:  186:      if(currentChar == '*'){
+       20:  187:	strcat(headerString, "*");
+        -:  188:      }
+      136:  189:      totalPadding = max(returnalignof(currentChar), totalPadding);
+      136:  190:      i++;
+        -:  191:    }
+      433:  192:    while(adress-headerStringToSize(headerString)>= sizeR){
+       65:  193:      strcat(headerString, "r");
+        -:  194:    }
+        -:  195:  }
+        -:  196:  // padda ut strukten mot paddingen
+       18:  197:  adress += ((totalPadding-(adress%totalPadding))%totalPadding);
+       45:  198:  while(adress > headerStringToSize(headerString)){
+        9:  199:      strcat(headerString, "r");
+        -:  200:  }
+       18:  201:  return headerString;
+        -:  202:}
+        -:  203:
+        -:  204:
+       19:  205:char* formatStringToHeaderString(char* layout ){
+       19:  206:  if(layout == NULL){
+    #####:  207:    puts("No formatstring to allocate");
+    #####:  208:    exit(0);
+        -:  209:  }
+       19:  210:  if(layout[0] == '\0') return (char*) calloc(1,1);
+        -:  211:  
+       18:  212:  char* formatString = formatStringWithoutDigits(layout);
+       18:  213:  char* headerString = calloc(lengthOfFormatStringToAllocate(layout),sizeof(char));
+        -:  214:
+       18:  215:  char* returnHeaderString = convertformatStringWithoutDigitsToHeaderString(formatString, headerString);
+        -:  216: 
+       18:  217:  free(formatString);
+       18:  218:  return returnHeaderString;
+        -:  219:}
+        -:  220:
+        -:  221:
+        -:  222:
+        -:  223:
+        -:  224:#ifdef MANUAL_TEST 
+        -:  225:int main(int argc, char* argv[]){
+        -:  226:  char* print1 = formatStringWithoutDigits(argv[1]);
+        -:  227:  int print2 = lengthOfFormatStringWithoutDigitsToAllocate(argv[1]);
+        -:  228:  char* print3 = formatStringToHeaderString(argv[1]);
+        -:  229:  printf(" formatstring without digits length to allocate %d\n formatstring without digits: %s\n formatString to headerString: %s\n",print2, print1, print3);
+        -:  230:  
+        -:  231:  printf("returndigit test %d\n",returnDigit("2i3c1f*52l", 3));
+        -:  232:
+        -:  233:
+        -:  234:  return 0;
+        -:  235:}
+        -:  236:#endif
+        -:  237:
+        -:  238: 
+     1031:  239: size_t headerStringToSize(char* layout){
+        -:  240:  
+     1031:  241:   switch(*layout){
+        -:  242:   case 'r':
+      669:  243:     return sizeof(int) + headerStringToSize(layout + 1);
+        -:  244:   case '*':
+       84:  245:     return sizeof(void*) + headerStringToSize(layout + 1);
+        -:  246:   case '\0':
+      278:  247:     return 0;
+        -:  248:   }
+        -:  249:
+    #####:  250:   return 0; // should not happen
+        -:  251:
+        -:  252: }

@@ -3,7 +3,6 @@
 #include <stdbool.h>
 #include "heap.h"
 #include "header.h"
-#include "heap_rep.h"
 #include "heapIterator.h"
 
 

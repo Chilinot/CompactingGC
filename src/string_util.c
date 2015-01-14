@@ -204,8 +204,7 @@ char* convertformatStringWithoutDigitsToHeaderString(char* formatString, char* h
 
 char* formatStringToHeaderString(char* layout ){
   if(layout == NULL){
-    puts("No formatstring to allocate");
-    exit(0);
+    return NULL;
   }
   if(layout[0] == '\0') return (char*) calloc(1,1);
   

@@ -1,0 +1,6 @@
+Header_test = 8/8 tests passed
+Heap_test = 14/14 tests passed
+Heapiterator_test = 1/1 test passed
+Stack_test = 1/1 test passed
+Stringutil_test = 4/4 tests passed
+gc_test = 1/1 tests passed

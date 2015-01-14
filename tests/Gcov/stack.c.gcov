@@ -1,0 +1,49 @@
+        -:    0:Source:/home/marcus/IOOPM/Projekt/persikan/src/stack.c
+        -:    0:Graph:stack.gcno
+        -:    0:Data:stack.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:#include <string.h>
+        -:    2:#include <stdio.h>
+        -:    3:#include <stdlib.h>
+        -:    4:#include <setjmp.h>
+        -:    5:#include <assert.h>
+        -:    6:#include <stdint.h>
+        -:    7:#include "stack.h"
+        -:    8://#include "../../heap.h"
+        -:    9:
+        -:   10:#define Dump_registers() \
+        -:   11:jmp_buf env; \
+        -:   12:if (setjmp(env)) abort(); \
+        -:   13: 
+        -:   14:// Finds all the possible pointers that points on the stack to memoryspace where;
+        -:   15:// heapstart < memoryspace < heapEnd and calls the fucntion foreach for every pointer found
+        1:   16:void stackIterator(void* heapStart, void* heapEnd,  void (*foreach)(void**)) {
+        -:   17:	extern char** environ;
+        1:   18:	Dump_registers();
+        -:   19:#ifdef __GNUC__
+        1:   20:	void* stackTop = __builtin_frame_address(0);
+        -:   21:#else
+        -:   22:	int getStackPointerTemp = Ox1337;
+        -:   23:	void* stackTop = &getStackPointerTemp;
+        -:   24:#endif
+        1:   25:	void* stackBottom = (void*) environ;
+        -:   26:
+        1:   27:	int sign = stackBottom - stackTop < 0 ? -1 : 1;
+        -:   28:
+        1:   29:	void** cursor = stackTop;
+        -:   30:
+       91:   31:	while(cursor != stackBottom) {
+       89:   32:		void* cursorValue = *cursor;
+        -:   33:
+       89:   34:		if(cursorValue < heapEnd && heapStart < cursorValue) {
+        2:   35:			(*foreach)(cursor);
+        -:   36:		}
+        -:   37:
+       89:   38:		cursor = cursor + sign;
+        -:   39:	}
+        -:   40:
+        1:   41:}
+        -:   42:
+        -:   43:
+        -:   44:
