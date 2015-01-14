@@ -243,6 +243,7 @@ void testPointerIterator() {
 		CU_ASSERT(pointerHasBeFound[i] == true); //check that
 	}
 
+	free(headerstring);
 	//heap_del(heap);
 }
 
