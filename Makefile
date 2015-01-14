@@ -4,6 +4,9 @@ all: test_all
 CC     = gcc
 CFLAGS = -ggdb -Wall -std=c99
 
+SRC_FOLDER    = src/
+TARGET_FOLDER = target/
+
 # Clean settings
 GEN_EXTENSIONS = *.o *.out
 
@@ -15,22 +18,22 @@ clean:
 %:	%.c
 	$(CC) $(CFLAGS) $< -o $@
 
-test_header: header.c header.h header_tests.c string_util/string_util.c string_util/string_util.h heap.c heap.h heap_rep.h
-	$(CC) $(CFLAGS) header_tests.c header.c string_util/string_util.c heap.c -o header_unittests -lcunit
-	./header_unittests
+test_header: $(SRC_FOLDER)header.c $(SRC_FOLDER)header.h $(SRC_FOLDER)header_tests.c $(SRC_FOLDER)string_util/string_util.c $(SRC_FOLDER)string_util/string_util.h $(SRC_FOLDER)heap.c $(SRC_FOLDER)heap.h $(SRC_FOLDER)heap_rep.h
+	$(CC) $(CFLAGS) $(SRC_FOLDER)header_tests.c $(SRC_FOLDER)header.c $(SRC_FOLDER)string_util/string_util.c $(SRC_FOLDER)heap.c -o $(TARGET_FOLDER)header_unittests -lcunit
+	./$(TARGET_FOLDER)header_unittests
 
-test_heap: heap.c heap_rep.h heap.h heap_tests.c header.h header.c string_util/string_util.c string_util/string_util.h debug.c debug.h
-	$(CC) $(CFLAGS) heap_tests.c heap.c header.c string_util/string_util.c debug.c -o heap_unittests -lcunit
-	./heap_unittests
+test_heap: $(SRC_FOLDER)heap.c $(SRC_FOLDER)heap_rep.h $(SRC_FOLDER)heap.h $(SRC_FOLDER)heap_tests.c $(SRC_FOLDER)header.h $(SRC_FOLDER)header.c $(SRC_FOLDER)string_util/string_util.c $(SRC_FOLDER)string_util/string_util.h $(SRC_FOLDER)debug.c $(SRC_FOLDER)debug.h
+	$(CC) $(CFLAGS) $(SRC_FOLDER)heap_tests.c $(SRC_FOLDER)heap.c $(SRC_FOLDER)header.c $(SRC_FOLDER)string_util/string_util.c $(SRC_FOLDER)debug.c -o $(TARGET_FOLDER)heap_unittests -lcunit
+	./$(TARGET_FOLDER)heap_unittests
 
-test_heapIterator: heapIterator.c heapIterator.h heapIterator_tests.c header.c header.h string_util/string_util.c string_util/string_util.h heap.c heap.h heap_rep.h
-	$(CC) $(CFLAGS) heapIterator.c heapIterator_tests.c header.c string_util/string_util.c heap.c -o heapIterator_unittests -lcunit
-	./heapIterator_unittests
+test_heapIterator: $(SRC_FOLDER)heapIterator.c $(SRC_FOLDER)heapIterator.h $(SRC_FOLDER)heapIterator_tests.c $(SRC_FOLDER)header.c $(SRC_FOLDER)header.h $(SRC_FOLDER)string_util/string_util.c $(SRC_FOLDER)string_util/string_util.h $(SRC_FOLDER)heap.c $(SRC_FOLDER)heap.h $(SRC_FOLDER)heap_rep.h
+	$(CC) $(CFLAGS) $(SRC_FOLDER)heapIterator.c $(SRC_FOLDER)heapIterator_tests.c $(SRC_FOLDER)header.c $(SRC_FOLDER)string_util/string_util.c $(SRC_FOLDER)heap.c -o $(TARGET_FOLDER)heapIterator_unittests -lcunit
+	./$(TARGET_FOLDER)heapIterator_unittests
 
-test_linkedlist: linkedlist.c linkedlist.h linkedlist_tests.c
-	$(CC) $(CFLAGS) linkedlist.c linkedlist_tests.c -o linkedlist_unittests -lcunit
-	./linkedlist_unittests
+test_linkedlist: $(SRC_FOLDER)linkedlist.c $(SRC_FOLDER)linkedlist.h $(SRC_FOLDER)linkedlist_tests.c
+	$(CC) $(CFLAGS) $(SRC_FOLDER)linkedlist.c $(SRC_FOLDER)linkedlist_tests.c -o $(TARGET_FOLDER)linkedlist_unittests -lcunit
+	./$(TARGET_FOLDER)linkedlist_unittests
 
-test_stack: stack.c stack.h stack_tests.c
-	$(CC) $(CFLAGS) stack.c stack_tests.c -o stack_unittests -lcunit
-	./stack_unittests
+test_stack: $(SRC_FOLDER)stack.c $(SRC_FOLDER)stack.h $(SRC_FOLDER)stack_tests.c
+	$(CC) $(CFLAGS) $(SRC_FOLDER)stack.c $(SRC_FOLDER)stack_tests.c -o $(TARGET_FOLDER)stack_unittests -lcunit
+	./$(TARGET_FOLDER)stack_unittests
