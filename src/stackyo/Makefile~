@@ -1,2 +1,0 @@
-stackyo:	
-	gcc -std=c99 -Wall -o stackyo stackyo.c
