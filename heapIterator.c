@@ -1,11 +1,9 @@
 #include <assert.h>
-#include "heap.h"
-#include "linkedlist.h"
-#include "header.h"
-#include "gc.h"
-#include "heap_rep.h"
 #include <stdint.h>
 #include <stdbool.h>
+#include "heap.h"
+#include "header.h"
+#include "heap_rep.h"
 #include "heapIterator.h"
 
 
