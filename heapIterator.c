@@ -10,14 +10,9 @@
 
 
 
-/**
- * Objekt flyttas till den passiva/nya delen av heapen om den inte redan är flyttad och markeras som flyttad.
- * Om objektet redan är flyttat kommer det inte flyttas igen, addresen till objektet på passiva delen kommer fortfarande retuneras.
- * Om objektet har pekare till andra objekt på heapen kommer dom också flyttas och pekarna ändras därefter.
- * @param h heapen vi jobbar på
- * @param obj är en pekare till objekt på den aktiva heapen
- * @return en pekare till det nya stället(på den passiva delen av heapen) objektet nu kan hittas
- */
+// Objekt flyttas till den passiva/nya delen av heapen om den inte redan är flyttad och markeras som flyttad.
+// Om objektet redan är flyttat kommer det inte flyttas igen, addresen till objektet på passiva delen kommer fortfarande retuneras.
+// Om objektet har pekare till andra objekt på heapen kommer dom också flyttas och pekarna ändras därefter.
 void* heapIterator(Heap h, void* obj) {
 	if(heap_hasBeenCopied(obj) == true) {
 		return header_clearHeaderTypeBits(GET_HEAPBLOCK(obj));
@@ -29,7 +24,8 @@ void* heapIterator(Heap h, void* obj) {
 	//else
 	void* newObjPlats = heap_copyFromActiveToPassive(h, obj);
 	void g(void * p) {
-		*(((intptr_t) p) + newObjPlats) = heapIterator(h, *(((intptr_t) p) + newObjPlats));
+	  void** pplusnewObjPlats = (void**)(((intptr_t) p ) + ((intptr_t) newObjPlats ));
+	  *pplusnewObjPlats = heapIterator(h, *pplusnewObjPlats);
 		return;
 	};
 	header_pointerIterator(GET_HEAPBLOCK(newObjPlats), &g);

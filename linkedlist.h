@@ -1,3 +1,7 @@
+/**
+ * @file
+*/
+
 #ifndef __linkedlist__
 #define __linkedlist__
 

@@ -1,0 +1,213 @@
+\hypertarget{header_8h}{}\section{header.\+h File Reference}
+\label{header_8h}\index{header.\+h@{header.\+h}}
+{\ttfamily \#include $<$stdlib.\+h$>$}\\*
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef struct \hyperlink{structheap__s}{heap\+\_\+s} $\ast$ \hyperlink{header_8h_acff7c46ae1f4265ad565cc6ccf18dacb}{Heap}
+\item 
+typedef void $\ast$($\ast$ \hyperlink{header_8h_a06b2359261c4a4b38a68770cac5af7bb}{trace\+\_\+f}) (\hyperlink{gc_8h_acff7c46ae1f4265ad565cc6ccf18dacb}{Heap} h, void $\ast$obj)
+\item 
+typedef void $\ast$($\ast$ \hyperlink{header_8h_aa76b6071b446d0df3c9902129945e6f0}{s\+\_\+trace\+\_\+f}) (\hyperlink{gc_8h_acff7c46ae1f4265ad565cc6ccf18dacb}{Heap} h, \hyperlink{header_8h_a06b2359261c4a4b38a68770cac5af7bb}{trace\+\_\+f} f, void $\ast$obj)
+\end{DoxyCompactItemize}
+\subsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \hyperlink{header_8h_ad7f9678fbffaef587ba680031317a4f9}{header\+\_\+type} \{ \\*
+{\bfseries P\+O\+I\+N\+T\+E\+R\+\_\+\+T\+O\+\_\+\+S\+T\+R\+I\+N\+G}, 
+{\bfseries F\+O\+R\+W\+A\+R\+D\+I\+N\+G\+\_\+\+A\+D\+D\+R\+E\+S\+S}, 
+{\bfseries F\+U\+N\+C\+T\+I\+O\+N\+\_\+\+P\+O\+I\+N\+T\+E\+R}, 
+{\bfseries B\+I\+T\+V\+E\+C\+T\+O\+R}, 
+\\*
+{\bfseries E\+R\+R\+O\+R}
+ \}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void $\ast$ \hyperlink{header_8h_a9069f4c438720ad29784fd24eae1c434}{header\+\_\+from\+Format\+String} (\hyperlink{gc_8h_acff7c46ae1f4265ad565cc6ccf18dacb}{Heap} heap, char $\ast$string)
+\item 
+void $\ast$ \hyperlink{header_8h_a8807ab0a137871cb453952970f71629c}{header\+\_\+forwarding\+Address} (void $\ast$pointer)
+\item 
+void $\ast$ \hyperlink{header_8h_af4faba254af1e769b86417d52ed7633a}{header\+\_\+object\+Specific\+Function} (\hyperlink{header_8h_aa76b6071b446d0df3c9902129945e6f0}{s\+\_\+trace\+\_\+f} function)
+\item 
+void $\ast$ \hyperlink{header_8h_a75d2091616dc826190ae3e2ad03fd688}{header\+\_\+clear\+Header\+Type\+Bits} (void $\ast$header)
+\item 
+\hyperlink{header_8h_ad7f9678fbffaef587ba680031317a4f9}{header\+\_\+type} \hyperlink{header_8h_aa86d8a60c699a5c77678ac9e531d8a33}{header\+\_\+get\+Header\+Type} (void $\ast$header)
+\item 
+size\+\_\+t \hyperlink{header_8h_a6113d99292d0f82bff89c99ae670f2e4}{header\+\_\+get\+Size} (void $\ast$header)
+\item 
+void \hyperlink{header_8h_af10ae1e637766deb16a964e363ce7c61}{header\+\_\+pointer\+Iterator} (void $\ast$header, void($\ast$f)(void $\ast$))
+\item 
+void $\ast$ \hyperlink{header_8h_af9241ebdf3d00b2d2ac6452ff4052224}{header\+\_\+set\+Header\+Type} (void $\ast$header, \hyperlink{header_8h_ad7f9678fbffaef587ba680031317a4f9}{header\+\_\+type} type)
+\end{DoxyCompactItemize}
+
+
+\subsection{Typedef Documentation}
+\hypertarget{header_8h_acff7c46ae1f4265ad565cc6ccf18dacb}{}\index{header.\+h@{header.\+h}!Heap@{Heap}}
+\index{Heap@{Heap}!header.\+h@{header.\+h}}
+\subsubsection[{Heap}]{\setlength{\rightskip}{0pt plus 5cm}typedef struct {\bf heap\+\_\+s}$\ast$ {\bf Heap}}\label{header_8h_acff7c46ae1f4265ad565cc6ccf18dacb}
+The opaque data type holding all the heap data \hypertarget{header_8h_aa76b6071b446d0df3c9902129945e6f0}{}\index{header.\+h@{header.\+h}!s\+\_\+trace\+\_\+f@{s\+\_\+trace\+\_\+f}}
+\index{s\+\_\+trace\+\_\+f@{s\+\_\+trace\+\_\+f}!header.\+h@{header.\+h}}
+\subsubsection[{s\+\_\+trace\+\_\+f}]{\setlength{\rightskip}{0pt plus 5cm}typedef void$\ast$($\ast$ s\+\_\+trace\+\_\+f) ({\bf Heap} h, {\bf trace\+\_\+f} f, void $\ast$obj)}\label{header_8h_aa76b6071b446d0df3c9902129945e6f0}
+The signature of object-\/specific trace functions. It will be called for its specific objects, and be given a generic trace function f to be called on each pointer inside obj. \hypertarget{header_8h_a06b2359261c4a4b38a68770cac5af7bb}{}\index{header.\+h@{header.\+h}!trace\+\_\+f@{trace\+\_\+f}}
+\index{trace\+\_\+f@{trace\+\_\+f}!header.\+h@{header.\+h}}
+\subsubsection[{trace\+\_\+f}]{\setlength{\rightskip}{0pt plus 5cm}typedef void$\ast$($\ast$ trace\+\_\+f) ({\bf Heap} h, void $\ast$obj)}\label{header_8h_a06b2359261c4a4b38a68770cac5af7bb}
+The signature of the trace function 
+
+\subsection{Enumeration Type Documentation}
+\hypertarget{header_8h_ad7f9678fbffaef587ba680031317a4f9}{}\index{header.\+h@{header.\+h}!header\+\_\+type@{header\+\_\+type}}
+\index{header\+\_\+type@{header\+\_\+type}!header.\+h@{header.\+h}}
+\subsubsection[{header\+\_\+type}]{\setlength{\rightskip}{0pt plus 5cm}enum {\bf header\+\_\+type}}\label{header_8h_ad7f9678fbffaef587ba680031317a4f9}
+Used to determine the type of the header. 
+
+\subsection{Function Documentation}
+\hypertarget{header_8h_a75d2091616dc826190ae3e2ad03fd688}{}\index{header.\+h@{header.\+h}!header\+\_\+clear\+Header\+Type\+Bits@{header\+\_\+clear\+Header\+Type\+Bits}}
+\index{header\+\_\+clear\+Header\+Type\+Bits@{header\+\_\+clear\+Header\+Type\+Bits}!header.\+h@{header.\+h}}
+\subsubsection[{header\+\_\+clear\+Header\+Type\+Bits}]{\setlength{\rightskip}{0pt plus 5cm}void$\ast$ header\+\_\+clear\+Header\+Type\+Bits (
+\begin{DoxyParamCaption}
+\item[{void $\ast$}]{header}
+\end{DoxyParamCaption}
+)}\label{header_8h_a75d2091616dc826190ae3e2ad03fd688}
+Removes the two bits that indicate the type of the header.
+
+
+\begin{DoxyParams}{Parameters}
+{\em header} & -\/ The header to clear. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The now clean header. 
+\end{DoxyReturn}
+\hypertarget{header_8h_a8807ab0a137871cb453952970f71629c}{}\index{header.\+h@{header.\+h}!header\+\_\+forwarding\+Address@{header\+\_\+forwarding\+Address}}
+\index{header\+\_\+forwarding\+Address@{header\+\_\+forwarding\+Address}!header.\+h@{header.\+h}}
+\subsubsection[{header\+\_\+forwarding\+Address}]{\setlength{\rightskip}{0pt plus 5cm}void$\ast$ header\+\_\+forwarding\+Address (
+\begin{DoxyParamCaption}
+\item[{void $\ast$}]{pointer}
+\end{DoxyParamCaption}
+)}\label{header_8h_a8807ab0a137871cb453952970f71629c}
+Creates a header that is a forwarding address.
+
+
+\begin{DoxyParams}{Parameters}
+{\em pointer} & -\/ The pointer the header should be based on. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The created header. 
+\end{DoxyReturn}
+\hypertarget{header_8h_a9069f4c438720ad29784fd24eae1c434}{}\index{header.\+h@{header.\+h}!header\+\_\+from\+Format\+String@{header\+\_\+from\+Format\+String}}
+\index{header\+\_\+from\+Format\+String@{header\+\_\+from\+Format\+String}!header.\+h@{header.\+h}}
+\subsubsection[{header\+\_\+from\+Format\+String}]{\setlength{\rightskip}{0pt plus 5cm}void$\ast$ header\+\_\+from\+Format\+String (
+\begin{DoxyParamCaption}
+\item[{{\bf Heap}}]{heap, }
+\item[{char $\ast$}]{string}
+\end{DoxyParamCaption}
+)}\label{header_8h_a9069f4c438720ad29784fd24eae1c434}
+Returns a compact version of the string (aka bitvector) or a pointer to a copy of the string on the heap if the string will not fit inside a single void pointer.
+
+The least significant bits of the returned pointer shows if it is a bitvector or pointer. If the two last bits (little-\/endian) are equal to 00 then it is a pointer. If they are equal to 11 then it is a bitvector.
+
+Allowed characters in the string is\+: r -\/ To represent sizeof(int)
+\begin{DoxyItemize}
+\item -\/ To represent sizeof(void$\ast$)
+\end{DoxyItemize}
+
+
+\begin{DoxyParams}{Parameters}
+{\em heap} & -\/ The heap strings should be allocated on if needed. \\
+\hline
+{\em string} & -\/ The string to base the header on. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The header created. 
+\end{DoxyReturn}
+\hypertarget{header_8h_aa86d8a60c699a5c77678ac9e531d8a33}{}\index{header.\+h@{header.\+h}!header\+\_\+get\+Header\+Type@{header\+\_\+get\+Header\+Type}}
+\index{header\+\_\+get\+Header\+Type@{header\+\_\+get\+Header\+Type}!header.\+h@{header.\+h}}
+\subsubsection[{header\+\_\+get\+Header\+Type}]{\setlength{\rightskip}{0pt plus 5cm}{\bf header\+\_\+type} header\+\_\+get\+Header\+Type (
+\begin{DoxyParamCaption}
+\item[{void $\ast$}]{header}
+\end{DoxyParamCaption}
+)}\label{header_8h_aa86d8a60c699a5c77678ac9e531d8a33}
+Returns the type of the given header.
+
+
+\begin{DoxyParams}{Parameters}
+{\em header} & -\/ The header to determine the type of. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The type of the given header. 
+\end{DoxyReturn}
+\hypertarget{header_8h_a6113d99292d0f82bff89c99ae670f2e4}{}\index{header.\+h@{header.\+h}!header\+\_\+get\+Size@{header\+\_\+get\+Size}}
+\index{header\+\_\+get\+Size@{header\+\_\+get\+Size}!header.\+h@{header.\+h}}
+\subsubsection[{header\+\_\+get\+Size}]{\setlength{\rightskip}{0pt plus 5cm}size\+\_\+t header\+\_\+get\+Size (
+\begin{DoxyParamCaption}
+\item[{void $\ast$}]{header}
+\end{DoxyParamCaption}
+)}\label{header_8h_a6113d99292d0f82bff89c99ae670f2e4}
+Returns the size of the object defined in the header.
+
+
+\begin{DoxyParams}{Parameters}
+{\em header} & -\/ The header to read. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The size \char`\"{}hidden\char`\"{} in the header. 
+\end{DoxyReturn}
+\hypertarget{header_8h_af4faba254af1e769b86417d52ed7633a}{}\index{header.\+h@{header.\+h}!header\+\_\+object\+Specific\+Function@{header\+\_\+object\+Specific\+Function}}
+\index{header\+\_\+object\+Specific\+Function@{header\+\_\+object\+Specific\+Function}!header.\+h@{header.\+h}}
+\subsubsection[{header\+\_\+object\+Specific\+Function}]{\setlength{\rightskip}{0pt plus 5cm}void$\ast$ header\+\_\+object\+Specific\+Function (
+\begin{DoxyParamCaption}
+\item[{{\bf s\+\_\+trace\+\_\+f}}]{function}
+\end{DoxyParamCaption}
+)}\label{header_8h_af4faba254af1e769b86417d52ed7633a}
+Takes a pointer to an object specific garbage collection function and returns a header pointing to said function.
+
+
+\begin{DoxyParams}{Parameters}
+{\em function} & -\/ The function the header should point to. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The created header. 
+\end{DoxyReturn}
+\hypertarget{header_8h_af10ae1e637766deb16a964e363ce7c61}{}\index{header.\+h@{header.\+h}!header\+\_\+pointer\+Iterator@{header\+\_\+pointer\+Iterator}}
+\index{header\+\_\+pointer\+Iterator@{header\+\_\+pointer\+Iterator}!header.\+h@{header.\+h}}
+\subsubsection[{header\+\_\+pointer\+Iterator}]{\setlength{\rightskip}{0pt plus 5cm}void header\+\_\+pointer\+Iterator (
+\begin{DoxyParamCaption}
+\item[{void $\ast$}]{header, }
+\item[{void($\ast$)(void $\ast$)}]{f}
+\end{DoxyParamCaption}
+)}\label{header_8h_af10ae1e637766deb16a964e363ce7c61}
+f anropas med alla pekare som headerns objekt har, där pekare som functionen anropas med beskriver hur mycket ifrån objektets adress pekare verkligen är, Objektet är den data som header beskriver och hör till.
+
+
+\begin{DoxyParams}{Parameters}
+{\em header} & en pekare \\
+\hline
+{\em f} & en funktion \\
+\hline
+\end{DoxyParams}
+\hypertarget{header_8h_af9241ebdf3d00b2d2ac6452ff4052224}{}\index{header.\+h@{header.\+h}!header\+\_\+set\+Header\+Type@{header\+\_\+set\+Header\+Type}}
+\index{header\+\_\+set\+Header\+Type@{header\+\_\+set\+Header\+Type}!header.\+h@{header.\+h}}
+\subsubsection[{header\+\_\+set\+Header\+Type}]{\setlength{\rightskip}{0pt plus 5cm}void$\ast$ header\+\_\+set\+Header\+Type (
+\begin{DoxyParamCaption}
+\item[{void $\ast$}]{header, }
+\item[{{\bf header\+\_\+type}}]{type}
+\end{DoxyParamCaption}
+)}\label{header_8h_af9241ebdf3d00b2d2ac6452ff4052224}
+Takes the given header and returns the same header but with the type bits set according to the given type.
+
+
+\begin{DoxyParams}{Parameters}
+{\em header} & -\/ The header to base the new header on. \\
+\hline
+{\em type} & -\/ The type to set the header to. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Copy of given header but with the given type instead of the original one. 
+\end{DoxyReturn}

@@ -1,0 +1,28 @@
+\hypertarget{stack_8h}{}\section{stack.\+h File Reference}
+\label{stack_8h}\index{stack.\+h@{stack.\+h}}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{stack_8h_a907e34e92b1fe3414461444ddb77309c}{stack\+Iterator} (void $\ast$heap\+Start, void $\ast$heap\+End, void($\ast$foreach)(void $\ast$$\ast$))
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\hypertarget{stack_8h_a907e34e92b1fe3414461444ddb77309c}{}\index{stack.\+h@{stack.\+h}!stack\+Iterator@{stack\+Iterator}}
+\index{stack\+Iterator@{stack\+Iterator}!stack.\+h@{stack.\+h}}
+\subsubsection[{stack\+Iterator}]{\setlength{\rightskip}{0pt plus 5cm}void stack\+Iterator (
+\begin{DoxyParamCaption}
+\item[{void $\ast$}]{heap\+Start, }
+\item[{void $\ast$}]{heap\+End, }
+\item[{void($\ast$)(void $\ast$$\ast$)}]{foreach}
+\end{DoxyParamCaption}
+)}\label{stack_8h_a907e34e92b1fe3414461444ddb77309c}
+Finds all the possible pointers that points on the stack to the memoryspace where; heap\+Start $<$ memoryspace $<$ heap\+End and calls the function \char`\"{}foreach\char`\"{} for every pointer found. 
+\begin{DoxyParams}{Parameters}
+{\em heap\+Start} & pointer to the start of the heap \\
+\hline
+{\em heap\+End} & pointer to the end of the heap \\
+\hline
+{\em foreach} & function which is applied to all pointers found \\
+\hline
+\end{DoxyParams}

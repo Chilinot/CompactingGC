@@ -12,7 +12,9 @@ int clean_suite_1(void) {
 }
 
 // --- UNIT TESTS ---
-
+void testHeapIterator(void){
+  CU_FAIL("test not impl..");
+}
 
 // --- MAIN ---
 
@@ -32,8 +34,8 @@ int main() {
 	}
 
 	/* add the tests to the suites */
-	if(
-
+	if((NULL == CU_add_test(pSuite1, "test of heapIterator()", testHeapIterator))
+	   
 	) {
 		CU_cleanup_registry();
 		return CU_get_error();
