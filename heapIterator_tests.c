@@ -21,7 +21,6 @@ typedef struct test_struct {
 // --- UNIT TESTS ---
 void testHeapIterator(void){
 	Heap heap = heap_init(sizeof(struct heap_s) + 128 * sizeof(void*));
-	
 	// Allocate memory on the heap
 	TestNode last = heap_allocate_struct(heap, "i*");
 	TestNode middle = heap_allocate_struct(heap, "i*");

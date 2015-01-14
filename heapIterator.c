@@ -14,11 +14,14 @@
 // Om objektet redan är flyttat kommer det inte flyttas igen, addresen till objektet på passiva delen kommer fortfarande retuneras.
 // Om objektet har pekare till andra objekt på heapen kommer dom också flyttas och pekarna ändras därefter.
 void* heapIterator(Heap h, void* obj) {
+  if(obj == NULL){
+    return NULL;
+  }
 	if(heap_hasBeenCopied(obj) == true) {
 		return header_clearHeaderTypeBits(GET_HEAPBLOCK(obj));
 	}
-	else if(header_getHeaderType(GET_HEAPBLOCK(obj)) == FUNCTION_POINTER) {
-		return ((*((s_trace_f)(header_clearHeaderTypeBits(GET_HEAPBLOCK(obj)))))(h, &heapIterator, obj));
+	else if(header_getHeaderType(GET_HEAPBLOCK(obj)->header) == FUNCTION_POINTER) {
+		return ((*((s_trace_f)(header_clearHeaderTypeBits(GET_HEAPBLOCK(obj)->header))))(h, &heapIterator, obj));
 	}
 
 	//else
@@ -28,7 +31,7 @@ void* heapIterator(Heap h, void* obj) {
 	  *pplusnewObjPlats = heapIterator(h, *pplusnewObjPlats);
 		return;
 	};
-	header_pointerIterator(GET_HEAPBLOCK(newObjPlats), &g);
+	header_pointerIterator(GET_HEAPBLOCK(newObjPlats)->header, &g);
 
 	return newObjPlats;
 }
