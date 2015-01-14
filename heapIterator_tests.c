@@ -62,6 +62,11 @@ void testHeapIterator(void){
 	CU_ASSERT(new_middle->integer == 24);
 	CU_ASSERT(new_last->integer == 48);
 	
+	// Make sure the copied objects are referencing the copies and not the old objects.
+	CU_ASSERT(new_first != first);
+	CU_ASSERT(new_middle != middle);
+	CU_ASSERT(new_last != last);
+	
 	// Make sure they are no longer on the active part of the heap.
 	CU_ASSERT(!(new_first > heap_getActiveStart(heap) && new_first < heap_getActiveEnd(heap)));
 	CU_ASSERT(!(new_middle > heap_getActiveStart(heap) && new_middle < heap_getActiveEnd(heap)));
