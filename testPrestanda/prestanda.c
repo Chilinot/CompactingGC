@@ -3,13 +3,13 @@
 #include <string.h>
 #include <time.h>
 #include "linkedListLong.h" // use Lucas' awesome module (modified) !
-#include "../gc.h" // our garbage collector!
-#include "../stack.h" 
-#include "../header.h" 
-#include "../heap.h" 
-#include "../heapIterator.h" 
-#include "../string_util/string_util.h" 
-#include "../heap_rep.h"
+#include "../src/gc.h" // our garbage collector!
+#include "../src/stack.h" 
+#include "../src/header.h" 
+#include "../src/heap.h" 
+#include "../src/heapIterator.h" 
+#include "../src/string_util.h" 
+#include "../src/heap_rep.h"
 
 
 #include <inttypes.h> // for uint64_t
@@ -19,67 +19,44 @@
 
 
 
-uint64_t random(){
 
-  uint64_t num;
-
-  /* add code to seed random number generator */
-
-  num = rand();
-  num = (num << 32) | rand();
-
-  // enforce limits of value between 100000000 and 999999999
-  num = (num % (999999999 - 100000000)) + 100000000;
-  return num;
-}
 
 uint64_t randomLong(){
-  uint64_t l = random();
-
-  /* if(l >  MAX_RANDOM%(4*BILLION)  4 miljarder ){
-
-     return randomLong();
-     }
-  */
-
-  
-  return l;
+  return (uint64_t) rand();
 }
 
 
 
-void fillTheLists(LinkedListTest l1, LinkedListTest l2, LinkedListTest l3, LinkedListTest l4){
+void fillTheLists(LinkedListTest l1, LinkedListTest l2, LinkedListTest l3, LinkedListTest l4, int m){
 
   uint64_t theRandomAmountOfNumbersToPutInTheLists = randomLong();
   // between 0 and 4 billions
   
-  for(int i = 0; i < theRandomAmountOfNumbersToPutInTheLists; i++){
-    
+  for(int i = 0; i < m; i++){
+
     uint64_t randomNumberToAddInList = randomLong(); // between 0 and 4 billions
   
     if(randomNumberToAddInList%5 >= 0 && randomNumberToAddInList%5 < 1){
-      add(l1,randomNumberToAddInList);
+      l1 = add(l1,randomNumberToAddInList);
     }
     
     if(randomNumberToAddInList%5 >= 1 && randomNumberToAddInList%5 <= 2){
-      add(l2,randomNumberToAddInList);
+      l2 = add(l2,randomNumberToAddInList);
     }
     
     if(randomNumberToAddInList%5 > 2 && randomNumberToAddInList%5 <= 3){
-      add(l3,randomNumberToAddInList);
+      l3 = add(l3,randomNumberToAddInList);
     }
 
     if(randomNumberToAddInList%5 > 3 && randomNumberToAddInList%5 <= 4){
-      add(l4,randomNumberToAddInList);
+      l4 = add(l4,randomNumberToAddInList);
     }
   }
 }
 
-void randomNumberSearch(LinkedListTest l1, LinkedListTest l2, LinkedListTest l3, LinkedListTest l4){
+void randomNumberSearch(LinkedListTest l1, LinkedListTest l2, LinkedListTest l3, LinkedListTest l4, int n){
 
-  uint64_t NumberOfLoops = randomLong();
-
-  for(int i = 0; i < NumberOfLoops; i++){
+  for(int i = 0; i < n; i++){
 
     uint64_t randomNumberToSearch = randomLong(); // between 0 and 4 billions
 
@@ -105,7 +82,7 @@ void randomNumberSearch(LinkedListTest l1, LinkedListTest l2, LinkedListTest l3,
 
 }
 
-void mallocPrestanda(){;
+void mallocPrestanda(int m, int n){;
   LinkedListTest l1 = NULL ;
   LinkedListTest l2 = NULL ;
   LinkedListTest l3 = NULL ;
@@ -113,10 +90,11 @@ void mallocPrestanda(){;
  
   //random M numbers between 0 and 4e10  and put them in the four different lists
   
-  fillTheLists(l1, l2, l3, l4);
+  fillTheLists(l1, l2, l3, l4,m);
   
+  fillTheLists(l1, l2, l3, l4,n);
   //Now we have a bunch of random numbers in our list now we have to random N numbers and search in the lists and find them if we can
-  randomNumberSearch(l1 ,l2 ,l3 ,l4);
+  randomNumberSearch(l1 ,l2 ,l3 ,l4, n);
 
   //dealllocate the lists
   destroy_list(l1);
@@ -127,37 +105,36 @@ void mallocPrestanda(){;
 }
 
 
-void fillTheListsgc(LinkedListTest l1, LinkedListTest l2, LinkedListTest l3, LinkedListTest l4, Heap heap){
 
-  uint64_t theRandomAmountOfNumbersToPutInTheLists = randomLong();
-  // between 0 and 4 billions
-  
-  for(int i = 0; i < theRandomAmountOfNumbersToPutInTheLists; i++){
-    
+
+void fillTheListsgc(LinkedListTest l1, LinkedListTest l2, LinkedListTest l3, LinkedListTest l4, int m, Heap heap){
+
+  for(int i = 0; i < m; i++){
+    //printf("heap available %d\n", h_avail(heap));    
     uint64_t randomNumberToAddInList = randomLong(); // between 0 and 4 billions
   
     if(randomNumberToAddInList%5 >= 0 && randomNumberToAddInList%5 < 1){
-      addgc(l1,randomNumberToAddInList, heap);
+      l1 = addgc(l1,randomNumberToAddInList, heap);
     }
     
     if(randomNumberToAddInList%5 >= 1 && randomNumberToAddInList%5 <= 2){
-      addgc(l2,randomNumberToAddInList, heap);
+      l2 = addgc(l2,randomNumberToAddInList, heap);
     }
     
     if(randomNumberToAddInList%5 > 2 && randomNumberToAddInList%5 <= 3){
-      addgc(l3,randomNumberToAddInList, heap);
+      l3 = addgc(l3,randomNumberToAddInList, heap);
     }
-
+    
     if(randomNumberToAddInList%5 > 3 && randomNumberToAddInList%5 <= 4){
-      addgc(l4,randomNumberToAddInList, heap);
+      l4 = addgc(l4,randomNumberToAddInList, heap);
     }
   }
 }
 
 
-void gcPrestanda(){
+void gcPrestanda(int m, int n, int heapSize){
 
-  Heap h = h_init(20 + 100 * sizeof(void*)); // initialize a heap with what value??
+  Heap h = h_init(sizeof(struct heap_s) +  heapSize * sizeof(void*)); // initialize a heap with what value??
 
   if(h == NULL){
     puts("h == NULL");
@@ -168,9 +145,13 @@ void gcPrestanda(){
   LinkedListTest l2 =  NULL;
   LinkedListTest l3 =  NULL;
   LinkedListTest l4 =  NULL;
-  fillTheListsgc(l1, l2, l3, l4, h);
-  // randomNumberSearchgc(l1 ,l2 ,l3 ,l4, h);
 
+  fillTheListsgc(l1, l2, l3, l4, m, h); //shows cleaning unreferenced objects in the heap
+  h_gc(h);
+  fillTheListsgc(l1, l2, l3, l4, n, h); //shows cleaning unreferenced objects in the heap
+
+  randomNumberSearch(l1 ,l2 ,l3 ,l4, n);
+  
 
   h_delete(h);
 
@@ -182,17 +163,60 @@ int main(){
   
   clock_t start_t, end_t, total_t;
 
-
-  start_t = clock();
-  printf("Starting of the program, start_t = %ld\n", start_t);
-
-
-
-  //mallocPrestanda(); //DONE I THINK
-  gcPrestanda(); //NOT DONE NOT STARTED ON
+  for(int i = 0; i < 0; i++){
+    printf("random number = %d\n", rand());
+  }
 
 
-  end_t = clock();
-  printf("End of the big loop, end_t = %ld\n", end_t);
+  
+  printf("Starting of the program, start_t = %d\n", 1337);
+ 
+  unsigned int N = 1000000; // times to search the list
+  unsigned int M = 10000000; //add M number of objects in the list
+  unsigned int heapSize = 10000000000;
+  printf("RUNNING TESTS\n");
+
+
+  printf("TESTING GC\n");
+  for(int i = 0; i < 5; i++){
+    start_t = clock();
+ 
+    printf(" number of searches %d\n number of objects inserted %d\n size of the heap %d\n\n",N, M, heapSize);
+   
+    gcPrestanda(M,N, heapSize); 
+    N /= 10;
+    M /= 10;
+    heapSize /= 10;
+
+
+    start_t = clock() - start_t;
+    double  time = ((float)start_t)/CLOCKS_PER_SEC;
+    
+    printf("Time for this test: %f\n\n", time  );
+  }
+  N = 1000000; // times to search the list
+  M = 10000000; //add M number of objects in the list
+  heapSize = 10000000000;
+  printf("TESTING MALLOC\n");
+  for(int i = 0; i < 5; i++){
+    start_t = clock();
+ 
+    printf(" number of searches %d\n number of objects inserted %d\n size of the heap %d\n\n",N, M, heapSize);
+   
+    gcPrestanda(M,N, heapSize); 
+    N /= 10;
+    M /= 10;
+    heapSize /= 10;
+
+
+    start_t = clock() - start_t;
+    double  time = ((float)start_t)/CLOCKS_PER_SEC;
+    
+  printf("Time for this test: %f\n", time  );
+  }
+
+  start_t = clock() - start_t;
+  double  time = ((float)start_t)/CLOCKS_PER_SEC;
+
   return 0;
 }

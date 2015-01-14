@@ -7,7 +7,7 @@
 #ifndef __linkedlistLong__
 #define __linkedlistLong__
 #include <inttypes.h>
-#include "../gc.h" // our garbage collector!
+#include "../src/gc.h" // our garbage collector!
 
 typedef struct _linkedlist {
 	uint64_t data;

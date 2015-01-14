@@ -1,13 +1,13 @@
 #include "linkedListLong.h"
 #include <stdlib.h>
 #include <inttypes.h>
-#include "../gc.h" // our garbage collector!
-#include "../stack.h" 
-#include "../header.h" 
-#include "../heap.h" 
-#include "../heapIterator.h" 
-#include "../string_util/string_util.h" 
-#include "../heap_rep.h"
+#include "../src/gc.h" // our garbage collector!
+#include "../src/stack.h" 
+#include "../src/header.h" 
+#include "../src/heap.h" 
+#include "../src/heapIterator.h" 
+#include "../src/string_util.h" 
+#include "../src/heap_rep.h"
 
 
 
@@ -25,10 +25,10 @@ LinkedListTest addgc(LinkedListTest list, uint64_t data, Heap h) {
   LinkedListTest new_node = h_alloc_struct(h, "d*");
   new_node->data = data;
   new_node->next = list;
-  printf("Heapspace available %d\n", h_avail(h));
-  printf("data %d\n", data);
   return new_node;
 }
+
+
 
 
 uint64_t examine_head(LinkedListTest list) {
