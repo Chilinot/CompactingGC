@@ -24,11 +24,10 @@ int clean_suite_1(void) {
 void testh_gc() {
   Heap heap;
   heap = h_init(sizeof(struct heap_s) + 140*sizeof(void*));
-
   heap_allocate_struct(heap, "*ii*");
   heap_allocate_struct(heap, "*****");
   h_gc(heap);
-  CU_ASSERT(h_avail(heap) == 280);
+  CU_ASSERT(h_avail(heap) == 70*sizeof(void*));
   void* a = heap_allocate_struct(heap, "*ii*");
   void* b = heap_allocate_struct(heap, "*****");
   int bytesAvailable = h_avail(heap);

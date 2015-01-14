@@ -1,0 +1,112 @@
+        -:    0:Source:/home/marcus/IOOPM/Projekt/persikan/src/gc.c
+        -:    0:Graph:gc.gcno
+        -:    0:Data:gc.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:#include "gc.h"
+        -:    2:#include "heap.h"
+        -:    3:#include "header.h"
+        -:    4:#include "stack.h"
+        -:    5:#include "heapIterator.h"
+        -:    6:#include "string_util.h"
+        -:    7:
+        -:    8:// Create a heap from the heap module with the given amount of bytes.
+        -:    9:// Return a pointer to said heap.
+        1:   10:Heap h_init(size_t bytes) {
+        1:   11:	Heap h = heap_init(bytes);
+        1:   12:	return h;
+        -:   13:}
+        -:   14:
+        -:   15:// Destroy the given heap by calling the appropriate function in the heap module.
+    #####:   16:void h_delete(Heap h) {
+    #####:   17:	heap_del(h);
+    #####:   18:}
+        -:   19:
+        -:   20:// Calls stack tracer to retrieve pointers to all places in the stack that contains pointers to the heap and
+        -:   21:// the overwrites the values on the stack with the dbg_value.
+        -:   22:// Call h_delete() with the given heap.
+    #####:   23:void h_delete_dbg(Heap h, void* dbg_value) {
+    #####:   24:	void setPointerTodbg_value(void** pointer) {
+    #####:   25:		*pointer = dbg_value;
+    #####:   26:	}
+        -:   27:
+    #####:   28:	stackIterator(heap_getActiveStart(h) - 1, heap_getActiveEnd(h) + 1, setPointerTodbg_value);
+        -:   29:
+    #####:   30:	heap_del(h);
+    #####:   31:}
+        -:   32:
+        -:   33:// Calls function in heap module that returns the available size and return that value.	 
+        6:   34:size_t h_avail(Heap h) {
+        6:   35:	return heap_sizeLeft(h);
+        -:   36:}
+        -:   37:
+        -:   38:// Retrieves pointers to all places in the stack that contains pointers to the heap.
+        -:   39:// and iterates over the heap and finds pointers to other objects on the heap.
+        -:   40:// Also copies objects from active to passive using the pointers retrieved and swap the active and the passive
+        -:   41:// area. Returns the available size.
+        2:   42:size_t h_gc(Heap h) {
+        2:   43:	void f(void** stackPekare) {
+        2:   44:		*stackPekare = heapIterator(h, *stackPekare);
+        2:   45:	}
+        -:   46:
+        2:   47:	stackIterator(heap_getActiveStart(h) - 1, heap_getActiveEnd(h) + 1, &f);
+        -:   48:
+        2:   49:	heap_swapActiveAndPassive(h);
+        -:   50:
+        2:   51:	return h_avail(h);
+        -:   52:}
+        -:   53:
+        -:   54:// Checks if there is space left in the heap and if there is space
+        -:   55:// left in the heap triggers garbage collection.
+        -:   56:// If there is still not enough space left in the heap after the garbage collection return null.
+        -:   57:// Also creates a string with the value in bytes amount of 'c' characters.
+    #####:   58:void* h_alloc_data(Heap h, size_t bytes) {
+    #####:   59:	if(h_avail(h) < bytes) {
+    #####:   60:		if(h_gc(h) < bytes) {
+    #####:   61:			return NULL;
+        -:   62:		}
+        -:   63:	}
+        -:   64:
+        -:   65:	//else
+    #####:   66:	return heap_allocate_raw(h, bytes);
+        -:   67:}
+        -:   68:
+        -:   69:// Checks if there is space left in the heap and if there is space
+        -:   70:// left in the heap triggers garbage collection.
+        -:   71:// If there is still not enough space left in the heap after the garbage collection return null.
+    #####:   72:void* h_alloc_struct(Heap h, char* layout) {
+    #####:   73:	char* headerString = formatStringToHeaderString(layout);
+    #####:   74:	size_t bytes = headerStringToSize(headerString);
+    #####:   75:	free(headerString);
+        -:   76:
+    #####:   77:	if(h_avail(h) < bytes) {
+    #####:   78:		if(h_gc(h) < bytes) {
+    #####:   79:			return NULL;
+        -:   80:		}
+        -:   81:	}
+        -:   82:
+        -:   83:	//else
+    #####:   84:	return heap_allocate_struct(h, layout);
+        -:   85:}
+        -:   86:
+        -:   87:// Checks if there is space left in the heap and if there is space
+        -:   88:// left in the heap triggers garbage collection.
+        -:   89:// If there is still not enough space left in the heap after the garbage collection return null.
+        -:   90:// Then allocates the objects with function pointers.
+    #####:   91:void* h_alloc_union(Heap h, size_t bytes, s_trace_f f) {
+    #####:   92:	if(h_avail(h) < bytes) {
+    #####:   93:		if(h_gc(h) < bytes) {
+    #####:   94:			return NULL;
+        -:   95:		}
+        -:   96:	}
+        -:   97:
+        -:   98:	//else
+    #####:   99:	return heap_allocate_union(h, bytes, f);
+        -:  100:}
+        -:  101:/*
+        -:  102:#ifndef NO_GC_MAIN
+        -:  103:int main(void) {
+        -:  104:	return 0;
+        -:  105:}
+        -:  106:#endif
+        -:  107:*/
