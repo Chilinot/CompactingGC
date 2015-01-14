@@ -1,0 +1,49 @@
+Function 'heap_getActiveEnd'
+Lines executed:100.00% of 2
+
+Function 'heap_getActiveStart'
+Lines executed:100.00% of 2
+
+Function 'heap_sizeLeft'
+Lines executed:100.00% of 6
+
+Function 'heap_swapActiveAndPassive'
+Lines executed:100.00% of 7
+
+Function 'heap_hasBeenCopied'
+Lines executed:100.00% of 3
+
+Function 'heap_markAsCopied'
+Lines executed:100.00% of 5
+
+Function 'heap_copyFromActiveToPassive'
+Lines executed:100.00% of 13
+
+Function 'heap_allocate'
+Lines executed:100.00% of 6
+
+Function 'heap_allocatePassive'
+Lines executed:100.00% of 2
+
+Function 'heap_allocateActive'
+Lines executed:100.00% of 2
+
+Function 'heap_allocate_union'
+Lines executed:0.00% of 3
+
+Function 'heap_allocate_struct'
+Lines executed:100.00% of 4
+
+Function 'heap_allocate_raw'
+Lines executed:100.00% of 6
+
+Function 'heap_del'
+Lines executed:0.00% of 3
+
+Function 'heap_init'
+Lines executed:93.33% of 15
+
+File '/home/marcus/IOOPM/Projekt/persikan/src/heap.c'
+Lines executed:91.14% of 79
+Creating 'heap.c.gcov'
+

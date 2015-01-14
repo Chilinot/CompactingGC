@@ -1,0 +1,295 @@
+        -:    0:Source:/home/marcus/IOOPM/Projekt/persikan/src/header.c
+        -:    0:Graph:header.gcno
+        -:    0:Data:header.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:#include <stdint.h>
+        -:    2:#include <stdbool.h>
+        -:    3:#include <string.h>
+        -:    4:#include <stdio.h>
+        -:    5:#include "header.h"
+        -:    6:#include "heap.h"
+        -:    7:#include "string_util.h"
+        -:    8:
+        -:    9:
+        -:   10: // Defines number of bits per token.
+        -:   11:#define BITS_PER_TOKEN 2
+        -:   12:
+        -:   13: // Defines the amount of chars we can store in a bitvector.
+        -:   14:#define TOKENS_PER_POINTER ((sizeof(void*) * 8) / BITS_PER_TOKEN)
+        -:   15:
+        -:   16: // Defines the bit representation of the bitvector terminator.
+        -:   17:#define TERMINATOR_TOKEN 0b01
+        -:   18:
+        -:   19: // Bit representation of the pointer token.
+        -:   20:#define POINTER_TOKEN 0b11
+        -:   21:
+        -:   22: // Bit representation of the int token.
+        -:   23:#define INT_TOKEN 0b00
+        -:   24:
+        -:   25:// Removes two bits that indicate the type of the header.
+       10:   26:void* header_clearHeaderTypeBits(void* header) {
+       10:   27:	intptr_t cast_header = (intptr_t) header;
+       10:   28:	cast_header &= ~0b11;
+       10:   29:	return (void*) cast_header;
+        -:   30:}
+        -:   31:
+        -:   32:// Returns the type of the given header.
+        -:   33:
+       15:   34:header_type header_getHeaderType(void* header) {
+       15:   35:	intptr_t cast_header = (intptr_t) header;
+        -:   36:
+       15:   37:	cast_header &= 0b11; //tar ut de minst tv� signifikanta bitarna
+        -:   38:
+       15:   39:	switch(cast_header) {
+        -:   40:	case 0b00:
+        4:   41:		return POINTER_TO_STRING;
+        -:   42:
+        -:   43:	case 0b01:
+        2:   44:		return FORWARDING_ADDRESS;
+        -:   45:
+        -:   46:	case 0b10:
+        2:   47:		return FUNCTION_POINTER;
+        -:   48:
+        -:   49:	case 0b11:
+        7:   50:		return BITVECTOR;
+        -:   51:
+        -:   52:	default:
+    #####:   53:		return ERROR;
+        -:   54:	}
+        -:   55:
+        -:   56:	// This statement should never be reached. It is just here as a precaution.
+        -:   57:	return ERROR;
+        -:   58:}
+        -:   59:
+        -:   60:// Creates a header that is a forwarding adress.
+        -:   61:
+        2:   62:void* header_forwardingAddress(void* pointer) {
+        2:   63:	intptr_t cast_pointer = (intptr_t) pointer;
+        2:   64:	cast_pointer |= 1;
+        2:   65:	return (void*) cast_pointer;
+        -:   66:}
+        -:   67:
+        -:   68:// Returns a compact version of the string aka bitvector or a pointer to a copy of the string 
+        -:   69:// on the heap if the string will not fit inside a single void-pointer 
+        -:   70:// The least significant bits of the returned pointer shows if it is a bitvector or pointer. 
+        -:   71:// If the two last bits (little endian) are equal to 00 then it is a pointer.
+        -:   72:// If they are equal to 11 then it is a bitvector.
+        -:   73:
+        8:   74:void* header_fromFormatString(Heap heap, char* string) {
+        -:   75:	// True if the string will fit inside a void*-4 else false.
+        -:   76:	// It subtracts four to make sure the bitvector terminator and the header type will fit.
+        -:   77:
+        8:   78:	string = formatStringToHeaderString(string);
+        -:   79:
+        8:   80:	bool useVector = strlen(string) <= (TOKENS_PER_POINTER - 4);
+        -:   81:
+        8:   82:	if(useVector) {
+        5:   83:		int i = 0;
+        5:   84:		intptr_t header = 0;
+        -:   85:
+       68:   86:		while(string[i] != '\0') {
+        -:   87:
+       58:   88:			if(string[i] == '*') {
+        5:   89:				header |= POINTER_TOKEN;
+        -:   90:			}
+        -:   91:			else {
+       53:   92:				header |= INT_TOKEN;
+        -:   93:			}
+        -:   94:
+       58:   95:			header <<= BITS_PER_TOKEN;
+       58:   96:			i++;
+        -:   97:		}
+        -:   98:
+        -:   99:		// Terminate the bitvector.
+        5:  100:		header |= TERMINATOR_TOKEN;
+        -:  101:
+        -:  102:		// Make sure the header is properly shifted.
+        -:  103:		// Subtract one to account for the terminating bits.
+      107:  104:		while(i++ < TOKENS_PER_POINTER - 1) {
+       97:  105:			header <<= BITS_PER_TOKEN;
+        -:  106:		}
+        -:  107:
+        -:  108:		// Mark the two type bits as a bitvector.
+        5:  109:		header |= 0b11;
+        -:  110:
+        5:  111:		free(string);
+        -:  112:
+        5:  113:		return (void*) header;
+        -:  114:	}
+        -:  115:	else {
+        -:  116:		// Return a copy of the string allocated on the real heap.
+        3:  117:		char* string_copy = heap_allocate_raw(heap, strlen(string) + 1);
+        3:  118:		strcpy(string_copy, string);
+        -:  119:
+        3:  120:		free(string);
+        -:  121:
+        3:  122:		return (void*) string_copy;
+        -:  123:	}
+        -:  124:}
+        -:  125:
+        -:  126:// Takes a pointer to an object specific garbagecollection function and returns a header pointing to a said
+        -:  127:// function.
+        -:  128:
+    #####:  129:void* header_objectSpecificFunction(s_trace_f function) {
+    #####:  130:	intptr_t ptr = (intptr_t) function;
+    #####:  131:	ptr |= 0b10;
+    #####:  132:	return (void*) ptr;
+        -:  133:}
+        -:  134:
+        -:  135:// Returns the size of the object in the header.
+        -:  136:
+        5:  137:size_t header_getSize(void* header) {
+        5:  138:	int antal_r = 0;
+        5:  139:	int antal_p = 0;
+        -:  140:
+        5:  141:	switch(header_getHeaderType(header)) {
+        -:  142:	case BITVECTOR:
+       30:  143:		for(int i = TOKENS_PER_POINTER * BITS_PER_TOKEN - BITS_PER_TOKEN; i >= 2; i -= 2) {
+        -:  144:
+       30:  145:			intptr_t shifted = ((intptr_t) 0b11) << i;
+        -:  146:
+       30:  147:			intptr_t bits = ((intptr_t) header) & shifted;
+       30:  148:			bits = (bits >> i) & 0b11;
+        -:  149:
+       30:  150:			if(bits == TERMINATOR_TOKEN) {
+        3:  151:				break; // Stop the loop.
+        -:  152:			}
+        -:  153:
+       27:  154:			switch(bits) {
+        -:  155:			case INT_TOKEN:
+       25:  156:				++antal_r;
+       25:  157:				break;
+        -:  158:
+        -:  159:			case POINTER_TOKEN:
+        2:  160:				++antal_p;
+        2:  161:				break;
+        -:  162:
+        -:  163:				// This is only reached if the header is not properly formatted.
+        -:  164:			default:
+    #####:  165:				return 0;
+        -:  166:			}
+        -:  167:		}
+        -:  168:
+        3:  169:		break;
+        -:  170:
+        -:  171:	case POINTER_TO_STRING:
+        2:  172:		header = header_clearHeaderTypeBits(header);
+        2:  173:		char* string = (char*) header;
+        -:  174:
+       87:  175:		for(int i = 0; string[i] != '\0'; i++) {
+       85:  176:			if(string[i] == '*') {
+       15:  177:				++antal_p;
+        -:  178:			}
+       70:  179:			else if(string[i] == 'r') {
+       70:  180:				++antal_r;
+        -:  181:			}
+        -:  182:		}
+        -:  183:
+        2:  184:		break;
+        -:  185:
+        -:  186:	default:
+    #####:  187:		return 0;
+        -:  188:	}
+        -:  189:
+        5:  190:	return (sizeof(int) * antal_r) + (sizeof(void*) * antal_p);
+        -:  191:}
+        -:  192:
+        -:  193:// f anropas med alla pekare som headerns objekt har,
+        -:  194:// där pekare som functionen anropas med beskriver hur mycket ifrån objektets adress pekare verkligen är,
+        -:  195:// Objektet är den data som header beskriver och hör till.
+        -:  196:
+        2:  197:void header_pointerIterator(void* header, void (*f)(void*)) {
+        2:  198:	char* cursor = 0;
+        -:  199:
+        2:  200:	switch(header_getHeaderType(header)) {
+        -:  201:	case BITVECTOR:
+       16:  202:		for(int i = TOKENS_PER_POINTER * BITS_PER_TOKEN - BITS_PER_TOKEN; i >= 2; i -= 2) {
+       16:  203:			intptr_t shifted = ((intptr_t) 0b11) << i; // varfor??
+        -:  204:
+       16:  205:			intptr_t bits = ((intptr_t) header) & shifted;
+       16:  206:			bits = (bits >> i) & 0b11;
+        -:  207:
+       16:  208:			if(bits == TERMINATOR_TOKEN) {
+        2:  209:				break; // Stop the loop.
+        -:  210:			}
+        -:  211:
+       14:  212:			switch(bits) {
+        -:  213:			case INT_TOKEN:
+        6:  214:				cursor += sizeof(int) / sizeof(char);
+        6:  215:				break;
+        -:  216:
+        -:  217:			case POINTER_TOKEN:
+        8:  218:				(*f)((void*)(cursor));
+        8:  219:				cursor += sizeof(void*) / sizeof(char);
+        8:  220:				break;
+        -:  221:
+        -:  222:				// This is only reached if the header is not properly formatted.
+        -:  223:			default:
+    #####:  224:				return;
+        -:  225:			}
+        -:  226:		}
+        -:  227:
+        2:  228:		break;
+        -:  229:
+        -:  230:	case POINTER_TO_STRING:
+    #####:  231:		header = header_clearHeaderTypeBits(header);
+    #####:  232:		char* string = (char*) header;
+        -:  233:
+    #####:  234:		for(int i = 0; string[i] != '\0'; i++) {
+    #####:  235:			switch(string[i]) {
+        -:  236:			case 'r':
+    #####:  237:				cursor += sizeof(int) / sizeof(char);
+    #####:  238:				break;
+        -:  239:
+        -:  240:			case '*':
+    #####:  241:				(*f)((void*)(cursor));
+    #####:  242:				cursor += sizeof(void*) / sizeof(char);
+    #####:  243:				break;
+        -:  244:			}
+        -:  245:		}
+        -:  246:
+    #####:  247:		break;
+        -:  248:
+        -:  249:	default:
+    #####:  250:		return;
+        -:  251:	}
+        -:  252:
+        2:  253:	return;
+        -:  254:}
+        -:  255:
+        -:  256:// Takes the given header and returns the same header but with the typebits set according to the given type.
+        -:  257:
+        4:  258:void* header_setHeaderType(void* header, header_type type) {
+        -:  259:
+        4:  260:	intptr_t ptr = (intptr_t) header;
+        -:  261:
+        -:  262:	// First we need to clear the type bits.
+        4:  263:	ptr = header_clearHeaderTypeBits(ptr);
+        -:  264:
+        -:  265:	// Now we re set them according to the given type.
+        4:  266:	switch(type) {
+        -:  267:	case POINTER_TO_STRING:
+        1:  268:		ptr |= 0b00;
+        1:  269:		break;
+        -:  270:
+        -:  271:	case FORWARDING_ADDRESS:
+        1:  272:		ptr |= 0b01;
+        1:  273:		break;
+        -:  274:
+        -:  275:	case FUNCTION_POINTER:
+        1:  276:		ptr |= 0b10;
+        1:  277:		break;
+        -:  278:
+        -:  279:	case BITVECTOR:
+        1:  280:		ptr |= 0b11;
+        1:  281:		break;
+        -:  282:
+        -:  283:	default:
+        -:  284:		// ERROR
+    #####:  285:		return NULL;
+        -:  286:	}
+        -:  287:
+        4:  288:	return ptr;
+        -:  289:}
+        -:  290:

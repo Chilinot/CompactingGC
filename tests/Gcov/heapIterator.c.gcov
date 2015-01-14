@@ -1,0 +1,40 @@
+        -:    0:Source:/home/marcus/IOOPM/Projekt/persikan/src/heapIterator.c
+        -:    0:Graph:heapIterator.gcno
+        -:    0:Data:heapIterator.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:#include <assert.h>
+        -:    2:#include <stdint.h>
+        -:    3:#include <stdbool.h>
+        -:    4:#include "heap.h"
+        -:    5:#include "header.h"
+        -:    6:#include "heap_rep.h"
+        -:    7:#include "heapIterator.h"
+        -:    8:
+        -:    9:
+        -:   10:
+        -:   11:// Objekt flyttas till den passiva/nya delen av heapen om den inte redan är flyttad och markeras som flyttad.
+        -:   12:// Om objektet redan är flyttat kommer det inte flyttas igen, addresen till objektet på passiva delen kommer fortfarande retuneras.
+        -:   13:// Om objektet har pekare till andra objekt på heapen kommer dom också flyttas och pekarna ändras därefter.
+        4:   14:void* heapIterator(Heap h, void* obj) {
+        4:   15:  if(obj == NULL){
+        1:   16:    return NULL;
+        -:   17:  }
+        3:   18:	if(heap_hasBeenCopied(obj) == true) {
+    #####:   19:		return header_clearHeaderTypeBits(GET_HEAPBLOCK(obj));
+        -:   20:	}
+        3:   21:	else if(header_getHeaderType(GET_HEAPBLOCK(obj)->header) == FUNCTION_POINTER) {
+    #####:   22:		return ((*((s_trace_f)(header_clearHeaderTypeBits(GET_HEAPBLOCK(obj)->header))))(h, &heapIterator, obj));
+        -:   23:	}
+        -:   24:
+        -:   25:	//else
+        3:   26:	void* newObjPlats = heap_copyFromActiveToPassive(h, obj);
+        3:   27:	void g(void * p) {
+        3:   28:	  void** pplusnewObjPlats = (void**)(((intptr_t) p ) + ((intptr_t) newObjPlats ));
+        3:   29:	  *pplusnewObjPlats = heapIterator(h, *pplusnewObjPlats);
+        3:   30:		return;
+        -:   31:	};
+        3:   32:	header_pointerIterator(GET_HEAPBLOCK(newObjPlats)->header, &g);
+        -:   33:
+        3:   34:	return newObjPlats;
+        -:   35:}

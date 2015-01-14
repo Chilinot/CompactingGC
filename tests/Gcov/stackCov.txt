@@ -1,0 +1,7 @@
+Function 'stackIterator'
+Lines executed:100.00% of 12
+
+File '/home/marcus/IOOPM/Projekt/persikan/src/stack.c'
+Lines executed:100.00% of 12
+Creating 'stack.c.gcov'
+
