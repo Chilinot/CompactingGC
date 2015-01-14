@@ -80,6 +80,8 @@ void testHeapIterator(void){
 	CU_ASSERT(header_clearHeaderTypeBits(first_block->header) == new_first);
 	CU_ASSERT(header_clearHeaderTypeBits(middle_block->header) == new_middle);
 	CU_ASSERT(header_clearHeaderTypeBits(last_block->header) == new_last);
+	
+	heap_del(heap);
 }
 
 // --- MAIN ---
