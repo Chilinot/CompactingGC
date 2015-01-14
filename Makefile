@@ -52,7 +52,7 @@ string_util.o: setup $(SRC_FOLDER)/string_util.c $(SRC_FOLDER)/string_util.h
 
 
 # TESTS
-test_all: test_header test_heap test_heapIterator test_stack
+test_all: test_header test_heap test_heapIterator test_stack test_stringutil
 
 test_header: setup $(SRC_FOLDER)/header.c $(SRC_FOLDER)/header.h $(TEST_FOLDER)/header_tests.c $(SRC_FOLDER)/string_util.c $(SRC_FOLDER)/string_util.h $(SRC_FOLDER)/heap.c $(SRC_FOLDER)/heap.h
 	$(CC) $(CFLAGS) $(TESTFLAGS) $(TEST_FOLDER)/header_tests.c $(SRC_FOLDER)/header.c $(SRC_FOLDER)/string_util.c $(SRC_FOLDER)/heap.c -o $(TARGET_FOLDER)/tests/header_unittests -lcunit
@@ -69,3 +69,7 @@ test_heapIterator: setup $(SRC_FOLDER)/heapIterator.c $(SRC_FOLDER)/heapIterator
 test_stack: setup $(SRC_FOLDER)/stack.c $(SRC_FOLDER)/stack.h $(TEST_FOLDER)/stack_tests.c
 	$(CC) $(CFLAGS) $(TESTFLAGS) $(SRC_FOLDER)/stack.c $(TEST_FOLDER)/stack_tests.c -o $(TARGET_FOLDER)/tests/stack_unittests -lcunit
 	./$(TARGET_FOLDER)/tests/stack_unittests
+	
+test_stringutil: setup $(SRC_FOLDER)/string_util.c $(SRC_FOLDER)/string_util.h $(TEST_FOLDER)/string_util_test.c
+	$(CC) $(CFLAGS) $(TESTFLAGS) $(SRC_FOLDER)/string_util.c $(SRC_FOLDER)/string_util.h $(TEST_FOLDER)/string_util_test.c -o $(TARGET_FOLDER)/tests/stringutil_unittests -lcunit
+	./$(TARGET_FOLDER)/tests/stringutil_unittests
