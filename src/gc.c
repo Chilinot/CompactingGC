@@ -98,7 +98,8 @@ void* h_alloc_union(Heap h, size_t bytes, s_trace_f f) {
 	//else
 	return heap_allocate_union(h, bytes, f);
 }
-
+#ifndef NO_GC_MAIN
 int main(void) {
 	return 0;
 }
+#endif
