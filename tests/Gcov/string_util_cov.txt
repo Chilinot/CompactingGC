@@ -1,0 +1,34 @@
+Function 'headerStringToSize'
+Lines executed:83.33% of 6
+
+Function 'formatStringToHeaderString'
+Lines executed:80.00% of 10
+
+Function 'convertformatStringWithoutDigitsToHeaderString'
+Lines executed:100.00% of 21
+
+Function 'returnalignof'
+Lines executed:92.86% of 14
+
+Function 'returnsizeof'
+Lines executed:92.86% of 14
+
+Function 'formatStringWithoutDigits'
+Lines executed:100.00% of 18
+
+Function 'lengthOfFormatStringWithoutDigitsToAllocate'
+Lines executed:100.00% of 10
+
+Function 'lengthOfFormatStringToAllocate'
+Lines executed:100.00% of 8
+
+Function 'newPos'
+Lines executed:100.00% of 7
+
+Function 'returnDigit'
+Lines executed:100.00% of 12
+
+File '/home/marcus/IOOPM/Projekt/persikan/src/string_util.c'
+Lines executed:95.83% of 120
+Creating 'string_util.c.gcov'
+

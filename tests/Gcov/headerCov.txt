@@ -1,0 +1,28 @@
+Function 'header_setHeaderType'
+Lines executed:92.86% of 14
+
+Function 'header_pointerIterator'
+Lines executed:58.62% of 29
+
+Function 'header_getSize'
+Lines executed:92.59% of 27
+
+Function 'header_objectSpecificFunction'
+Lines executed:0.00% of 4
+
+Function 'header_fromFormatString'
+Lines executed:100.00% of 22
+
+Function 'header_forwardingAddress'
+Lines executed:100.00% of 4
+
+Function 'header_getHeaderType'
+Lines executed:88.89% of 9
+
+Function 'header_clearHeaderTypeBits'
+Lines executed:100.00% of 4
+
+File '/home/marcus/IOOPM/Projekt/persikan/src/header.c'
+Lines executed:82.30% of 113
+Creating 'header.c.gcov'
+

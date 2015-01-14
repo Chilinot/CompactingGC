@@ -1,0 +1,255 @@
+        -:    0:Source:/home/marcus/IOOPM/Projekt/persikan/src/heap.c
+        -:    0:Graph:heap.gcno
+        -:    0:Data:heap.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:#include <stdlib.h>
+        -:    2:#include <stdio.h>
+        -:    3:#include <stdint.h>
+        -:    4:#include "heap.h"
+        -:    5:#include "heap_rep.h"
+        -:    6:#include "header.h"
+        -:    7:
+        -:    8:// Comment the following row to disable debug output
+        -:    9:// #define HEAP_DEBUG
+        -:   10:
+        -:   11:#ifdef HEAP_DEBUG
+        -:   12:#include "debug.h"
+        -:   13:#endif
+        -:   14:
+        -:   15:// Creates a heap with the given size in bytes. Only half of the given amount will be usable at all times
+        -:   16:// due to it being split into an active and a passive area.
+        -:   17:// Returns null if the given size does not have space enough to fit metadata required by the heap.
+        -:   18:
+       16:   19:Heap heap_init(size_t bytes) {
+        -:   20:
+       16:   21:	size_t struct_size = sizeof(struct heap_s);
+        -:   22:
+       16:   23:	if(bytes <= struct_size) {
+        -:   24:		// The given space is too small.
+        2:   25:		return NULL;
+        -:   26:	}
+        -:   27:
+        -:   28:	// This is the amount of bytes available to the user.
+       14:   29:	size_t allocateable = bytes - struct_size;
+        -:   30:
+        -:   31:	// This is the amount of bytes per block (active or passive block).
+       14:   32:	size_t blocksize = allocateable / 2;
+        -:   33:
+        -:   34:	// Make sure the block sizes are properly aligned.
+       14:   35:	if(blocksize % sizeof(void*) != 0) {
+    #####:   36:		return NULL;
+        -:   37:	}
+        -:   38:
+       14:   39:	Heap heap = calloc(bytes, 1);
+        -:   40:
+       14:   41:	heap->heapsize = allocateable;
+        -:   42:
+       14:   43:	heap->active = (void*)(((char*) heap) + struct_size);
+       14:   44:	heap->passive = (void*)(((char*) heap->active) + blocksize);
+        -:   45:
+       14:   46:	heap->active_pointer = heap->active;
+       14:   47:	heap->passive_pointer = heap->passive;
+        -:   48:
+       14:   49:	return heap;
+        -:   50:}
+        -:   51:
+        -:   52:// De-allocates the given heap
+        -:   53:
+    #####:   54:void heap_del(Heap heap) {
+    #####:   55:	free(heap);
+    #####:   56:}
+        -:   57:
+        -:   58:// Allocates a new object on the heap with the given amount of bytes in size.
+        -:   59:// This object is not allowed to have pointers back into the heap.
+        -:   60:
+        5:   61:void* heap_allocate_raw(Heap heap, size_t bytes) {
+        5:   62:	char string[bytes + 1];
+        -:   63:
+      178:   64:	for(int i = 0; i < bytes; i++) {
+      173:   65:		string[i] = 'c';
+        -:   66:	}
+        -:   67:
+        5:   68:	string[bytes] = '\0';
+        5:   69:	return heap_allocate_struct(heap, string);
+        -:   70:}
+        -:   71:
+        -:   72:// Allocates a new object on the heap with the given formatstring.
+        -:   73:// Valid characters are the same as for h_alloc_struct in gc.h
+        -:   74:
+       11:   75:void* heap_allocate_struct(Heap heap, char* structure) {
+       11:   76:	void* header = header_fromFormatString(heap, structure);
+        -:   77:
+        -:   78:#ifdef HEAP_DEBUG
+        -:   79:	puts("heap_allocate_struct() header binary:");
+        -:   80:	printBits(sizeof(void*), &header);
+        -:   81:#endif
+        -:   82:
+       11:   83:	size_t bytes = header_getSize(header);
+       11:   84:	return heap_allocateActive(heap, header, bytes);
+        -:   85:}
+        -:   86:
+        -:   87:// Allocates a new object on the heap with the given size
+        -:   88:// and object-specific trace function.
+        -:   89:
+    #####:   90:void* heap_allocate_union(Heap heap, size_t bytes, s_trace_f f) {
+    #####:   91:	void* header = header_objectSpecificFunction(f);
+    #####:   92:	return heap_allocateActive(heap, header, bytes);
+        -:   93:}
+        -:   94:
+        -:   95:// Allocates the given amount of bytes on the given heap
+        -:   96:
+       13:   97:void* heap_allocateActive(Heap heap, void* header, size_t bytes) {
+       13:   98:	return heap_allocate(heap, header, bytes, &heap->active_pointer);
+        -:   99:}
+        -:  100:
+        -:  101:// Allocates the given amount of bytes on the given heap
+        -:  102:
+        6:  103:void* heap_allocatePassive(Heap heap, void* header, size_t bytes) {
+        6:  104:	return heap_allocate(heap, header, bytes, &heap->passive_pointer);
+        -:  105:}
+        -:  106:
+        -:  107:// Allocates the given amount of bytes on the given heap
+        -:  108:
+       21:  109:void* heap_allocate(Heap heap, void* header, size_t bytes, void** block_pointer) {
+       21:  110:	HeapBlock block = *block_pointer;
+        -:  111:
+        -:  112:	// Make sure the bytes are properly aligned.
+        -:  113:	// This will not work in all cases, but for this project it should work fine.
+       21:  114:	bytes = bytes + (bytes % sizeof(void*));
+        -:  115:
+       21:  116:	block->header = header;
+        -:  117:
+       21:  118:	*block_pointer = ((char*) *block_pointer) + sizeof(void*) + bytes;
+        -:  119:
+       21:  120:	return (((char*) &block->header) + sizeof(void*));
+        -:  121:}
+        -:  122:
+        -:  123:// Copies the data from the pointer pointing to a part in the active heap to the first empty slot
+        -:  124:// in the passive part. Will also mark the header of the object in the active part as copied to the
+        -:  125:// passive part.
+        -:  126:
+        4:  127:void* heap_copyFromActiveToPassive(Heap heap, void* data) {
+        -:  128:
+        4:  129:	HeapBlock block = GET_HEAPBLOCK(data);
+        -:  130:
+        4:  131:	void* header = block->header;
+        -:  132:
+        -:  133:	// Since strings are also stored as separate objects on our heap they need to be copied as well.
+        4:  134:	if(header_getHeaderType(header) == POINTER_TO_STRING) {
+        1:  135:		header = heap_copyFromActiveToPassive(heap, header_clearHeaderTypeBits(header));
+        1:  136:		header = header_setHeaderType(header, POINTER_TO_STRING);
+        -:  137:	}
+        -:  138:
+        4:  139:	size_t data_size = header_getSize(header);
+        -:  140:
+        -:  141:#ifdef HEAP_DEBUG
+        -:  142:	printf("\ndata_size: %zu\n", data_size);
+        -:  143:
+        -:  144:	puts("Header binary #1:");
+        -:  145:	printBits(sizeof(void*), &header);
+        -:  146:	puts("");
+        -:  147:#endif
+        -:  148:
+        4:  149:	char* active_data = data;
+        4:  150:	char* passive_data = heap_allocatePassive(heap, header, data_size);
+        -:  151:
+        -:  152:#ifdef HEAP_DEBUG
+        -:  153:	puts("Passive data binary #1:");
+        -:  154:	printBits(sizeof(void*), &passive_data);
+        -:  155:	puts("");
+        -:  156:#endif
+        -:  157:
+      180:  158:	for(size_t i = 0; i < data_size; i++) {
+        -:  159:#ifdef HEAP_DEBUG
+        -:  160:		puts("active_data char:");
+        -:  161:		printf("%c\n", active_data[i]);
+        -:  162:		puts("");
+        -:  163:#endif
+      176:  164:		passive_data[i] = active_data[i];
+        -:  165:	}
+        -:  166:
+        -:  167:#ifdef HEAP_DEBUG
+        -:  168:	puts("Passive data binary #2:");
+        -:  169:	printBits(sizeof(void*), &passive_data);
+        -:  170:	puts("");
+        -:  171:#endif
+        -:  172:
+        4:  173:	heap_markAsCopied(data, passive_data);
+        -:  174:
+        -:  175:#ifdef HEAP_DEBUG
+        -:  176:	puts("Header binary #2 ought to be forwarding address:");
+        -:  177:	printBits(sizeof(void*), &block->header);
+        -:  178:	puts("");
+        -:  179:#endif
+        -:  180:
+        4:  181:	return (void*) passive_data;
+        -:  182:}
+        -:  183:
+        -:  184:// Replaced the header of the object pointed to by dataparameter with the given forwarding adress
+        -:  185:// and marks it as copied
+        -:  186:
+        5:  187:void heap_markAsCopied(void* data, void* forwarding_address) {
+        5:  188:	HeapBlock block = GET_HEAPBLOCK(data);
+        -:  189:
+        -:  190:#ifdef HEAP_DEBUG
+        -:  191:	puts("header and forwardinng address:");
+        -:  192:	printBits(sizeof(void*), &block->header);
+        -:  193:	printBits(sizeof(void*), &forwarding_address);
+        -:  194:#endif
+        -:  195:
+        5:  196:	void* new_header = header_forwardingAddress(forwarding_address);
+        5:  197:	block->header = new_header;
+        -:  198:
+        -:  199:#ifdef HEAP_DEBUG
+        -:  200:	puts("header");
+        -:  201:	printBits(sizeof(void*), &new_header);
+        -:  202:#endif
+        5:  203:}
+        -:  204:
+        -:  205:// Checks if the object pointed to by the data parameter is marked as copied to the passive part.
+        -:  206:
+        2:  207:int heap_hasBeenCopied(void* data) {
+        2:  208:	HeapBlock block = GET_HEAPBLOCK(data);
+        2:  209:	return header_getHeaderType(block->header) == FORWARDING_ADDRESS;
+        -:  210:}
+        -:  211:
+        -:  212:// Marks the active part of the heap as the passive and vice versa.
+        -:  213:
+        1:  214:void heap_swapActiveAndPassive(Heap heap) {
+        -:  215:
+        -:  216:	// Temporary store the value of the active pointer.
+        1:  217:	void* temp_active = heap->active;
+        -:  218:
+        1:  219:	heap->active = heap->passive;
+        1:  220:	heap->passive = temp_active;
+        1:  221:	heap->active_pointer = heap->passive_pointer;
+        -:  222:
+        -:  223:	// The passive pointer is reset to the beginning as no live data is stored there.
+        1:  224:	heap->passive_pointer = heap->passive;
+        1:  225:}
+        -:  226:
+        -:  227:// Returns the amount of bytes left that can be allocated.
+        -:  228:
+        1:  229:size_t heap_sizeLeft(Heap heap) {
+        1:  230:	size_t blocksize = heap->heapsize / 2;
+        -:  231:
+        1:  232:	char* active_start = heap->active;
+        1:  233:	char* active_pointer = heap->active_pointer;
+        -:  234:
+        1:  235:	size_t bytes_used = active_pointer - active_start;
+        -:  236:
+        1:  237:	return blocksize - bytes_used;
+        -:  238:}
+        -:  239:
+        -:  240:// Returns pointer to the start of the active block in the given heap.
+        -:  241:
+        3:  242:void* heap_getActiveStart(Heap heap) {
+        3:  243:	return heap->active;
+        -:  244:}
+        -:  245:
+        -:  246:// Returns pointer to the end of the current allocated memory in the active heapblock of the given heap.
+        -:  247:
+        4:  248:void* heap_getActiveEnd(Heap heap) {
+        4:  249:	return heap->active_pointer;
+        -:  250:}
