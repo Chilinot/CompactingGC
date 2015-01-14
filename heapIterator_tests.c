@@ -39,10 +39,10 @@ void testHeapIterator(void){
 	
 	// Make sure stored values are intact.
 	CU_ASSERT(first->integer == 12);
-	CU_ASSERT(first->next_test_struct != NULL);
+	CU_ASSERT(first->next_test_struct == middle);
 	
 	CU_ASSERT(middle->integer == 24);
-	CU_ASSERT(middle->next_test_struct != NULL);
+	CU_ASSERT(middle->next_test_struct == last);
 	
 	CU_ASSERT(last->integer == 48);
 	CU_ASSERT(last->next_test_struct == NULL);
@@ -53,7 +53,7 @@ void testHeapIterator(void){
 	CU_ASSERT(last > heap_getActiveStart(heap) && last < heap_getActiveEnd(heap));
 	
 	// Run heap iterator on the first object.
-	TestNode new_first = heapIterator(heap, first);
+	TestNode new_first = heapIterator(heap, first); // Run heapIterator for the first and only time.
 	TestNode new_middle = new_first->next_test_struct;
 	TestNode new_last = new_middle->next_test_struct;
 	
