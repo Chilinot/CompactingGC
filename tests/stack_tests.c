@@ -5,7 +5,7 @@
 #include <assert.h>
 #include <stdint.h>
 #include "CUnit/Basic.h"
-#include "stack.h"
+#include "../src/stack.h"
 
 
 int init_suite1(void) {

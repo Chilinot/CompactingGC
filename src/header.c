@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include "header.h"
 #include "heap.h"
-#include "string_util/string_util.h"
+#include "string_util.h"
 
 
  // Defines number of bits per token.

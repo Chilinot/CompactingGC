@@ -1,10 +1,10 @@
-#include "header.h"
+#include "../src/header.h"
 #include "CUnit/Basic.h"
 #include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
-#include "heap.h"
-#include "heap_rep.h"
+#include "../src/heap.h"
+#include "../src/heap_rep.h"
 
 // Comment this row to disable debug
 // #define HEADER_TESTS_DEBUG

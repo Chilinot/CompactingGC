@@ -1,7 +1,7 @@
 #include "CUnit/Basic.h"
-#include "heap.h"
-#include "heap_rep.h"
-#include "header.h"
+#include "../src/heap.h"
+#include "../src/heap_rep.h"
+#include "../src/header.h"
 
 // Comment this row to disable debug output.
 //#define HEAP_TESTS_DEBUG

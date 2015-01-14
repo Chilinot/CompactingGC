@@ -4,8 +4,7 @@
 #include "stack.h"
 #include "heap_rep.h"
 #include "heapIterator.h"
-#include "linkedlist.h"
-#include "string_util/string_util.h"
+#include "string_util.h"
 
 // Create a heap from the heap module with the given amount of bytes.
 // Return a pointer to said heap.

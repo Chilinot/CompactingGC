@@ -1,8 +1,8 @@
 #include "CUnit/Basic.h"
-#include "heap.h"
-#include "heap_rep.h"
-#include "heapIterator.h"
-#include "header.h"
+#include "../src/heap.h"
+#include "../src/heap_rep.h"
+#include "../src/heapIterator.h"
+#include "../src/header.h"
 
 // --- SUITES ---
 int init_suite_1(void) {
