@@ -1,0 +1,93 @@
+\hypertarget{string__util_8h}{}\section{string\+\_\+util.\+h File Reference}
+\label{string__util_8h}\index{string\+\_\+util.\+h@{string\+\_\+util.\+h}}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+char $\ast$ \hyperlink{string__util_8h_a55e39c170ad59dc77988a375fb0c2fc8}{format\+String\+To\+Header\+String} (char $\ast$layout)
+\item 
+char $\ast$ \hyperlink{string__util_8h_a012c6f7fdfaed13b441fc7809aa850d1}{format\+String\+Without\+Digits} (char $\ast$format\+String)
+\item 
+int \hyperlink{string__util_8h_a5fb6201505c7289ea848664ffc784722}{return\+Digit} (char $\ast$layout, int digit\+Pos)
+\item 
+int \hyperlink{string__util_8h_a078e57c1d763c722c7669a955b755221}{new\+Pos} (char $\ast$layout, int current\+Pos)
+\item 
+size\+\_\+t \hyperlink{string__util_8h_a83a7ad4d21b4832f60140dc29c561ecd}{header\+String\+To\+Size} (char $\ast$layout)
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\hypertarget{string__util_8h_a55e39c170ad59dc77988a375fb0c2fc8}{}\index{string\+\_\+util.\+h@{string\+\_\+util.\+h}!format\+String\+To\+Header\+String@{format\+String\+To\+Header\+String}}
+\index{format\+String\+To\+Header\+String@{format\+String\+To\+Header\+String}!string\+\_\+util.\+h@{string\+\_\+util.\+h}}
+\subsubsection[{format\+String\+To\+Header\+String}]{\setlength{\rightskip}{0pt plus 5cm}char$\ast$ format\+String\+To\+Header\+String (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{layout}
+\end{DoxyParamCaption}
+)}\label{string__util_8h_a55e39c170ad59dc77988a375fb0c2fc8}
+Given a formatstring, converts the string into a headerstring that describes the memorylayout. If no string is given, terminate the program. empty strings will return an empty string. 
+\begin{DoxyParams}{Parameters}
+{\em The} & formatstring to be converted. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Returns a headerstring allocated on the heap. 
+\end{DoxyReturn}
+\hypertarget{string__util_8h_a012c6f7fdfaed13b441fc7809aa850d1}{}\index{string\+\_\+util.\+h@{string\+\_\+util.\+h}!format\+String\+Without\+Digits@{format\+String\+Without\+Digits}}
+\index{format\+String\+Without\+Digits@{format\+String\+Without\+Digits}!string\+\_\+util.\+h@{string\+\_\+util.\+h}}
+\subsubsection[{format\+String\+Without\+Digits}]{\setlength{\rightskip}{0pt plus 5cm}char$\ast$ format\+String\+Without\+Digits (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{format\+String}
+\end{DoxyParamCaption}
+)}\label{string__util_8h_a012c6f7fdfaed13b441fc7809aa850d1}
+Given a formatstring converts the string to a equivalent formatstring without digits 
+\begin{DoxyParams}{Parameters}
+{\em format\+String} & formatstring to be converted \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A formatstring cotaining no digits 
+\end{DoxyReturn}
+\hypertarget{string__util_8h_a83a7ad4d21b4832f60140dc29c561ecd}{}\index{string\+\_\+util.\+h@{string\+\_\+util.\+h}!header\+String\+To\+Size@{header\+String\+To\+Size}}
+\index{header\+String\+To\+Size@{header\+String\+To\+Size}!string\+\_\+util.\+h@{string\+\_\+util.\+h}}
+\subsubsection[{header\+String\+To\+Size}]{\setlength{\rightskip}{0pt plus 5cm}size\+\_\+t header\+String\+To\+Size (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{layout}
+\end{DoxyParamCaption}
+)}\label{string__util_8h_a83a7ad4d21b4832f60140dc29c561ecd}
+Calculates the size of a headerstring 
+\begin{DoxyParams}{Parameters}
+{\em layout} & the headerstring \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+size of the headerstring 
+\end{DoxyReturn}
+\hypertarget{string__util_8h_a078e57c1d763c722c7669a955b755221}{}\index{string\+\_\+util.\+h@{string\+\_\+util.\+h}!new\+Pos@{new\+Pos}}
+\index{new\+Pos@{new\+Pos}!string\+\_\+util.\+h@{string\+\_\+util.\+h}}
+\subsubsection[{new\+Pos}]{\setlength{\rightskip}{0pt plus 5cm}int new\+Pos (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{layout, }
+\item[{int}]{current\+Pos}
+\end{DoxyParamCaption}
+)}\label{string__util_8h_a078e57c1d763c722c7669a955b755221}
+finds the index after an integer in a string. ex. i23f if current\+Pos is at index 1 the function will return 4. 
+\begin{DoxyParams}{Parameters}
+{\em layout} & the string to find the new position \\
+\hline
+{\em current\+Pos} & the position of the first integer. \\
+\hline
+\end{DoxyParams}
+\hypertarget{string__util_8h_a5fb6201505c7289ea848664ffc784722}{}\index{string\+\_\+util.\+h@{string\+\_\+util.\+h}!return\+Digit@{return\+Digit}}
+\index{return\+Digit@{return\+Digit}!string\+\_\+util.\+h@{string\+\_\+util.\+h}}
+\subsubsection[{return\+Digit}]{\setlength{\rightskip}{0pt plus 5cm}int return\+Digit (
+\begin{DoxyParamCaption}
+\item[{char $\ast$}]{layout, }
+\item[{int}]{digit\+Pos}
+\end{DoxyParamCaption}
+)}\label{string__util_8h_a5fb6201505c7289ea848664ffc784722}
+returns the integer value in a string starting from digitpos ex. i23f, if digit\+Pos is at index 1 the function will return 23. 
+\begin{DoxyParams}{Parameters}
+{\em layout} & the string to find the integer \\
+\hline
+{\em digit\+Pos} & position of the first integer \\
+\hline
+\end{DoxyParams}

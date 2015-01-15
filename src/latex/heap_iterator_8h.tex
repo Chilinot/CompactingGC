@@ -1,0 +1,29 @@
+\hypertarget{heap_iterator_8h}{}\section{heap\+Iterator.\+h File Reference}
+\label{heap_iterator_8h}\index{heap\+Iterator.\+h@{heap\+Iterator.\+h}}
+{\ttfamily \#include \char`\"{}gc.\+h\char`\"{}}\\*
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void $\ast$ \hyperlink{heap_iterator_8h_ae666e93639e6a2782c38e6dac3138018}{heap\+Iterator} (\hyperlink{gc_8h_acff7c46ae1f4265ad565cc6ccf18dacb}{Heap} heap, void $\ast$obj)
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\hypertarget{heap_iterator_8h_ae666e93639e6a2782c38e6dac3138018}{}\index{heap\+Iterator.\+h@{heap\+Iterator.\+h}!heap\+Iterator@{heap\+Iterator}}
+\index{heap\+Iterator@{heap\+Iterator}!heap\+Iterator.\+h@{heap\+Iterator.\+h}}
+\subsubsection[{heap\+Iterator}]{\setlength{\rightskip}{0pt plus 5cm}void$\ast$ heap\+Iterator (
+\begin{DoxyParamCaption}
+\item[{{\bf Heap}}]{heap, }
+\item[{void $\ast$}]{obj}
+\end{DoxyParamCaption}
+)}\label{heap_iterator_8h_ae666e93639e6a2782c38e6dac3138018}
+Objekt flyttas till den passiva/nya delen av heapen om den inte redan är flyttad och markeras som flyttad. Om objektet redan är flyttat kommer det inte flyttas igen, addresen till objektet på passiva delen kommer fortfarande retuneras. Om objektet har pekare till andra objekt på heapen kommer dom också flyttas och pekarna ändras därefter. 
+\begin{DoxyParams}{Parameters}
+{\em h} & heapen vi jobbar på \\
+\hline
+{\em obj} & är en pekare till objekt på den aktiva heapen \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+en pekare till det nya stället(på den passiva delen av heapen) objektet nu kan hittas 
+\end{DoxyReturn}
