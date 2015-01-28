@@ -19,19 +19,22 @@ setup:
 clean:
 	rm -f $(GEN_EXTENSIONS) unittests *.orig
 
-# Builds the garbage collector under the name "GarbageCollector.o" and places it in the target folder.
-build: setup $(SRC_FOLDER)/gc.c $(SRC_FOLDER)/gc.h header.o heap.o heapIterator.o stack.o string_util.o
-	$(CC) $(CFLAGS) -o $(TARGET_FOLDER)/GarbageCollector.o \
-	$(SRC_FOLDER)/gc.c \
-	$(SRC_FOLDER)/gc.h \
+# Builds the garbage collector under the name "gc.o" and places it in the main folder.
+build: header.o heap.o heapIterator.o stack.o string_util.o gc.o
+	ld -r \
 	$(TARGET_FOLDER)/header.o \
 	$(TARGET_FOLDER)/heap.o \
 	$(TARGET_FOLDER)/heapIterator.o \
 	$(TARGET_FOLDER)/stack.o \
-	$(TARGET_FOLDER)/string_util.o
+	$(TARGET_FOLDER)/string_util.o \
+	$(TARGET_FOLDER)/gc.o \
+	-o gc.o
 
 
 # MODULES
+gc.o: setup $(SRC_FOLDER)/gc.c $(SRC_FOLDER)/gc.h
+	$(CC) $(CFLAGS) $(MODULEFLAGS) $(SRC_FOLDER)/gc.c -o $(TARGET_FOLDER)/gc.o
+
 debug.o: setup $(SRC_FOLDER)/debug.c $(SRC_FOLDER)/debug.h
 	$(CC) $(CFLAGS) $(MODULEFLAGS) $(SRC_FOLDER)/debug.c -o $(TARGET_FOLDER)/debug.o
 
@@ -52,7 +55,12 @@ string_util.o: setup $(SRC_FOLDER)/string_util.c $(SRC_FOLDER)/string_util.h
 
 
 # TESTS
-test_all: test_header test_heap test_heapIterator test_stack test_stringutil test_gc
+test_all: test_header test_heap test_heapIterator test_stack test_stringutil test_gc test_stability
+
+test_stability: setup build $(TEST_FOLDER)/stabilitytest/StabilityTest.c $(TEST_FOLDER)/stabilitytest/binarytree.c $(TEST_FOLDER)/stabilitytest/binarytree.h $(SRC_FOLDER)/gc.h $(SRC_FOLDER)/heap.h
+	$(CC) $(CFLAGS) $(TESTFLAGS) $(TEST_FOLDER)/stabilitytest/StabilityTest.c $(TEST_FOLDER)/stabilitytest/binarytree.c gc.o -o $(TARGET_FOLDER)/tests/StabilityTest
+	./$(TARGET_FOLDER)/tests/StabilityTest
+
 test_header: setup $(SRC_FOLDER)/header.c $(SRC_FOLDER)/header.h $(TEST_FOLDER)/header_tests.c $(SRC_FOLDER)/string_util.c $(SRC_FOLDER)/string_util.h $(SRC_FOLDER)/heap.c $(SRC_FOLDER)/heap.h
 	$(CC) $(CFLAGS) $(TESTFLAGS) $(TEST_FOLDER)/header_tests.c $(SRC_FOLDER)/header.c $(SRC_FOLDER)/string_util.c $(SRC_FOLDER)/heap.c -o $(TARGET_FOLDER)/tests/header_unittests -lcunit
 	./$(TARGET_FOLDER)/tests/header_unittests
