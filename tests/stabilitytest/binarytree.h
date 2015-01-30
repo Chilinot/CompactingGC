@@ -5,10 +5,8 @@
 
 typedef struct binary_tree *BinaryTree;
 
-BinaryTree tree_insert(Heap heap, BinaryTree tree, char* key, char* value);
-BinaryTree tree_remove(Heap heap, BinaryTree tree, char* key);
-int        tree_update(Heap heap, BinaryTree tree, char* key, char* value);
-char*      tree_query(BinaryTree tree, char* key);
+BinaryTree tree_insert(Heap heap, BinaryTree tree, int key);
+BinaryTree tree_remove(Heap heap, BinaryTree tree, int key);
 void       tree_print(BinaryTree tree);
 
 #endif

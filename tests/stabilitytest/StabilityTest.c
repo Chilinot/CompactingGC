@@ -2,35 +2,35 @@
 #include "../../src/heap.h"
 #include "binarytree.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 int main(void) {
+	// Initiate random generator with a random seed.
+	srand(9834589182300129);
+	
 	// Create a 2KB large heap for the binary tree.
-	Heap heap = h_init(sizeof(struct heap_s) + 2048 * sizeof(void*));
+	Heap heap = h_init(sizeof(struct heap_s) + 2048 * 2);
 	
-	BinaryTree tree = tree_insert(heap, tree, "5", "5");
-	tree = tree_insert(heap, tree, "3", "3");
-	tree = tree_insert(heap, tree, "2", "2");
-	tree = tree_insert(heap, tree, "4", "4");
-	tree = tree_insert(heap, tree, "7", "7");
-	tree = tree_insert(heap, tree, "6", "6");
-	tree = tree_insert(heap, tree, "8", "8");
+	printf("\nAvailable bytes in heap: %zu\n", h_avail(heap));
 	
-	puts("First print:");
+	BinaryTree tree = tree_insert(heap, NULL, 25);
+	for(int i = 0; i < 50; i++) {
+		tree = tree_insert(heap, tree, (rand() % 50) + 1);
+	}
+	
+	puts("\nFirst print:");
 	tree_print(tree);
+	printf("%zu Bytes left.\n", h_avail(heap));
 	
-	tree = tree_remove(heap, tree, "7");
-	
-	puts("Second print:");
-	tree_print(tree);
-	printf("%d\n", h_avail(heap));
-	
-	// Force garbage collection on the heap.
-	h_gc(heap);
-	
-	// Is the tree still "alive"?
-	puts("Third print:");
-	tree_print(tree);
-	printf("%d\n", h_avail(heap));
+	// Force garbage collection on the heap 10 times.
+	for(int i = 0; i < 10; i++) {
+		h_gc(heap);
+		
+		// Is the tree still "alive"?
+		puts("");
+		tree_print(tree);
+		printf("%zu Bytes left.\n", h_avail(heap));
+	}
 	
 	return 0;
 }
