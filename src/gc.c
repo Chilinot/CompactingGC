@@ -5,6 +5,10 @@
 #include "heapIterator.h"
 #include "string_util.h"
 
+size_t h_get_meta_size() {
+	return sizeof(struct heap_s);
+}
+
 // Create a heap from the heap module with the given amount of bytes.
 // Return a pointer to said heap.
 Heap h_init(size_t bytes) {

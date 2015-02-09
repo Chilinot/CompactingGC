@@ -26,6 +26,17 @@ typedef void* (*trace_f)(Heap h, void* obj);
 typedef void* (*s_trace_f)(Heap h, trace_f f, void* obj);
 
 /**
+ * Returns the amount of bytes the heaps needs in order to store
+ * the meta data about the heap.
+ * 
+ * It would be difficult to create a stable heap without a call
+ * to this function.
+ * 
+ * @return The amount of bytes needed to store the heaps meta data.
+ */
+size_t h_get_meta_size();
+
+/**
  * Create a new heap with bytes total size (including both spaces
  * and metadata), meaning strictly less than bytes will be
  * available for allocation.

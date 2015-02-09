@@ -59,7 +59,7 @@ string_util.o: setup $(SRC_FOLDER)/string_util.c $(SRC_FOLDER)/string_util.h
 # TESTS
 test_all: test_header test_heap test_heapIterator test_stack test_stringutil test_gc test_stability
 
-test_stability: setup build $(TEST_FOLDER)/stabilitytest/StabilityTest.c $(TEST_FOLDER)/stabilitytest/binarytree.c $(TEST_FOLDER)/stabilitytest/binarytree.h $(SRC_FOLDER)/gc.h $(SRC_FOLDER)/heap.h
+test_stability: setup build $(TEST_FOLDER)/stabilitytest/StabilityTest.c $(TEST_FOLDER)/stabilitytest/binarytree.c $(TEST_FOLDER)/stabilitytest/binarytree.h $(SRC_FOLDER)/gc.h
 	$(CC) $(CFLAGS) $(TESTFLAGS) $(TEST_FOLDER)/stabilitytest/StabilityTest.c $(TEST_FOLDER)/stabilitytest/binarytree.c $(TARGET_FOLDER)/GarbageCollector.o -o $(TARGET_FOLDER)/$(TEST_FOLDER)/StabilityTest
 	./$(TARGET_FOLDER)/$(TEST_FOLDER)/StabilityTest
 
